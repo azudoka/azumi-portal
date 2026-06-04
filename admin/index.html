@@ -178,6 +178,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="nav-tab" onclick="abaAtiva('nr1',this)">NR-1</button>
     <button class="nav-tab" onclick="abaAtiva('treinamento',this)">Treinamento</button>
     <button class="nav-tab" onclick="abaAtiva('diagnostico',this)">Diagnostico HRaaS</button>
+    <button class="nav-tab" onclick="abaAtiva('cultura',this)">Cultura</button>
+    <button class="nav-tab" onclick="abaAtiva('gtm',this)">GTM Pessoal</button>
+    <button class="nav-tab" onclick="abaAtiva('impulso',this)">Impulso</button>
   </div>
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
@@ -199,6 +202,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div id="tab-diagnostico" class="tab-content">
       <div class="tab-header"><div class="tab-title">Diagnostico HRaaS</div><div class="tab-count" id="count-diagnostico">0</div></div>
       <div id="cards-diagnostico"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-cultura" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Cultura e Endomarketing</div><div class="tab-count" id="count-cultura">0</div></div>
+      <div id="cards-cultura"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-gtm" class="tab-content">
+      <div class="tab-header"><div class="tab-title">GTM Pessoal</div><div class="tab-count" id="count-gtm">0</div></div>
+      <div id="cards-gtm"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-impulso" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Programa Impulso</div><div class="tab-count" id="count-impulso">0</div></div>
+      <div id="cards-impulso"><div class="loading">Carregando...</div></div>
     </div>
   </div>
 </div>
@@ -256,7 +271,7 @@ function abaAtiva(aba,btn){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
   document.getElementById('tab-'+aba).classList.add('active');btn.classList.add('active')
 }
-async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico()}
+async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico();carregarCultura();carregarGtm();carregarImpulso()}
 function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
 
 // ── CAREER ──────────────────────────────────────────────
@@ -510,11 +525,163 @@ function diagnosticoCard(r){
   </div>`
 }
 
+// ── CULTURA ──────────────────────────────────────────────
+async function carregarCultura(){
+  const cont=document.getElementById('cards-cultura')
+  const {data,error}=await sb.from('cultura_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-cultura').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>culturaCard(r)).join('')
+}
+function culturaCard(r){
+  const rid=r.id||''
+  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse:(r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[])
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome||''}${r.cargo?' · '+r.cargo:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.setor?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.setor}</span>`:''}
+            ${r.tamanho_equipe?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tamanho_equipe}</span>`:''}
+            ${r.prazo?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.modelo_trabalho?`<div class="req-item"><div class="req-item-lbl">Modelo</div><div class="req-item-val">${r.modelo_trabalho}</div></div>`:''}
+        ${r.budget?`<div class="req-item"><div class="req-item-lbl">Budget</div><div class="req-item-val">${r.budget}</div></div>`:''}
+      </div>
+      ${srvs.length?`<div class="req-servicos"><div class="req-servicos-lbl">Servicos (${srvs.length})</div>${srvs.map(s=>`<div class="srv-item"><span>${s}</span></div>`).join('')}</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('cultura',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('cultura_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('cultura_requests','${rid}','${(r.empresa||'').replace(/'/g,'')}',carregarCultura)">Excluir</button>
+    </div>
+  </div>`
+}
+
+// ── GTM ──────────────────────────────────────────────
+async function carregarGtm(){
+  const cont=document.getElementById('cards-gtm')
+  const {data,error}=await sb.from('gtm_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-gtm').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>gtmCard(r)).join('')
+}
+function gtmCard(r){
+  const rid=r.id||''
+  const desafios=Array.isArray(r.desafios)?r.desafios:(r.desafios?r.desafios.split(',').map(s=>s.trim()).filter(Boolean):[])
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.area_atuacao||''}${r.formato_juridico?' · '+r.formato_juridico:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.cidade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${[r.cidade,r.estado].filter(Boolean).join('/')}</span>`:''}
+            ${r.prazo?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.tempo_autonomo?`<div class="req-item"><div class="req-item-lbl">Tempo autonomo</div><div class="req-item-val">${r.tempo_autonomo}</div></div>`:''}
+        ${r.budget?`<div class="req-item"><div class="req-item-lbl">Budget</div><div class="req-item-val">${r.budget}</div></div>`:''}
+      </div>
+      ${desafios.length?`<div class="req-servicos"><div class="req-servicos-lbl">Desafios (${desafios.length})</div>${desafios.slice(0,3).map(s=>`<div class="srv-item"><span>${s}</span></div>`).join('')}${desafios.length>3?`<div class="srv-item"><span style="color:var(--ts)">+${desafios.length-3} mais</span></div>`:''}</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('gtm',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('gtm_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('gtm_requests','${rid}','${(r.nome||'').replace(/'/g,'')}',carregarGtm)">Excluir</button>
+    </div>
+  </div>`
+}
+
+// ── IMPULSO ──────────────────────────────────────────────
+async function carregarImpulso(){
+  const cont=document.getElementById('cards-impulso')
+  const {data,error}=await sb.from('impulso_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-impulso').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>impulsoCard(r)).join('')
+}
+function impulsoCard(r){
+  const rid=r.id||''
+  const comps=Array.isArray(r.competencias)?r.competencias:(r.competencias?r.competencias.split(',').map(s=>s.trim()).filter(Boolean):[])
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.cargo_atual||''}${r.empresa_atual?' · '+r.empresa_atual:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.nivel_programa?`<span style="font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 9px">${r.nivel_programa}</span>`:''}
+            ${r.modalidade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.modalidade}</span>`:''}
+            ${r.tempo_rh?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tempo_rh} em RH</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.formato?`<div class="req-item"><div class="req-item-lbl">Formato</div><div class="req-item-val">${r.formato}</div></div>`:''}
+        ${r.patrocinado?`<div class="req-item"><div class="req-item-lbl">Patrocinado</div><div class="req-item-val" style="color:#6ee7b7">Sim${r.empresa_patroc?' — '+r.empresa_patroc:''}</div></div>`:''}
+      </div>
+      ${r.porque_agora?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.porque_agora}"</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('impulso',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('impulso_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('impulso_requests','${rid}','${(r.nome||'').replace(/'/g,'')}',carregarImpulso)">Excluir</button>
+    </div>
+  </div>`
+}
+
 // ── STATUS / DELETE ──────────────────────────────────────────────
 async function atualizarStatus(tabela,id,status,sel){
   if(!status)return;sel.value=''
   await sb.from(tabela).update({status}).eq('id',id);toast('Status atualizado')
-  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico}
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso}
   if(m[tabela])m[tabela]()
 }
 async function excluir(tabela,id,nome,reload){
@@ -543,6 +710,9 @@ function renderDrawer(tipo,r){
   else if(tipo==='nr1')b.innerHTML=drawerNr1(r)
   else if(tipo==='treinamento')b.innerHTML=drawerTreinamento(r)
   else if(tipo==='diagnostico')b.innerHTML=drawerDiagnostico(r)
+  else if(tipo==='cultura')b.innerHTML=drawerCultura(r)
+  else if(tipo==='gtm')b.innerHTML=drawerGtm(r)
+  else if(tipo==='impulso')b.innerHTML=drawerImpulso(r)
   else b.innerHTML=drawerCareer(r)
 }
 
@@ -689,6 +859,71 @@ function drawerCareer(r){
   ${resultBox('result-career')}`
 }
 
+function drawerCultura(r){
+  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse.join(', '):(r.servicos_interesse||'—')
+  return infoBlock(r,[['empresa','Empresa'],['nome','Responsavel'],['setor','Setor'],['tamanho_equipe','Equipe'],['formato','Formato'],['prazo','Prazo'],['budget','Budget']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta Cultura e Endomarketing</div>
+    ${calcSelect('cu-pkg','Pacote',[['ESSENCIAL','ESSENCIAL — Diagnostico basico (R$2.800)'],['COMPLETO','COMPLETO — Diagnostico + Workshop (R$5.500)'],['PREMIUM','PREMIUM — Diag + Marca + Campanha (R$9.500)']],'COMPLETO')}
+    <div class="calc-row">
+      ${calcField('cu-prazo','Duracao (meses)',3)}
+      ${calcField('cu-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-section-title" style="margin-top:14px">Adicionais</div>
+    <div class="adicionais-list">
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="800"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Pesquisa pulso mensal</div><div class="adicional-val">+ R$ 800/mes</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="2500"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Video institucional</div><div class="adicional-val">+ R$ 2.500</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="1200"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Kit onboarding cultural</div><div class="adicional-val">+ R$ 1.200</div></div>
+    </div>
+    <div class="calc-field" style="margin-top:12px"><label>Observacoes</label><textarea id="cu-obs" placeholder="Servicos: ${srvs.substring(0,80)}..."></textarea></div>
+  </div>
+  ${resultBox('result-cultura')}`
+}
+
+function drawerGtm(r){
+  return infoBlock(r,[['nome','Nome'],['area_atuacao','Area'],['formato_juridico','Formato juridico'],['cidade','Cidade'],['budget','Budget'],['prazo','Prazo']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta GTM Pessoal</div>
+    ${calcSelect('g-pkg','Pacote',[['SPRINT','SPRINT — 1 mes intensivo (R$1.800)'],['JORNADA','JORNADA — 3 meses (R$3.600)'],['MENTORIA','MENTORIA — 6 meses (R$5.800)']],'JORNADA')}
+    <div class="calc-row">
+      ${calcSelect('g-fmt','Formato',[['1','Online (x1.0)'],['1.1','Hibrido (x1.1)'],['1.2','Presencial (x1.2)']],1)}
+      ${calcField('g-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-row">
+      ${calcField('g-parc','Parcelas',1)}
+      ${calcField('g-entrada','Entrada (%)',50)}
+    </div>
+    <div class="calc-section-title" style="margin-top:14px">Adicionais</div>
+    <div class="adicionais-list">
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="600"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Auditoria de perfil digital</div><div class="adicional-val">+ R$ 600</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="400"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Planejamento de conteudo (30 dias)</div><div class="adicional-val">+ R$ 400</div></div>
+    </div>
+    <div class="calc-field" style="margin-top:12px"><label>Observacoes</label><textarea id="g-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-gtm')}`
+}
+
+function drawerImpulso(r){
+  const nivel=r.nivel_programa||'AVANCADO'
+  const nMap={ESSENCIAL:'ESSENCIAL (R$1.200)',AVANCADO:'AVANCADO (R$2.200)',MASTER:'MASTER (R$3.800)'}
+  return infoBlock(r,[['nome','Nome'],['cargo_atual','Cargo'],['empresa_atual','Empresa'],['nivel_programa','Nivel'],['modalidade','Modalidade'],['formato','Formato'],['tempo_rh','Tempo RH']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta Programa Impulso</div>
+    ${calcSelect('i-pkg','Nivel do programa',[['ESSENCIAL','ESSENCIAL — Fundamentos (R$1.200)'],['AVANCADO','AVANCADO — Pratica (R$2.200)'],['MASTER','MASTER — Lideranca (R$3.800)']],nivel)}
+    <div class="calc-row">
+      ${calcSelect('i-mod','Modalidade',[['1','Individual (x1.0)'],['0.75','Grupo/Turma (x0.75)']],'1')}
+      ${calcSelect('i-fmt','Formato',[['1','Online (x1.0)'],['1.1','Presencial (x1.1)']],1)}
+    </div>
+    <div class="calc-row">
+      ${calcField('i-parc','Parcelas',1)}
+      ${calcField('i-desc','Desconto (%)',0)}
+    </div>
+    ${r.patrocinado?`<div style="padding:8px 12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;font-size:11px;color:#6ee7b7;margin-bottom:12px">Patrocinado por: ${r.empresa_patroc||'empresa'} — considerar faturamento PJ</div>`:''}
+    <div class="calc-field"><label>Observacoes</label><textarea id="i-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-impulso')}`
+}
+
 // ── CALCULAR ──────────────────────────────────────────────
 function v(id){const el=document.getElementById(id);return el?parseFloat(el.value)||0:0}
 function vstr(id){const el=document.getElementById(id);return el?el.value:'' }
@@ -702,6 +937,9 @@ function calcular(){
   else if(tipo==='nr1')calcNr1()
   else if(tipo==='treinamento')calcTreinamento()
   else if(tipo==='diagnostico')calcDiagnostico()
+  else if(tipo==='cultura')calcCultura()
+  else if(tipo==='gtm')calcGtm()
+  else if(tipo==='impulso')calcImpulso()
   else calcCareer()
 }
 
@@ -804,6 +1042,65 @@ function calcCareer(){
     ${parc>1?`<div class="result-row" style="margin-top:8px"><div class="result-lbl">${parc}x de</div><div class="result-val">${fmtNum(pv)}</div></div>`:''}`
 }
 
+function calcCultura(){
+  const pkgBase={ESSENCIAL:2800,COMPLETO:5500,PREMIUM:9500}
+  const pkg=vstr('cu-pkg'),prazo=v('cu-prazo')||1,desc=v('cu-desc')
+  const base=pkgBase[pkg]||5500
+  const adics=adicionaisTotal()
+  const adicsTotal=adics*prazo
+  const subtotal=base+adicsTotal
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  proposalCtx.resultado={pkg,base,adicsTotal,subtotal,descVal,total,prazo}
+  const box=document.getElementById('result-cultura')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Pacote ${pkg}</div><div class="result-val">${fmtNum(base)}</div></div>
+    ${adicsTotal?`<div class="result-row"><div class="result-lbl">Adicionais (${prazo} mes${prazo>1?'es':''})</div><div class="result-val">${fmtNum(adicsTotal)}</div></div>`:''}
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>`
+}
+
+function calcGtm(){
+  const pkgBase={SPRINT:1800,JORNADA:3600,MENTORIA:5800}
+  const pkg=vstr('g-pkg'),fmt=v('g-fmt')||1,desc=v('g-desc'),parc=v('g-parc')||1,ent=v('g-entrada')
+  const base=pkgBase[pkg]||3600
+  const adics=adicionaisTotal()
+  const subtotal=(base*fmt)+adics
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  const entrada=total*(ent/100)
+  const pv=total/parc
+  proposalCtx.resultado={pkg,base,adics,subtotal,descVal,total,entrada,parc,pv}
+  const box=document.getElementById('result-gtm')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Pacote ${pkg} (formato x${fmt})</div><div class="result-val">${fmtNum(base*fmt)}</div></div>
+    ${adics?`<div class="result-row"><div class="result-lbl">Adicionais</div><div class="result-val">${fmtNum(adics)}</div></div>`:''}
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>
+    ${parc>1?`<div class="result-row" style="margin-top:8px"><div class="result-lbl">${parc}x de</div><div class="result-val">${fmtNum(pv)}</div></div>`:''}
+    ${ent?`<div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Entrada (${ent}%)</div><div class="result-val">${fmtNum(entrada)}</div></div><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Restante</div><div class="result-val">${fmtNum(total-entrada)}</div></div></div>`:''}`
+}
+
+function calcImpulso(){
+  const pkgBase={ESSENCIAL:1200,AVANCADO:2200,MASTER:3800}
+  const pkg=vstr('i-pkg'),mod=v('i-mod')||1,fmt=v('i-fmt')||1,parc=v('i-parc')||1,desc=v('i-desc')
+  const base=pkgBase[pkg]||2200
+  const subtotal=base*mod*fmt
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  const pv=total/parc
+  proposalCtx.resultado={pkg,base,mod,fmt,subtotal,descVal,total,parc,pv}
+  const box=document.getElementById('result-impulso')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Pacote ${pkg} (mod x${mod} / fmt x${fmt})</div><div class="result-val">${fmtNum(subtotal)}</div></div>
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>
+    ${parc>1?`<div class="result-row" style="margin-top:8px"><div class="result-lbl">${parc}x de</div><div class="result-val">${fmtNum(pv)}</div></div>`:''}`
+}
+
 // ── PDF ──────────────────────────────────────────────
 function gerarPDF(){
   calcular()
@@ -820,6 +1117,12 @@ function gerarPDF(){
     conteudo=`<h3>Tema: ${r.tema_principal||'—'} | Pacote: ${vstr('t-pkg')}</h3><p><b>Participantes:</b> ${r.num_participantes||'—'} | <b>Turmas:</b> ${v('t-turmas')}</p><hr><p>Valor por turma: ${fmtNum(res.porTurma||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('t-obs')}</p>`
   } else if(tipo==='diagnostico'){
     conteudo=`<h3>Pacote: ${res.pkg||'—'} | Colaboradores: ${r.num_colaboradores||'—'}</h3><hr><p>Mensalidade: ${fmtNum(res.mensal||0)}</p><p>Implantacao: ${fmtNum(res.implVal||0)}</p><p>Prazo: ${v('d-prazo')} meses</p><p><b>Total contrato: ${fmtNum(res.totalFinal||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('d-obs')}</p>`
+  } else if(tipo==='cultura'){
+    conteudo=`<h3>Empresa: ${empresa} | Equipe: ${r.tamanho_equipe||'—'}</h3><hr><h3>Proposta Cultura e Endomarketing</h3><p>Pacote: ${res.pkg||'—'}</p><p>Adicionais (${v('cu-prazo')} meses): ${fmtNum(res.adicsTotal||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('cu-obs')}</p>`
+  } else if(tipo==='gtm'){
+    conteudo=`<h3>${r.nome||'—'} | ${r.area_atuacao||'—'}</h3><hr><h3>Proposta GTM Pessoal</h3><p>Pacote: ${res.pkg||'—'}</p>${res.adics?`<p>Adicionais: ${fmtNum(res.adics)}</p>`:''}<p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('g-obs')}</p>`
+  } else if(tipo==='impulso'){
+    conteudo=`<h3>${r.nome||'—'} | Nivel: ${res.pkg||'—'}</h3><hr><h3>Proposta Programa Impulso</h3><p>Modalidade: ${r.modalidade||'—'} | Formato: ${r.formato||'—'}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('i-obs')}</p>`
   } else {
     conteudo=`<h3>Servicos: ${r.servicos_interesse||'—'}</h3><hr><p>Valor: ${fmtNum(v('c-valor'))}</p><p>${vstr('c-obs')}</p>`
   }
@@ -853,6 +1156,16 @@ async function salvarProposta(){
   } else if(tipo==='diagnostico'){
     tabela='diagnostico_proposals'
     dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,decisor:r.nome_decisor,pacote:res.pkg,colab:r.num_colaboradores,valor_mensal:res.mensal,implantacao:res.implVal,meses:v('d-prazo'),desconto_pct:v('d-desc'),desconto_valor:res.descVal,valor_final:res.totalFinal,obs:vstr('d-obs'),status:'enviada',emitido_por:emitido}
+  }
+  else if(tipo==='cultura'){
+    tabela='cultura_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.empresa,responsavel:r.nome,setor:r.setor,pacote:res.pkg,adicionais_valor:res.adicsTotal,prazo_meses:v('cu-prazo'),desconto_pct:v('cu-desc'),desconto_valor:res.descVal,total_final:res.total,obs:vstr('cu-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='gtm'){
+    tabela='gtm_proposals'
+    dados={protocolo:protProp,request_id:r.id,nome:r.nome,area_atuacao:r.area_atuacao,pacote:res.pkg,adicionais_valor:res.adics,desconto_pct:v('g-desc'),desconto_valor:res.descVal,total_final:res.total,parcelas:v('g-parc'),obs:vstr('g-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='impulso'){
+    tabela='impulso_proposals'
+    dados={protocolo:protProp,request_id:r.id,nome:r.nome,nivel_programa:res.pkg,modalidade:r.modalidade,formato:r.formato,desconto_pct:v('i-desc'),desconto_valor:res.descVal,total_final:res.total,parcelas:v('i-parc'),obs:vstr('i-obs'),status:'enviada',emitido_por:emitido}
   }
   if(!tabela){toast('Career Plan: salvar manualmente');return}
   const {error}=await sb.from(tabela).insert(dados)

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultura e Endomarketing · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+.hero{text-align:center;padding:44px 24px 28px;width:100%}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:500px;margin:0 auto}
+.prog-wrap{width:100%;max-width:720px;padding:0 24px 20px}
+.prog-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-bar-txt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)}
+.prog-bar-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6;font-weight:600}
+.prog-bar-track{height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6);border-radius:100px;transition:width .4s ease;width:0%}
+.acc-wrap{width:100%;max-width:720px;padding:0 24px 24px;display:flex;flex-direction:column;gap:10px}
+.acc-section{border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .25s}
+.acc-section.filled{border-color:rgba(59,130,246,.3)}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;background:var(--surface);transition:background .2s;gap:14px}
+.acc-header:hover{background:rgba(255,255,255,.04)}
+.acc-hd-left{display:flex;align-items:center;gap:14px;flex:1}
+.acc-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(147,197,253,.6);width:24px;flex-shrink:0}
+.acc-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700}
+.acc-check{width:20px;height:20px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s}
+.acc-section.filled .acc-check{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.4)}
+.acc-chevron{flex-shrink:0;transition:transform .25s;color:var(--ts)}
+.acc-section.open .acc-chevron{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 20px 20px;animation:fadeup .25s ease}
+.acc-section.open .acc-body{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.acc-divider{height:1px;background:var(--border);margin:0 0 18px}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}header{padding:0 20px}}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+.slider-wrap{margin-bottom:4px}
+.slider-track{display:flex;align-items:center;gap:14px}
+.slider-track input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:100px;outline:none;cursor:pointer}
+.slider-track input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+.slider-val{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#3B82F6;min-width:48px;text-align:right}
+.slider-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:4px}
+.checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.checks-grid{grid-template-columns:1fr}}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s}
+.check-item:hover{border-color:rgba(59,130,246,.3)}
+.check-item.on{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.4)}
+.check-box{width:18px;height:18px;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.check-item.on .check-box{background:#3B82F6;border-color:#3B82F6}
+.check-lbl{font-size:12px;color:rgba(255,255,255,.75)}
+.scale-question{margin-bottom:20px}
+.scale-question .sq-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:10px;line-height:1.45}
+.scale-opts{display:flex;gap:6px}
+.scale-opts button{flex:1;height:38px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--ts);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.scale-opts button:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.scale-opts button.on{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.5);color:#93C5FD}
+.scale-ends{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);margin-top:4px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s;margin-bottom:12px}
+.toggle-row.on{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.05)}
+.toggle-row-txt strong{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+.toggle-row-txt span{font-size:12px;color:var(--ts)}
+.toggle-sw{width:38px;height:22px;background:var(--border);border-radius:100px;position:relative;transition:background .25s;flex-shrink:0}
+.toggle-row.on .toggle-sw{background:linear-gradient(135deg,#3B82F6,#8B5CF6)}
+.toggle-sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s}
+.toggle-row.on .toggle-sw::after{transform:translateX(16px)}
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.lgpd-row.on .lgpd-box{background:#3B82F6;border-color:#3B82F6}
+.submit-wrap{width:100%;max-width:720px;padding:0 24px 40px}
+.btn-sub{width:100%;padding:15px;border:none;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block;animation:fadeup .4s ease}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo-wrap">
+    <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
+      <defs><linearGradient id="lg-c" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#034C8B"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      <circle cx="44" cy="48" r="34" fill="url(#lg-c)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg-c)" opacity=".7"/>
+    </svg>
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
+  </a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">B2B · Cultura</div>
+    <h1>Cultura e <span>Endomarketing</span></h1>
+    <p>Construção e ativação de cultura organizacional com estratégia. Da identidade cultural à comunicação interna — tudo conectado ao propósito da empresa.</p>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-bar-label">
+      <div class="prog-bar-txt" id="prog-txt">0 de 5 seções preenchidas</div>
+      <div class="prog-bar-pct" id="prog-pct">0%</div>
+    </div>
+    <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="acc-wrap" id="accWrap">
+
+    <!-- 01 IDENTIFICAÇÃO -->
+    <div class="acc-section open" id="sec1">
+      <div class="acc-header" onclick="toggleAcc(1)">
+        <div class="acc-hd-left"><div class="acc-num">01</div><div class="acc-title">Identificação da Empresa</div></div>
+        <div class="acc-check" id="check1"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg1"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body1">
+        <div class="acc-divider"></div>
+        <div class="row2">
+          <div class="field" id="f-empresa">
+            <label>Empresa<span class="req">*</span></label>
+            <input type="text" id="empresa" placeholder="Razão social ou nome fantasia">
+            <div class="err-msg">Informe o nome da empresa</div>
+          </div>
+          <div class="field" id="f-setor">
+            <label>Setor / Segmento<span class="req">*</span></label>
+            <input type="text" id="setor" placeholder="Ex: Saúde, Tecnologia, Varejo">
+            <div class="err-msg">Informe o setor</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-nome">
+            <label>Seu nome<span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Nome completo">
+            <div class="err-msg">Informe seu nome</div>
+          </div>
+          <div class="field" id="f-cargo">
+            <label>Cargo<span class="req">*</span></label>
+            <input type="text" id="cargo" placeholder="Ex: CEO, CHRO, Gerente de RH">
+            <div class="err-msg">Informe seu cargo</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-email">
+            <label>E-mail corporativo<span class="req">*</span></label>
+            <input type="email" id="email" placeholder="voce@empresa.com.br">
+            <div class="err-msg">Informe um e-mail válido</div>
+          </div>
+          <div class="field" id="f-whatsapp">
+            <label>WhatsApp<span class="req">*</span></label>
+            <input type="tel" id="whatsapp" placeholder="(11) 99999-9999">
+            <div class="err-msg">Informe o WhatsApp</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-tam">
+            <label>Tamanho da equipe<span class="req">*</span></label>
+            <select id="tam">
+              <option value="">Selecione</option>
+              <option>Até 10 pessoas</option>
+              <option>11 a 50 pessoas</option>
+              <option>51 a 200 pessoas</option>
+              <option>201 a 500 pessoas</option>
+              <option>Acima de 500 pessoas</option>
+            </select>
+            <div class="err-msg">Selecione o tamanho</div>
+          </div>
+          <div class="field">
+            <label>Modelo de trabalho</label>
+            <select id="modelo_trabalho">
+              <option value="">Selecione</option>
+              <option>Presencial</option>
+              <option>Híbrido</option>
+              <option>100% remoto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nível de colaboração entre times<span class="req">*</span></label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="colaboracao" min="1" max="10" value="5" oninput="document.getElementById('colaboracao-val').textContent=this.value">
+              <div class="slider-val" id="colaboracao-val">5</div>
+            </div>
+            <div class="slider-labels"><span>Muito baixo</span><span>Neutro</span><span>Muito alto</span></div>
+          </div>
+        </div>
+
+        <div class="toggle-row" id="tog-identidade" onclick="togRow('identidade')">
+          <div class="toggle-row-txt">
+            <strong>Já possui identidade cultural definida?</strong>
+            <span>Missão, visão, valores ou propósito documentados</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 DIAGNÓSTICO CULTURAL -->
+    <div class="acc-section" id="sec2">
+      <div class="acc-header" onclick="toggleAcc(2)">
+        <div class="acc-hd-left"><div class="acc-num">02</div><div class="acc-title">Diagnóstico Cultural</div></div>
+        <div class="acc-check" id="check2"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg2"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body2">
+        <div class="acc-divider"></div>
+
+        <div class="scale-question">
+          <div class="sq-label">Como as pessoas vivem os valores da empresa no dia a dia?<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-valores"></div>
+          <div class="scale-ends"><span>Não vivem</span><span>Vivem plenamente</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Qual o nível de alinhamento entre liderança e cultura desejada?<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-alinhamento"></div>
+          <div class="scale-ends"><span>Desalinhado</span><span>Totalmente alinhado</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Com que frequência a empresa celebra conquistas e reconhece pessoas?<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-reconhecimento"></div>
+          <div class="scale-ends"><span>Nunca</span><span>Sempre</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">As pessoas entendem claramente por que fazem o que fazem (propósito)?<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-proposito"></div>
+          <div class="scale-ends"><span>Não entendem</span><span>Entendem claramente</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Como está o clima e a sensação de pertencimento na equipe?<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-pertencimento"></div>
+          <div class="scale-ends"><span>Muito ruim</span><span>Excelente</span></div>
+        </div>
+
+        <div class="field" style="margin-top:4px">
+          <label>Principais problemas culturais<span class="req">*</span></label>
+          <div class="checks-grid" id="grid-problemas"></div>
+          <div class="err-msg" id="err-problemas">Selecione ao menos um problema</div>
+        </div>
+
+        <div class="field" id="f-palavra">
+          <label>Se a cultura atual fosse uma palavra, qual seria?<span class="req">*</span></label>
+          <input type="text" id="palavra_cultura" placeholder="Ex: Caótica, Burocrática, Acolhedora">
+          <div class="err-msg">Preencha este campo</div>
+        </div>
+
+        <div class="field">
+          <label>Descreva o principal desafio cultural que a empresa enfrenta hoje<span class="opt">(opcional)</span></label>
+          <textarea id="desafio_cultural" placeholder="Contexto, histórico, impactos percebidos..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 O QUE CONSTRUIR -->
+    <div class="acc-section" id="sec3">
+      <div class="acc-header" onclick="toggleAcc(3)">
+        <div class="acc-hd-left"><div class="acc-num">03</div><div class="acc-title">O Que Construir</div></div>
+        <div class="acc-check" id="check3"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg3"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body3">
+        <div class="acc-divider"></div>
+
+        <div class="field">
+          <label>Serviços de interesse<span class="req">*</span></label>
+          <div class="checks-grid" id="grid-servicos"></div>
+          <div class="err-msg" id="err-servicos">Selecione ao menos um serviço</div>
+        </div>
+
+        <div class="field">
+          <label>Como seria a cultura ideal para a sua empresa?<span class="req">*</span></label>
+          <textarea id="cultura_ideal" placeholder="Descreva em palavras, comportamentos ou sentimentos..." style="min-height:96px"></textarea>
+          <div class="err-msg" id="err-cultura-ideal">Descreva a cultura ideal</div>
+        </div>
+
+        <div class="toggle-row" id="tog-marca" onclick="togRow('marca')">
+          <div class="toggle-row-txt">
+            <strong>Interesse em Marca Empregadora (Employer Branding)?</strong>
+            <span>Construção de posicionamento para atração e retenção de talentos</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 FORMATO E CONTEXTO -->
+    <div class="acc-section" id="sec4">
+      <div class="acc-header" onclick="toggleAcc(4)">
+        <div class="acc-hd-left"><div class="acc-num">04</div><div class="acc-title">Formato e Contexto</div></div>
+        <div class="acc-check" id="check4"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg4"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body4">
+        <div class="acc-divider"></div>
+        <div class="row2">
+          <div class="field" id="f-formato">
+            <label>Formato de atuação preferido<span class="req">*</span></label>
+            <select id="formato">
+              <option value="">Selecione</option>
+              <option>Consultoria pontual</option>
+              <option>Projeto estruturado</option>
+              <option>Parceria contínua</option>
+              <option>Workshop / imersão</option>
+            </select>
+            <div class="err-msg">Selecione o formato</div>
+          </div>
+          <div class="field" id="f-prazo">
+            <label>Prazo esperado<span class="req">*</span></label>
+            <select id="prazo">
+              <option value="">Selecione</option>
+              <option>Até 1 mês</option>
+              <option>1 a 3 meses</option>
+              <option>3 a 6 meses</option>
+              <option>Mais de 6 meses</option>
+            </select>
+            <div class="err-msg">Selecione o prazo</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-budget">
+            <label>Budget disponível<span class="req">*</span></label>
+            <select id="budget">
+              <option value="">Selecione</option>
+              <option>Até R$ 3.000/mês</option>
+              <option>R$ 3.000 a R$ 7.000/mês</option>
+              <option>R$ 7.000 a R$ 15.000/mês</option>
+              <option>Acima de R$ 15.000/mês</option>
+              <option>A definir / flexível</option>
+            </select>
+            <div class="err-msg">Selecione o budget</div>
+          </div>
+          <div class="field">
+            <label>Como prefere ter as entregas?</label>
+            <select id="entregas_formato">
+              <option value="">Selecione</option>
+              <option>Documentos e guias</option>
+              <option>Apresentações executivas</option>
+              <option>Ativações práticas</option>
+              <option>Combinado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 FECHAMENTO -->
+    <div class="acc-section" id="sec5">
+      <div class="acc-header" onclick="toggleAcc(5)">
+        <div class="acc-hd-left"><div class="acc-num">05</div><div class="acc-title">Fechamento</div></div>
+        <div class="acc-check" id="check5"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg5"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body5">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Conte um pouco da história da empresa<span class="opt">(opcional)</span></label>
+          <textarea id="historia_empresa" placeholder="Fundação, momento atual, cultura que já existe, o que orgulha a equipe..."></textarea>
+        </div>
+        <div class="field">
+          <label>Como ficou sabendo da Azumi RH?</label>
+          <select id="como_conheceu">
+            <option value="">Selecione</option>
+            <option>Indicação</option>
+            <option>LinkedIn</option>
+            <option>Instagram</option>
+            <option>Google</option>
+            <option>Evento</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="lgpd-row" id="lgpd-row" onclick="togLgpd()">
+          <div class="lgpd-box" id="lgpd-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="display:none" id="lgpd-svg"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p>Autorizo o uso dos dados informados para contato e elaboração de proposta, conforme a LGPD. Seus dados não serão compartilhados com terceiros.<span class="req">*</span></p>
+        </div>
+        <div class="err-msg" id="err-lgpd" style="margin-top:6px">Aceite os termos para continuar</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="submit-wrap">
+    <button class="btn-sub" id="btn-sub" onclick="enviar()">Enviar solicitação</button>
+  </div>
+
+  <div class="success" id="success">
+    <div class="s-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h2>Solicitação enviada!</h2>
+    <p>Obrigado pelo interesse em transformar a cultura da sua empresa. Nossa equipe entrará em contato em breve para uma conversa inicial.</p>
+    <div class="prot-badge" id="prot-badge"></div>
+    <a href="/" class="btn-home">Voltar ao início</a>
+  </div>
+</main>
+
+<footer>© 2025 AZUMI RH · CULTURA E ENDOMARKETING · AZ-CULT</footer>
+
+<script>
+const SB_URL='https://yxtirmonrjmlasnrqwwl.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const PROBLEMAS=['Falta de propósito claro','Alta rotatividade','Comunicação interna ruim','Conflitos entre times','Resistência a mudanças','Cultura de medo/punição','Liderança desalinhada','Falta de reconhecimento','Silos departamentais','Baixo engajamento','Diversidade e inclusão','Onboarding fraco'];
+const SERVICOS=['Mapeamento de Cultura','Construção de Valores','Manual de Cultura','Rituais e Celebrações','Comunicação Interna','Endomarketing','Employer Branding','Pesquisa de Clima','Imersão Cultural','Treinamento de Líderes','Diversidade & Inclusão','Onboarding Cultural'];
+
+let sclScores={valores:0,alinhamento:0,reconhecimento:0,proposito:0,pertencimento:0};
+let problemasSet=new Set();
+let servicosSet=new Set();
+let togStates={identidade:false,marca:false};
+let lgpdOk=false;
+let filledSecs=new Set();
+
+function buildScales(){
+  ['valores','alinhamento','reconhecimento','proposito','pertencimento'].forEach(k=>{
+    const el=document.getElementById('scl-'+k);
+    for(let i=1;i<=5;i++){
+      const b=document.createElement('button');
+      b.textContent=i;
+      b.onclick=()=>{
+        sclScores[k]=i;
+        el.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j<i));
+      };
+      el.appendChild(b);
+    }
+  });
+}
+
+function buildChecks(id,items,store){
+  const g=document.getElementById(id);
+  items.forEach(txt=>{
+    const d=document.createElement('div');
+    d.className='check-item';
+    d.innerHTML=`<div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="display:none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-lbl">${txt}</span>`;
+    d.onclick=()=>{
+      d.classList.toggle('on');
+      const svg=d.querySelector('svg');
+      if(d.classList.contains('on')){store.add(txt);svg.style.display='block'}
+      else{store.delete(txt);svg.style.display='none'}
+    };
+    g.appendChild(d);
+  });
+}
+
+function togRow(k){
+  togStates[k]=!togStates[k];
+  document.getElementById('tog-'+k).classList.toggle('on',togStates[k]);
+}
+
+function togLgpd(){
+  lgpdOk=!lgpdOk;
+  document.getElementById('lgpd-row').classList.toggle('on',lgpdOk);
+  document.getElementById('lgpd-svg').style.display=lgpdOk?'block':'none';
+  document.getElementById('err-lgpd').style.display='none';
+}
+
+function toggleAcc(n){
+  const s=document.getElementById('sec'+n);
+  s.classList.toggle('open');
+}
+
+function markFilled(n,ok){
+  const s=document.getElementById('sec'+n);
+  if(ok){filledSecs.add(n);s.classList.add('filled')}
+  else{filledSecs.delete(n);s.classList.remove('filled')}
+  document.getElementById('checksvg'+n).style.display=ok?'block':'none';
+  const pct=Math.round(filledSecs.size/5*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-txt').textContent=filledSecs.size+' de 5 seções preenchidas';
+}
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+
+function validateAndMark(){
+  markFilled(1,v('empresa')&&v('setor')&&v('nome')&&v('cargo')&&v('email')&&v('whatsapp')&&v('tam'));
+  markFilled(2,Object.values(sclScores).every(x=>x>0)&&problemasSet.size>0&&v('palavra_cultura'));
+  markFilled(3,servicosSet.size>0&&v('cultura_ideal'));
+  markFilled(4,v('formato')&&v('prazo')&&v('budget'));
+  markFilled(5,lgpdOk);
+}
+
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',validateAndMark));
+
+function genProt(){
+  const d=new Date();
+  const ym=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0');
+  const r=String(Math.floor(10000+Math.random()*90000));
+  return 'AZ-CULT-'+ym+'-'+r;
+}
+
+async function enviar(){
+  validateAndMark();
+  let ok=true;
+  const required=[['empresa','f-empresa'],['setor','f-setor'],['nome','f-nome'],['cargo','f-cargo'],['email','f-email'],['whatsapp','f-whatsapp'],['tam','f-tam'],['formato','f-formato'],['prazo','f-prazo'],['budget','f-budget']];
+  required.forEach(([id,fid])=>{if(!v(id)){document.getElementById(fid).classList.add('err');ok=false}else{document.getElementById(fid).classList.remove('err')}});
+  if(!v('email')||!v('email').includes('@')){document.getElementById('f-email').classList.add('err');ok=false}
+  const allScales=Object.values(sclScores).every(x=>x>0);
+  if(!allScales||!v('palavra_cultura')||problemasSet.size===0){
+    if(!allScales||!v('palavra_cultura'))document.getElementById('f-palavra').classList.add('err');
+    if(problemasSet.size===0)document.getElementById('err-problemas').style.display='block';
+    ok=false;
+  }else{document.getElementById('f-palavra').classList.remove('err');document.getElementById('err-problemas').style.display='none';}
+  if(servicosSet.size===0){document.getElementById('err-servicos').style.display='block';ok=false;}
+  else{document.getElementById('err-servicos').style.display='none';}
+  if(!v('cultura_ideal')){document.getElementById('err-cultura-ideal').style.display='block';ok=false;}
+  else{document.getElementById('err-cultura-ideal').style.display='none';}
+  if(!lgpdOk){document.getElementById('err-lgpd').style.display='block';ok=false;}
+  if(!ok){document.querySelector('.acc-section.err, .field.err')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=true;btn.textContent='Enviando...';
+  const protocolo=genProt();
+
+  const payload={
+    empresa:v('empresa'),setor:v('setor'),nome:v('nome'),cargo:v('cargo'),
+    email:v('email'),whatsapp:v('whatsapp'),tamanho_equipe:v('tam'),
+    modelo_trabalho:v('modelo_trabalho'),
+    colaboracao_nivel:parseInt(document.getElementById('colaboracao').value),
+    identidade_cultural_existente:togStates.identidade,
+    cultura_scores:sclScores,
+    problemas_culturais:Array.from(problemasSet),
+    palavra_cultura:v('palavra_cultura'),
+    desafio_cultural:v('desafio_cultural'),
+    servicos_interesse:Array.from(servicosSet),
+    cultura_ideal:v('cultura_ideal'),
+    interesse_marca_empregadora:togStates.marca,
+    formato:v('formato'),prazo:v('prazo'),budget:v('budget'),
+    entregas_formato:v('entregas_formato'),
+    historia_empresa:v('historia_empresa'),
+    como_conheceu:v('como_conheceu'),
+    protocolo,lgpd:true
+  };
+
+  try{
+    await sb.from('cultura_requests').insert([payload]);
+    const emailHtml=`<h2>Nova solicitação — Cultura e Endomarketing</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Empresa:</b> ${payload.empresa}</p><p><b>Nome:</b> ${payload.nome} — ${payload.cargo}</p><p><b>E-mail:</b> ${payload.email}</p><p><b>WhatsApp:</b> ${payload.whatsapp}</p><p><b>Tamanho equipe:</b> ${payload.tamanho_equipe}</p><p><b>Problemas:</b> ${payload.problemas_culturais.join(', ')}</p><p><b>Palavra cultura:</b> ${payload.palavra_cultura}</p><p><b>Serviços:</b> ${payload.servicos_interesse.join(', ')}</p><p><b>Formato:</b> ${payload.formato} | Prazo: ${payload.prazo} | Budget: ${payload.budget}</p>`;
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:`[AZ-CULT] ${payload.empresa} — ${payload.nome}`,html:emailHtml})});
+  }catch(e){console.error(e);}
+
+  document.getElementById('accWrap').style.display='none';
+  document.querySelector('.prog-wrap').style.display='none';
+  document.querySelector('.submit-wrap').style.display='none';
+  document.getElementById('success').classList.add('active');
+  document.getElementById('prot-badge').textContent=protocolo;
+  document.querySelector('.hero').scrollIntoView({behavior:'smooth'});
+}
+
+buildScales();
+buildChecks('grid-problemas',PROBLEMAS,problemasSet);
+buildChecks('grid-servicos',SERVICOS,servicosSet);
+</script>
+</body>
+</html>

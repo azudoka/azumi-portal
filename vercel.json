@@ -5,6 +5,11 @@
     { "source": "/nr1", "destination": "/nr1.html" },
     { "source": "/treinamento", "destination": "/treinamento.html" },
     { "source": "/diagnostico", "destination": "/diagnostico.html" },
+    { "source": "/diagnostico-org", "destination": "/diagnostico-org.html" },
+    { "source": "/lideres", "destination": "/lideres.html" },
+    { "source": "/cultura", "destination": "/cultura.html" },
+    { "source": "/impulso", "destination": "/impulso.html" },
+    { "source": "/gtm", "destination": "/gtm.html" },
     { "source": "/raiox", "destination": "/raiox.html" },
     { "source": "/admin", "destination": "/admin/index.html" }
   ]

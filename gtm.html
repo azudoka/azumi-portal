@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go-to-Market Pessoal · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(139,92,246,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 10% 90%,rgba(59,130,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(139,92,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+.hero{text-align:center;padding:44px 24px 28px;width:100%}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(196,181,253,.85);background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#7c3aed,#8B5CF6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:500px;margin:0 auto}
+.prog-wrap{width:100%;max-width:720px;padding:0 24px 20px}
+.prog-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-bar-txt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)}
+.prog-bar-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8B5CF6;font-weight:600}
+.prog-bar-track{height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#8B5CF6,#a78bfa);border-radius:100px;transition:width .4s ease;width:0%}
+.acc-wrap{width:100%;max-width:720px;padding:0 24px 24px;display:flex;flex-direction:column;gap:10px}
+.acc-section{border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .25s}
+.acc-section.filled{border-color:rgba(139,92,246,.3)}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;background:var(--surface);transition:background .2s;gap:14px}
+.acc-header:hover{background:rgba(255,255,255,.04)}
+.acc-hd-left{display:flex;align-items:center;gap:14px;flex:1}
+.acc-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(196,181,253,.6);width:24px;flex-shrink:0}
+.acc-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700}
+.acc-check{width:20px;height:20px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s}
+.acc-section.filled .acc-check{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4)}
+.acc-chevron{flex-shrink:0;transition:transform .25s;color:var(--ts)}
+.acc-section.open .acc-chevron{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 20px 20px;animation:fadeup .25s ease}
+.acc-section.open .acc-body{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.acc-divider{height:1px;background:var(--border);margin:0 0 18px}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.04)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}header{padding:0 20px}}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+.scale-question{margin-bottom:20px}
+.scale-question .sq-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:10px;line-height:1.45}
+.scale-opts{display:flex;gap:6px}
+.scale-opts button{flex:1;height:38px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--ts);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.scale-opts button:hover{border-color:rgba(139,92,246,.4);color:var(--tp)}
+.scale-opts button.on{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.5);color:#c4b5fd}
+.scale-ends{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);margin-top:4px}
+.checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.checks-grid{grid-template-columns:1fr}}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s}
+.check-item:hover{border-color:rgba(139,92,246,.3)}
+.check-item.on{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.4)}
+.check-box{width:18px;height:18px;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.check-item.on .check-box{background:#8B5CF6;border-color:#8B5CF6}
+.check-lbl{font-size:12px;color:rgba(255,255,255,.75)}
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(139,92,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.lgpd-row.on .lgpd-box{background:#8B5CF6;border-color:#8B5CF6}
+.submit-wrap{width:100%;max-width:720px;padding:0 24px 40px}
+.btn-sub{width:100%;padding:15px;border:none;border-radius:100px;background:linear-gradient(135deg,#4c1d95,#7c3aed,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block;animation:fadeup .4s ease}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(167,139,250,.2));border:1px solid rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#8B5CF6;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#4c1d95,#7c3aed,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo-wrap">
+    <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
+      <defs><linearGradient id="lg-g" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4c1d95"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      <circle cx="44" cy="48" r="34" fill="url(#lg-g)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg-g)" opacity=".7"/>
+    </svg>
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
+  </a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">B2C · Go-to-Market</div>
+    <h1>Go-to-Market <span>Pessoal</span></h1>
+    <p>Para profissionais autônomos, consultores e freelancers de RH que querem estruturar seu posicionamento, atrair mais clientes e crescer com estratégia.</p>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-bar-label">
+      <div class="prog-bar-txt" id="prog-txt">0 de 4 seções preenchidas</div>
+      <div class="prog-bar-pct" id="prog-pct">0%</div>
+    </div>
+    <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="acc-wrap" id="accWrap">
+
+    <!-- 01 SOBRE VOCÊ -->
+    <div class="acc-section open" id="sec1">
+      <div class="acc-header" onclick="toggleAcc(1)">
+        <div class="acc-hd-left"><div class="acc-num">01</div><div class="acc-title">Sobre Você</div></div>
+        <div class="acc-check" id="check1"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg1"><path d="M2 6l3 3 5-5" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body1">
+        <div class="acc-divider"></div>
+        <div class="row2">
+          <div class="field" id="f-nome">
+            <label>Seu nome<span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Nome completo">
+            <div class="err-msg">Informe seu nome</div>
+          </div>
+          <div class="field" id="f-email">
+            <label>E-mail<span class="req">*</span></label>
+            <input type="email" id="email" placeholder="voce@email.com">
+            <div class="err-msg">Informe um e-mail válido</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-whatsapp">
+            <label>WhatsApp<span class="req">*</span></label>
+            <input type="tel" id="whatsapp" placeholder="(11) 99999-9999">
+            <div class="err-msg">Informe o WhatsApp</div>
+          </div>
+          <div class="field" id="f-area">
+            <label>Área de atuação<span class="req">*</span></label>
+            <input type="text" id="area_atuacao" placeholder="Ex: Recrutamento, T&D, Consultoria RH">
+            <div class="err-msg">Informe sua área</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-juridico">
+            <label>Formato jurídico<span class="req">*</span></label>
+            <select id="formato_juridico">
+              <option value="">Selecione</option>
+              <option>MEI</option>
+              <option>ME / EPP</option>
+              <option>Pessoa Física (autônomo)</option>
+              <option>Ainda não tenho</option>
+            </select>
+            <div class="err-msg">Selecione o formato</div>
+          </div>
+          <div class="field" id="f-tempo">
+            <label>Tempo atuando como autônomo<span class="req">*</span></label>
+            <select id="tempo_autonomo">
+              <option value="">Selecione</option>
+              <option>Menos de 6 meses</option>
+              <option>6 meses a 1 ano</option>
+              <option>1 a 3 anos</option>
+              <option>Mais de 3 anos</option>
+              <option>Ainda não comecei</option>
+            </select>
+            <div class="err-msg">Selecione</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field" id="f-cidade">
+            <label>Cidade<span class="req">*</span></label>
+            <input type="text" id="cidade" placeholder="Sua cidade">
+            <div class="err-msg">Informe sua cidade</div>
+          </div>
+          <div class="field" id="f-estado">
+            <label>Estado<span class="req">*</span></label>
+            <select id="estado">
+              <option value="">UF</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
+            </select>
+            <div class="err-msg">Selecione</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>LinkedIn<span class="opt">(opcional)</span></label>
+            <input type="text" id="linkedin" placeholder="linkedin.com/in/seuperfil">
+          </div>
+          <div class="field">
+            <label>Instagram<span class="opt">(opcional)</span></label>
+            <input type="text" id="instagram" placeholder="@seuperfil">
+          </div>
+        </div>
+        <div class="field">
+          <label>Site ou portfólio<span class="opt">(opcional)</span></label>
+          <input type="text" id="site" placeholder="seusite.com.br">
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 SITUAÇÃO ATUAL -->
+    <div class="acc-section" id="sec2">
+      <div class="acc-header" onclick="toggleAcc(2)">
+        <div class="acc-hd-left"><div class="acc-num">02</div><div class="acc-title">Situação Atual</div></div>
+        <div class="acc-check" id="check2"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg2"><path d="M2 6l3 3 5-5" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body2">
+        <div class="acc-divider"></div>
+
+        <div class="field" id="f-descricao">
+          <label>Descreva o serviço que você oferece hoje<span class="req">*</span></label>
+          <textarea id="descricao_servico" placeholder="O que você faz, para quem, e qual o resultado que entrega..."></textarea>
+          <div class="err-msg">Descreva seu serviço</div>
+        </div>
+
+        <div class="field" id="f-clientes">
+          <label>Como você consegue seus clientes atualmente?<span class="req">*</span></label>
+          <select id="como_clientes">
+            <option value="">Selecione</option>
+            <option>Quase 100% por indicação</option>
+            <option>Prospecção ativa (eu busco)</option>
+            <option>Redes sociais (LinkedIn/Instagram)</option>
+            <option>Plataformas de freelancer</option>
+            <option>Ainda não tenho clientes</option>
+            <option>Combinado</option>
+          </select>
+          <div class="err-msg">Selecione</div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Clareza sobre o seu posicionamento no mercado<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-pos"></div>
+          <div class="scale-ends"><span>Nenhuma clareza</span><span>Muito claro</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Consistência na sua comunicação e presença digital<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-dig"></div>
+          <div class="scale-ends"><span>Inexistente</span><span>Muito consistente</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Processo de vendas e fechamento de contratos<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-venda"></div>
+          <div class="scale-ends"><span>Sem processo</span><span>Processo estruturado</span></div>
+        </div>
+
+        <div class="scale-question">
+          <div class="sq-label">Satisfação com a sua receita atual<span class="req">*</span></div>
+          <div class="scale-opts" id="scl-receita"></div>
+          <div class="scale-ends"><span>Muito insatisfeita</span><span>Muito satisfeita</span></div>
+        </div>
+
+        <div class="field" style="margin-top:4px">
+          <label>Principais desafios<span class="req">*</span></label>
+          <div class="checks-grid" id="grid-desafios"></div>
+          <div class="err-msg" id="err-desafios">Selecione ao menos um desafio</div>
+        </div>
+
+        <div class="field">
+          <label>O que mais te impede de crescer hoje?<span class="opt">(opcional)</span></label>
+          <textarea id="impedimento" placeholder="Bloqueios, medos, limitações de tempo, recurso..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 O QUE CONSTRUIR -->
+    <div class="acc-section" id="sec3">
+      <div class="acc-header" onclick="toggleAcc(3)">
+        <div class="acc-hd-left"><div class="acc-num">03</div><div class="acc-title">O Que Construir</div></div>
+        <div class="acc-check" id="check3"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg3"><path d="M2 6l3 3 5-5" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body3">
+        <div class="acc-divider"></div>
+
+        <div class="field">
+          <label>O que quer estruturar ou melhorar<span class="req">*</span></label>
+          <div class="checks-grid" id="grid-estruturar"></div>
+          <div class="err-msg" id="err-estruturar">Selecione ao menos um item</div>
+        </div>
+
+        <div class="field" id="f-visao">
+          <label>Como você se vê daqui a 1 ano?<span class="req">*</span></label>
+          <textarea id="visao_1ano" placeholder="Tipo de cliente, faturamento, serviços, presença digital, equipe..."></textarea>
+          <div class="err-msg">Descreva sua visão</div>
+        </div>
+
+        <div class="row2">
+          <div class="field" id="f-budget">
+            <label>Budget disponível para investir<span class="req">*</span></label>
+            <select id="budget">
+              <option value="">Selecione</option>
+              <option>Até R$ 500/mês</option>
+              <option>R$ 500 a R$ 1.500/mês</option>
+              <option>R$ 1.500 a R$ 3.000/mês</option>
+              <option>Acima de R$ 3.000/mês</option>
+              <option>A definir</option>
+            </select>
+            <div class="err-msg">Selecione o budget</div>
+          </div>
+          <div class="field" id="f-prazo">
+            <label>Prazo para ver resultados<span class="req">*</span></label>
+            <select id="prazo">
+              <option value="">Selecione</option>
+              <option>30 dias</option>
+              <option>3 meses</option>
+              <option>6 meses</option>
+              <option>1 ano</option>
+            </select>
+            <div class="err-msg">Selecione o prazo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 FECHAMENTO -->
+    <div class="acc-section" id="sec4">
+      <div class="acc-header" onclick="toggleAcc(4)">
+        <div class="acc-hd-left"><div class="acc-num">04</div><div class="acc-title">Fechamento</div></div>
+        <div class="acc-check" id="check4"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg4"><path d="M2 6l3 3 5-5" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body4">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Conte sua história como profissional autônomo<span class="opt">(opcional)</span></label>
+          <textarea id="historia" placeholder="Como chegou até aqui, o que te motivou a empreender na área de RH..."></textarea>
+        </div>
+        <div class="field">
+          <label>Como ficou sabendo da Azumi RH?</label>
+          <select id="como_conheceu">
+            <option value="">Selecione</option>
+            <option>Indicação</option>
+            <option>LinkedIn</option>
+            <option>Instagram</option>
+            <option>Google</option>
+            <option>Evento</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="lgpd-row" id="lgpd-row" onclick="togLgpd()">
+          <div class="lgpd-box" id="lgpd-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="display:none" id="lgpd-svg"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p>Autorizo o uso dos dados informados para contato sobre a consultoria Go-to-Market, conforme a LGPD. Seus dados não serão compartilhados com terceiros.<span class="req">*</span></p>
+        </div>
+        <div class="err-msg" id="err-lgpd" style="margin-top:6px">Aceite os termos para continuar</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="submit-wrap">
+    <button class="btn-sub" id="btn-sub" onclick="enviar()">Enviar solicitação</button>
+  </div>
+
+  <div class="success" id="success">
+    <div class="s-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h2>Solicitação enviada!</h2>
+    <p>Em breve a Patrícia entrará em contato para uma conversa inicial sobre seu Go-to-Market.</p>
+    <div class="prot-badge" id="prot-badge"></div>
+    <a href="/" class="btn-home">Voltar ao início</a>
+  </div>
+</main>
+
+<footer>© 2025 AZUMI RH · GO-TO-MARKET PESSOAL · AZ-GTM</footer>
+
+<script>
+const SB_URL='https://yxtirmonrjmlasnrqwwl.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const DESAFIOS=['Falta de posicionamento claro','Poucos clientes','Precificação inadequada','Dificuldade em vender','Presença digital fraca','Sem processo de prospecção','Dependência de indicações','Escopo mal definido','Contrato e propostas','Falta de autoridade na área','Gestão do tempo','Medo de cobrar mais'];
+const ESTRUTURAR=['Posicionamento e nicho','Proposta de valor','Precificação','Presença no LinkedIn','Presença no Instagram','Site ou portfólio','Processo de vendas','Proposta comercial','Contratos e onboarding','Networking estratégico','Conteúdo e autoridade','Estrutura de pacotes'];
+
+const scales={pos:0,dig:0,venda:0,receita:0};
+let desafiosSet=new Set();
+let estruturarSet=new Set();
+let lgpdOk=false;
+let filledSecs=new Set();
+
+function buildScales(){
+  Object.keys(scales).forEach(k=>{
+    const el=document.getElementById('scl-'+k);
+    for(let i=1;i<=5;i++){
+      const b=document.createElement('button');
+      b.textContent=i;
+      b.onclick=()=>{scales[k]=i;el.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j<i));validateAndMark();};
+      el.appendChild(b);
+    }
+  });
+}
+
+function buildChecks(id,items,store){
+  const g=document.getElementById(id);
+  items.forEach(txt=>{
+    const d=document.createElement('div');
+    d.className='check-item';
+    d.innerHTML=`<div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="display:none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-lbl">${txt}</span>`;
+    d.onclick=()=>{
+      d.classList.toggle('on');
+      const svg=d.querySelector('svg');
+      if(d.classList.contains('on')){store.add(txt);svg.style.display='block'}
+      else{store.delete(txt);svg.style.display='none'}
+      validateAndMark();
+    };
+    g.appendChild(d);
+  });
+}
+
+function togLgpd(){
+  lgpdOk=!lgpdOk;
+  document.getElementById('lgpd-row').classList.toggle('on',lgpdOk);
+  document.getElementById('lgpd-svg').style.display=lgpdOk?'block':'none';
+  document.getElementById('err-lgpd').style.display='none';
+  validateAndMark();
+}
+
+function toggleAcc(n){document.getElementById('sec'+n).classList.toggle('open');}
+
+function markFilled(n,ok){
+  const s=document.getElementById('sec'+n);
+  if(ok){filledSecs.add(n);s.classList.add('filled')}else{filledSecs.delete(n);s.classList.remove('filled')}
+  document.getElementById('checksvg'+n).style.display=ok?'block':'none';
+  const pct=Math.round(filledSecs.size/4*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-txt').textContent=filledSecs.size+' de 4 seções preenchidas';
+}
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+
+function validateAndMark(){
+  markFilled(1,v('nome')&&v('email')&&v('whatsapp')&&v('area_atuacao')&&v('formato_juridico')&&v('tempo_autonomo')&&v('cidade')&&v('estado'));
+  markFilled(2,v('descricao_servico')&&v('como_clientes')&&Object.values(scales).every(x=>x>0)&&desafiosSet.size>0);
+  markFilled(3,estruturarSet.size>0&&v('visao_1ano')&&v('budget')&&v('prazo'));
+  markFilled(4,lgpdOk);
+}
+
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',validateAndMark));
+
+function genProt(){
+  const d=new Date();
+  const ym=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0');
+  return 'AZ-GTM-'+ym+'-'+String(Math.floor(10000+Math.random()*90000));
+}
+
+async function enviar(){
+  validateAndMark();
+  let ok=true;
+  const req=[['nome','f-nome'],['email','f-email'],['whatsapp','f-whatsapp'],['area_atuacao','f-area'],['formato_juridico','f-juridico'],['tempo_autonomo','f-tempo'],['cidade','f-cidade'],['estado','f-estado'],['descricao_servico','f-descricao'],['como_clientes','f-clientes'],['visao_1ano','f-visao'],['budget','f-budget'],['prazo','f-prazo']];
+  req.forEach(([id,fid])=>{if(!v(id)){document.getElementById(fid).classList.add('err');ok=false}else document.getElementById(fid).classList.remove('err')});
+  if(!v('email')||!v('email').includes('@')){document.getElementById('f-email').classList.add('err');ok=false}
+  if(!Object.values(scales).every(x=>x>0)){ok=false;}
+  if(desafiosSet.size===0){document.getElementById('err-desafios').style.display='block';ok=false}else document.getElementById('err-desafios').style.display='none';
+  if(estruturarSet.size===0){document.getElementById('err-estruturar').style.display='block';ok=false}else document.getElementById('err-estruturar').style.display='none';
+  if(!lgpdOk){document.getElementById('err-lgpd').style.display='block';ok=false}
+  if(!ok)return;
+
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=true;btn.textContent='Enviando...';
+  const protocolo=genProt();
+
+  const payload={
+    nome:v('nome'),email:v('email'),whatsapp:v('whatsapp'),
+    area_atuacao:v('area_atuacao'),formato_juridico:v('formato_juridico'),
+    tempo_autonomo:v('tempo_autonomo'),cidade:v('cidade'),estado:v('estado'),
+    linkedin:v('linkedin'),instagram:v('instagram'),site:v('site'),
+    descricao_servico:v('descricao_servico'),como_clientes:v('como_clientes'),
+    gtm_scores:scales,
+    desafios:Array.from(desafiosSet),impedimento:v('impedimento'),
+    estruturar:Array.from(estruturarSet),
+    visao_1ano:v('visao_1ano'),budget:v('budget'),prazo:v('prazo'),
+    historia:v('historia'),como_conheceu:v('como_conheceu'),
+    protocolo,lgpd:true
+  };
+
+  try{
+    await sb.from('gtm_requests').insert([payload]);
+    const emailHtml=`<h2>Nova solicitação — Go-to-Market Pessoal</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Nome:</b> ${payload.nome}</p><p><b>E-mail:</b> ${payload.email}</p><p><b>WhatsApp:</b> ${payload.whatsapp}</p><p><b>Área:</b> ${payload.area_atuacao}</p><p><b>Formato jurídico:</b> ${payload.formato_juridico}</p><p><b>Cidade:</b> ${payload.cidade}/${payload.estado}</p><p><b>Desafios:</b> ${payload.desafios.join(', ')}</p><p><b>Estruturar:</b> ${payload.estruturar.join(', ')}</p><p><b>Budget:</b> ${payload.budget} | Prazo: ${payload.prazo}</p>`;
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:`[AZ-GTM] ${payload.nome} — ${payload.area_atuacao}`,html:emailHtml})});
+  }catch(e){console.error(e);}
+
+  document.getElementById('accWrap').style.display='none';
+  document.querySelector('.prog-wrap').style.display='none';
+  document.querySelector('.submit-wrap').style.display='none';
+  document.getElementById('success').classList.add('active');
+  document.getElementById('prot-badge').textContent=protocolo;
+  document.querySelector('.hero').scrollIntoView({behavior:'smooth'});
+}
+
+buildScales();
+buildChecks('grid-desafios',DESAFIOS,desafiosSet);
+buildChecks('grid-estruturar',ESTRUTURAR,estruturarSet);
+</script>
+</body>
+</html>
