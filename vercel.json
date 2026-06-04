@@ -3,6 +3,9 @@
     { "source": "/career", "destination": "/career.html" },
     { "source": "/vaga", "destination": "/vaga.html" },
     { "source": "/nr1", "destination": "/nr1.html" },
+    { "source": "/treinamento", "destination": "/treinamento.html" },
+    { "source": "/diagnostico", "destination": "/diagnostico.html" },
+    { "source": "/raiox", "destination": "/raiox.html" },
     { "source": "/admin", "destination": "/admin/index.html" }
   ]
 }

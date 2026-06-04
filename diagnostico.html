@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostico HRaaS · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+
+/* HERO */
+.hero{text-align:center;padding:44px 24px 28px;width:100%}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:480px;margin:0 auto}
+
+/* PROGRESS BAR */
+.prog-wrap{width:100%;max-width:720px;padding:0 24px 20px}
+.prog-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-bar-txt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+.prog-bar-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6;font-weight:600}
+.prog-bar-track{height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6);border-radius:100px;transition:width .4s ease;width:0%}
+
+/* ACCORDION */
+.acc-wrap{width:100%;max-width:720px;padding:0 24px 24px;display:flex;flex-direction:column;gap:10px}
+.acc-section{border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .25s}
+.acc-section.filled{border-color:rgba(59,130,246,.3)}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;background:var(--surface);transition:background .2s;gap:14px}
+.acc-header:hover{background:rgba(255,255,255,.04)}
+.acc-hd-left{display:flex;align-items:center;gap:14px;flex:1}
+.acc-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(147,197,253,.6);width:24px;flex-shrink:0}
+.acc-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--tp)}
+.acc-check{width:20px;height:20px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s}
+.acc-section.filled .acc-check{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.4)}
+.acc-chevron{flex-shrink:0;transition:transform .25s;color:var(--ts)}
+.acc-section.open .acc-chevron{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 20px 20px;animation:fadeup .25s ease}
+.acc-section.open .acc-body{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.acc-divider{height:1px;background:var(--border);margin:0 0 18px}
+
+/* FIELDS */
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr}header{padding:0 20px}}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+
+/* SLIDER */
+.slider-wrap{margin-bottom:4px}
+.slider-track{display:flex;align-items:center;gap:14px}
+.slider-track input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:100px;outline:none;cursor:pointer}
+.slider-track input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+.slider-val{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#3B82F6;min-width:48px;text-align:right}
+.slider-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:4px}
+
+/* SCALE BUTTONS */
+.scale-row{display:flex;gap:8px}
+.scale-btn{flex:1;padding:12px 6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;text-align:center;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--ts);transition:all .2s}
+.scale-btn:hover{border-color:rgba(59,130,246,.3);color:var(--tp)}
+.scale-btn.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6}
+.scale-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:5px}
+
+/* TOGGLE SWITCH */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s;margin-bottom:12px}
+.toggle-row.on{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.05)}
+.toggle-row-txt strong{display:block;font-size:13px;font-weight:600;color:var(--tp);margin-bottom:2px}
+.toggle-row-txt span{font-size:12px;color:var(--ts)}
+.toggle-sw{width:38px;height:22px;background:var(--border);border-radius:100px;position:relative;transition:background .25s;flex-shrink:0}
+.toggle-row.on .toggle-sw{background:linear-gradient(135deg,#3B82F6,#8B5CF6)}
+.toggle-sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.toggle-row.on .toggle-sw::after{transform:translateX(16px)}
+
+/* COND BLOCK */
+.cond-block{display:none;margin-bottom:14px;padding:16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:12px;animation:fadeup .25s ease}
+.cond-block.visible{display:block}
+
+/* FRENTES TABLE */
+.frentes-list{display:flex;flex-direction:column;gap:8px}
+.frente-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);transition:border-color .2s}
+.frente-row.selected{border-color:rgba(59,130,246,.3)}
+.frente-name{flex:1;font-size:13px;color:var(--tp);font-weight:500}
+.frente-badges{display:flex;gap:6px;flex-shrink:0}
+.f-badge{padding:4px 10px;border:1px solid var(--border);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--ts);letter-spacing:.06em}
+.f-badge:hover{color:var(--tp)}
+.f-badge.c1{border-color:rgba(239,68,68,.3);color:rgba(252,165,165,.7)}
+.f-badge.c1.on{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.5);color:#fca5a5}
+.f-badge.c2{border-color:rgba(245,158,11,.3);color:rgba(253,230,138,.7)}
+.f-badge.c2.on{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45);color:#fcd34d}
+.f-badge.c3{border-color:rgba(59,130,246,.2);color:rgba(147,197,253,.6)}
+.f-badge.c3.on{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.4);color:#93C5FD}
+.frentes-legend{display:flex;gap:14px;margin-bottom:12px}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* LGPD */
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.lgpd-row.on .lgpd-box{background:#3B82F6;border-color:#3B82F6}
+
+/* SUBMIT */
+.submit-wrap{width:100%;max-width:720px;padding:0 24px 40px}
+.btn-sub{width:100%;padding:15px;border:none;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block;animation:fadeup .4s ease}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo-wrap">
+    <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
+      <defs>
+        <linearGradient id="lg-d" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#034C8B"/>
+          <stop offset="50%" stop-color="#3B82F6"/>
+          <stop offset="100%" stop-color="#8B5CF6"/>
+        </linearGradient>
+      </defs>
+      <circle cx="44" cy="48" r="34" fill="url(#lg-d)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg-d)" opacity=".7"/>
+    </svg>
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
+  </a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">HRaaS · HR as a Service</div>
+    <h1>Diagnostico <span>HRaaS</span></h1>
+    <p>Avalie o momento atual do RH da sua empresa e receba uma proposta personalizada de HR as a Service.</p>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-wrap">
+    <div class="prog-bar-label">
+      <div class="prog-bar-txt" id="prog-txt">0 de 8 secoes preenchidas</div>
+      <div class="prog-bar-pct" id="prog-pct">0%</div>
+    </div>
+    <div class="prog-bar-track">
+      <div class="prog-bar-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <!-- ACCORDION -->
+  <div class="acc-wrap" id="accWrap">
+
+    <!-- SECAO 1 — IDENTIFICACAO -->
+    <div class="acc-section open" id="sec1">
+      <div class="acc-header" onclick="toggleAcc(1)">
+        <div class="acc-hd-left"><div class="acc-num">01</div><div class="acc-title">Identificacao da Empresa</div></div>
+        <div class="acc-check" id="check1"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg1"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body1">
+        <div class="acc-divider"></div>
+        <div class="row2">
+          <div class="field" id="f-empresa">
+            <label>Nome da empresa<span class="req">*</span></label>
+            <input type="text" id="empresa" placeholder="Razao social ou nome fantasia" oninput="markFilled(1)">
+            <div class="err-msg">Campo obrigatorio</div>
+          </div>
+          <div class="field">
+            <label>CNPJ<span class="opt">(opcional)</span></label>
+            <input type="text" id="cnpj" placeholder="00.000.000/0001-00" oninput="markFilled(1)">
+          </div>
+        </div>
+        <div class="field" id="f-decisor">
+          <label>Nome do decisor / responsavel<span class="req">*</span></label>
+          <input type="text" id="decisor" placeholder="CEO, Diretor, Sócio ou responsavel" oninput="markFilled(1)">
+          <div class="err-msg">Campo obrigatorio</div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Cargo<span class="opt">(opcional)</span></label>
+            <input type="text" id="cargo" placeholder="Ex: CEO, Diretor Geral" oninput="markFilled(1)">
+          </div>
+          <div class="field" id="f-email">
+            <label>E-mail<span class="req">*</span></label>
+            <input type="email" id="email" placeholder="contato@empresa.com.br" oninput="markFilled(1)">
+            <div class="err-msg">Informe um e-mail valido</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>WhatsApp<span class="opt">(opcional)</span></label>
+          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" oninput="markFilled(1)">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 2 — ESTRUTURA E PORTE -->
+    <div class="acc-section" id="sec2">
+      <div class="acc-header" onclick="toggleAcc(2)">
+        <div class="acc-hd-left"><div class="acc-num">02</div><div class="acc-title">Estrutura e Porte</div></div>
+        <div class="acc-check" id="check2"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg2"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body2">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Numero de colaboradores (CLT + PJ)</label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="num_colaboradores" min="1" max="500" value="30" oninput="updSlider('num_colaboradores','val-colab');markFilled(2)">
+              <div class="slider-val" id="val-colab">30</div>
+            </div>
+            <div class="slider-labels"><span>1</span><span>500+</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Numero de unidades / filiais</label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="num_unidades" min="1" max="20" value="1" oninput="updSlider('num_unidades','val-unid');markFilled(2)">
+              <div class="slider-val" id="val-unid">1</div>
+            </div>
+            <div class="slider-labels"><span>1</span><span>20+</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Vagas abertas em media por ano</label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="num_vagas_ano" min="0" max="100" value="5" oninput="updSlider('num_vagas_ano','val-vagas');markFilled(2)">
+              <div class="slider-val" id="val-vagas">5</div>
+            </div>
+            <div class="slider-labels"><span>0</span><span>100+</span></div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Segmento de atuacao</label>
+            <select id="segmento" onchange="markFilled(2)">
+              <option value="">Selecionar</option>
+              <option>Industria</option>
+              <option>Comercio</option>
+              <option>Servicos</option>
+              <option>Saude</option>
+              <option>Educacao</option>
+              <option>Tecnologia</option>
+              <option>Logistica / Transporte</option>
+              <option>Construcao Civil</option>
+              <option>Agronegocio</option>
+              <option>Financeiro / Bancario</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Regiao principal</label>
+            <select id="regiao" onchange="markFilled(2)">
+              <option value="">Selecionar</option>
+              <option>Grande Sao Paulo</option>
+              <option>Interior SP</option>
+              <option>Sul do Brasil</option>
+              <option>Rio de Janeiro</option>
+              <option>Minas Gerais</option>
+              <option>Nordeste</option>
+              <option>Centro-Oeste</option>
+              <option>Norte</option>
+              <option>Atuacao nacional</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 3 — RH ATUAL -->
+    <div class="acc-section" id="sec3">
+      <div class="acc-header" onclick="toggleAcc(3)">
+        <div class="acc-hd-left"><div class="acc-num">03</div><div class="acc-title">RH Atual</div></div>
+        <div class="acc-check" id="check3"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg3"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body3">
+        <div class="acc-divider"></div>
+        <div class="toggle-row" id="tog-hr" onclick="togToggle('hr',3)">
+          <div class="toggle-row-txt">
+            <strong>A empresa possui RH interno?</strong>
+            <span>Profissional ou equipe dedicada a gestao de pessoas</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+        <div class="cond-block" id="cond-hr">
+          <div class="row2">
+            <div class="field">
+              <label>Quantas pessoas no RH</label>
+              <select id="rh_tamanho" onchange="markFilled(3)">
+                <option value="">Selecionar</option>
+                <option>1 pessoa (solo)</option>
+                <option>2 a 3 pessoas</option>
+                <option>4 a 8 pessoas</option>
+                <option>Mais de 8 pessoas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Senioridade do RH atual</label>
+              <select id="rh_senioridade" onchange="markFilled(3)">
+                <option value="">Selecionar</option>
+                <option>Assistente / Auxiliar</option>
+                <option>Analista</option>
+                <option>Coordenador</option>
+                <option>Gerente</option>
+                <option>Diretor</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>O que o RH atual realiza?</label>
+            <div class="chips" id="chips-rh-atual">
+              <button class="chip" type="button" data-v="Departamento pessoal" onclick="togChip(this,3)">Depto pessoal</button>
+              <button class="chip" type="button" data-v="Recrutamento e selecao" onclick="togChip(this,3)">Recrutamento</button>
+              <button class="chip" type="button" data-v="Treinamento" onclick="togChip(this,3)">Treinamento</button>
+              <button class="chip" type="button" data-v="Clima e cultura" onclick="togChip(this,3)">Clima e cultura</button>
+              <button class="chip" type="button" data-v="Performance" onclick="togChip(this,3)">Performance</button>
+              <button class="chip" type="button" data-v="Beneficios" onclick="togChip(this,3)">Beneficios</button>
+            </div>
+          </div>
+        </div>
+        <div class="toggle-row" id="tog-visita" onclick="togToggle('visita',3)" style="margin-top:8px">
+          <div class="toggle-row-txt">
+            <strong>Gostaria de uma visita presencial da Azumi?</strong>
+            <span>Diagnostico aprofundado feito in loco</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 4 — MATURIDADE DE GESTAO -->
+    <div class="acc-section" id="sec4">
+      <div class="acc-header" onclick="toggleAcc(4)">
+        <div class="acc-hd-left"><div class="acc-num">04</div><div class="acc-title">Maturidade de Gestao</div></div>
+        <div class="acc-check" id="check4"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg4"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body4">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Maturidade da lideranca em gestao de pessoas (1 = inexperiente, 5 = muito maduro)</label>
+          <div class="scale-row" id="scale-lideranca">
+            <button class="scale-btn" type="button" onclick="selScale('lideranca',1,this,4)">1</button>
+            <button class="scale-btn" type="button" onclick="selScale('lideranca',2,this,4)">2</button>
+            <button class="scale-btn" type="button" onclick="selScale('lideranca',3,this,4)">3</button>
+            <button class="scale-btn" type="button" onclick="selScale('lideranca',4,this,4)">4</button>
+            <button class="scale-btn" type="button" onclick="selScale('lideranca',5,this,4)">5</button>
+          </div>
+          <div class="scale-labels"><span>Inexperiente</span><span>Muito maduro</span></div>
+        </div>
+        <div class="field">
+          <label>A empresa possui processos documentados de RH?</label>
+          <div class="chips" id="chips-processos">
+            <button class="chip" type="button" data-v="Admissao / demissao" onclick="togChip(this,4)">Admissao / demissao</button>
+            <button class="chip" type="button" data-v="Onboarding" onclick="togChip(this,4)">Onboarding</button>
+            <button class="chip" type="button" data-v="Avaliacao de desempenho" onclick="togChip(this,4)">Avaliacao de desempenho</button>
+            <button class="chip" type="button" data-v="Plano de cargos e salarios" onclick="togChip(this,4)">Plano de cargos e salarios</button>
+            <button class="chip" type="button" data-v="Nenhum documentado" onclick="togChip(this,4)">Nenhum documentado</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Ferramentas / sistemas de RH utilizados<span class="opt">(opcional)</span></label>
+          <input type="text" id="sistemas_rh" placeholder="Ex: Gupy, Sólides, Totvs, Planilha, nenhum..." oninput="markFilled(4)">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 5 — CLIMA E ENGAJAMENTO -->
+    <div class="acc-section" id="sec5">
+      <div class="acc-header" onclick="toggleAcc(5)">
+        <div class="acc-hd-left"><div class="acc-num">05</div><div class="acc-title">Clima e Engajamento</div></div>
+        <div class="acc-check" id="check5"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg5"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body5">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Como voce avalia o clima organizacional atual? (1 = muito ruim, 5 = excelente)</label>
+          <div class="scale-row" id="scale-clima">
+            <button class="scale-btn" type="button" onclick="selScale('clima',1,this,5)">1</button>
+            <button class="scale-btn" type="button" onclick="selScale('clima',2,this,5)">2</button>
+            <button class="scale-btn" type="button" onclick="selScale('clima',3,this,5)">3</button>
+            <button class="scale-btn" type="button" onclick="selScale('clima',4,this,5)">4</button>
+            <button class="scale-btn" type="button" onclick="selScale('clima',5,this,5)">5</button>
+          </div>
+          <div class="scale-labels"><span>Muito ruim</span><span>Excelente</span></div>
+        </div>
+        <div class="field">
+          <label>Principais sinais de alerta percebidos</label>
+          <div class="chips" id="chips-alertas">
+            <button class="chip" type="button" data-v="Alta rotatividade" onclick="togChip(this,5)">Alta rotatividade</button>
+            <button class="chip" type="button" data-v="Absenteismo" onclick="togChip(this,5)">Absenteismo</button>
+            <button class="chip" type="button" data-v="Dificuldade para contratar" onclick="togChip(this,5)">Dificuldade para contratar</button>
+            <button class="chip" type="button" data-v="Conflitos internos" onclick="togChip(this,5)">Conflitos internos</button>
+            <button class="chip" type="button" data-v="Baixa performance" onclick="togChip(this,5)">Baixa performance</button>
+            <button class="chip" type="button" data-v="Afastamentos" onclick="togChip(this,5)">Afastamentos</button>
+            <button class="chip" type="button" data-v="Nenhum sinal relevante" onclick="togChip(this,5)">Nenhum relevante</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Descricao do principal desafio de clima<span class="opt">(opcional)</span></label>
+          <textarea id="desafio_clima" placeholder="Conte com suas palavras o que mais preocupa a empresa hoje..." style="min-height:72px" oninput="markFilled(5)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 6 — FRENTES PRIORITARIAS -->
+    <div class="acc-section" id="sec6">
+      <div class="acc-header" onclick="toggleAcc(6)">
+        <div class="acc-hd-left"><div class="acc-num">06</div><div class="acc-title">Frentes Prioritarias</div></div>
+        <div class="acc-check" id="check6"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg6"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body6">
+        <div class="acc-divider"></div>
+        <p style="font-size:13px;color:var(--ts);margin-bottom:14px;line-height:1.5">Classifique cada frente de RH por nivel de prioridade para a sua empresa.</p>
+        <div class="frentes-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#fca5a5"></div><span style="color:rgba(252,165,165,.8)">C1 — Critico</span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#fcd34d"></div><span style="color:rgba(253,230,138,.8)">C2 — Importante</span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#93C5FD"></div><span style="color:rgba(147,197,253,.8)">C3 — Futuro</span></div>
+        </div>
+        <div class="frentes-list" id="frentes-list">
+          <!-- rows generated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 7 — COMPLIANCE E HISTORICO -->
+    <div class="acc-section" id="sec7">
+      <div class="acc-header" onclick="toggleAcc(7)">
+        <div class="acc-hd-left"><div class="acc-num">07</div><div class="acc-title">Compliance e Historico</div></div>
+        <div class="acc-check" id="check7"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg7"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body7">
+        <div class="acc-divider"></div>
+        <div class="toggle-row" id="tog-compliance" onclick="togToggle('compliance',7)">
+          <div class="toggle-row-txt">
+            <strong>Existe algum passivo trabalhista ou autuacao ativa?</strong>
+            <span>Acoes na Justica do Trabalho, autos de infracao do MTE</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+        <div class="cond-block" id="cond-compliance">
+          <div class="field">
+            <label>Descreva o contexto<span class="opt">(opcional)</span></label>
+            <textarea id="obs_compliance" placeholder="Quantas acoes ativas, natureza do passivo, situacao atual..." style="min-height:72px" oninput="markFilled(7)"></textarea>
+          </div>
+        </div>
+        <div class="toggle-row" id="tog-historico" onclick="togToggle('historico',7)">
+          <div class="toggle-row-txt">
+            <strong>O historico de RH esta desorganizado ou incompleto?</strong>
+            <span>Documentos faltando, processos nao registrados, dados dispersos</span>
+          </div>
+          <div class="toggle-sw"></div>
+        </div>
+        <div class="cond-block" id="cond-historico">
+          <div class="field">
+            <label>O que esta desorganizado?</label>
+            <div class="chips" id="chips-desorg">
+              <button class="chip" type="button" data-v="Documentos de admissao" onclick="togChip(this,7)">Admissao</button>
+              <button class="chip" type="button" data-v="Ferias e jornada" onclick="togChip(this,7)">Ferias e jornada</button>
+              <button class="chip" type="button" data-v="Historico de cargos e salarios" onclick="togChip(this,7)">Cargos e salarios</button>
+              <button class="chip" type="button" data-v="Contratos e termos" onclick="togChip(this,7)">Contratos e termos</button>
+              <button class="chip" type="button" data-v="Dados em planilhas soltas" onclick="togChip(this,7)">Planilhas soltas</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 8 — EXPECTATIVAS E ENVIO -->
+    <div class="acc-section" id="sec8">
+      <div class="acc-header" onclick="toggleAcc(8)">
+        <div class="acc-hd-left"><div class="acc-num">08</div><div class="acc-title">Expectativas e Envio</div></div>
+        <div class="acc-check" id="check8"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg8"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body8">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>O que voce espera do HRaaS?<span class="opt">(opcional)</span></label>
+          <textarea id="expectativas" placeholder="Quais problemas precisa resolver? Qual e a visao de RH ideal para a empresa daqui a 12 meses?" oninput="markFilled(8)"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Prazo para inicio<span class="opt">(opcional)</span></label>
+            <select id="prazo_inicio" onchange="markFilled(8)">
+              <option value="">Sem prazo definido</option>
+              <option>Imediato — esta semana</option>
+              <option>Proximo mes</option>
+              <option>Em 2 a 3 meses</option>
+              <option>No proximo trimestre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Como conheceu a Azumi RH<span class="opt">(opcional)</span></label>
+            <select id="como_conheceu" onchange="markFilled(8)">
+              <option value="">Selecionar</option>
+              <option>LinkedIn</option>
+              <option>Indicacao</option>
+              <option>Busca no Google</option>
+              <option>Instagram</option>
+              <option>Evento / palestra</option>
+              <option>Ja sou cliente</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Observacoes adicionais<span class="opt">(opcional)</span></label>
+          <textarea id="observacoes" placeholder="Qualquer contexto adicional que ajude a Azumi a preparar a melhor proposta..." style="min-height:72px" oninput="markFilled(8)"></textarea>
+        </div>
+        <div class="field" id="f-lgpd">
+          <label>Protecao de dados</label>
+          <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
+            <div class="lgpd-box" id="lgpd-box">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" id="lgpd-tick" style="display:none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitacao para elaborar um diagnostico e proposta personalizada de HRaaS, conforme a LGPD — Lei 13.709/2018. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+          </div>
+          <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap" id="submitWrap">
+    <button class="btn-sub" id="btn-sub" onclick="enviar()">Iniciar diagnostico HRaaS</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="s-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Diagnostico enviado!</h2>
+    <p>Recebemos o diagnostico HRaaS da sua empresa. Nossa equipe preparara uma proposta personalizada e entrara em contato em ate 24h.</p>
+    <div class="prot-badge" id="s-prot"></div>
+    <br>
+    <a href="/" class="btn-home">Voltar ao inicio</a>
+  </div>
+</main>
+
+<footer>© 2026 Azumi RH · contato@azumirh.com.br · azumirh.com.br</footer>
+
+<script>
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+function gerarProtocolo(){
+  const d=new Date()
+  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
+  return 'AZ-DIAG-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+}
+
+const FRENTES=[
+  'Recrutamento e Selecao',
+  'Treinamento e Desenvolvimento',
+  'Clima e Cultura Organizacional',
+  'Gestao de Performance',
+  'Departamento Pessoal',
+  'Beneficios e Remuneracao',
+  'Compliance e Seguranca do Trabalho',
+  'RH Estrategico e Indicadores'
+]
+
+let lgpd=false
+const secFilled=new Set()
+const scaleVals={}
+const toggleVals={}
+const frentesVals={}
+
+// RENDER FRENTES
+function renderFrentes(){
+  const list=document.getElementById('frentes-list')
+  list.innerHTML=''
+  FRENTES.forEach(f=>{
+    const row=document.createElement('div')
+    row.className='frente-row'
+    row.id='fr-'+f.replace(/\s/g,'_')
+    row.innerHTML=`
+      <div class="frente-name">${f}</div>
+      <div class="frente-badges">
+        <button class="f-badge c1" type="button" onclick="selFrente('${f}','C1',this)">C1</button>
+        <button class="f-badge c2" type="button" onclick="selFrente('${f}','C2',this)">C2</button>
+        <button class="f-badge c3" type="button" onclick="selFrente('${f}','C3',this)">C3</button>
+      </div>`
+    list.appendChild(row)
+  })
+}
+renderFrentes()
+
+function selFrente(nome,nivel,el){
+  const row=el.closest('.frente-row')
+  row.querySelectorAll('.f-badge').forEach(b=>b.classList.remove('on'))
+  el.classList.add('on')
+  row.classList.add('selected')
+  frentesVals[nome]=nivel
+  markFilled(6)
+}
+
+function toggleAcc(n){
+  const sec=document.getElementById('sec'+n)
+  const isOpen=sec.classList.contains('open')
+  for(let i=1;i<=8;i++)document.getElementById('sec'+i).classList.remove('open')
+  if(!isOpen)sec.classList.add('open')
+}
+
+function markFilled(n){
+  secFilled.add(n)
+  document.getElementById('sec'+n).classList.add('filled')
+  document.getElementById('checksvg'+n).style.display='block'
+  updateProgress()
+}
+
+function updateProgress(){
+  const pct=Math.round(secFilled.size/8*100)
+  document.getElementById('prog-fill').style.width=pct+'%'
+  document.getElementById('prog-pct').textContent=pct+'%'
+  document.getElementById('prog-txt').textContent=secFilled.size+' de 8 secoes preenchidas'
+}
+
+function selScale(name,val,el,sec){
+  scaleVals[name]=val
+  const row=el.closest('.scale-row')
+  row.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('on'))
+  el.classList.add('on')
+  markFilled(sec)
+}
+
+function togToggle(name,sec){
+  const el=document.getElementById('tog-'+name)
+  const isOn=el.classList.toggle('on')
+  toggleVals[name]=isOn
+  const cond=document.getElementById('cond-'+name)
+  if(cond)cond.classList.toggle('visible',isOn)
+  markFilled(sec)
+}
+
+function togChip(el,sec){
+  el.classList.toggle('on')
+  markFilled(sec)
+}
+
+function updSlider(id,valId){
+  document.getElementById(valId).textContent=document.getElementById(id).value
+}
+
+function toggleLGPD(){
+  lgpd=!lgpd
+  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
+  document.getElementById('lgpd-box').style.background=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-box').style.borderColor=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
+  document.getElementById('lgpd-err').style.display='none'
+  document.getElementById('f-lgpd').classList.remove('err')
+}
+
+function g(id){return document.getElementById(id)}
+function chipVals(id){return Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c=>c.dataset.v).join(', ')}
+
+function buildFrentesStr(){
+  return Object.entries(frentesVals).map(([k,v])=>k+':'+v).join(' | ')
+}
+
+function validar(){
+  let ok=true
+  if(!g('empresa').value.trim()){g('f-empresa').classList.add('err');ok=false}
+  if(!g('decisor').value.trim()){g('f-decisor').classList.add('err');ok=false}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(g('email').value.trim())){g('f-email').classList.add('err');ok=false}
+  if(!ok)document.getElementById('sec1').classList.add('open')
+  return ok
+}
+
+async function enviar(){
+  if(!lgpd){
+    document.getElementById('f-lgpd').classList.add('err')
+    document.getElementById('lgpd-err').style.display='block'
+    document.getElementById('sec8').classList.add('open')
+    return
+  }
+  if(!validar())return
+
+  const btn=g('btn-sub')
+  btn.disabled=true;btn.textContent='Enviando...'
+  const protocolo=gerarProtocolo()
+
+  const dados={
+    protocolo,
+    nome_empresa:g('empresa').value.trim(),
+    cnpj:g('cnpj').value.trim(),
+    nome_decisor:g('decisor').value.trim(),
+    cargo_decisor:g('cargo').value.trim(),
+    email:g('email').value.trim(),
+    whatsapp:g('whatsapp').value.trim(),
+    num_colaboradores:Number(g('num_colaboradores').value)||null,
+    num_unidades:Number(g('num_unidades').value)||1,
+    num_vagas_ano:Number(g('num_vagas_ano').value)||null,
+    segmento:g('segmento').value,
+    regiao:g('regiao').value,
+    tem_rh_interno:!!toggleVals['hr'],
+    rh_tamanho:g('rh_tamanho').value,
+    rh_senioridade:g('rh_senioridade').value,
+    rh_frentes:chipVals('chips-rh-atual'),
+    visita_presencial:!!toggleVals['visita'],
+    maturidade_lideranca:scaleVals['lideranca']||null,
+    processos_documentados:chipVals('chips-processos'),
+    sistemas_rh:g('sistemas_rh').value.trim(),
+    clima_score:scaleVals['clima']||null,
+    alertas_clima:chipVals('chips-alertas'),
+    desafio_clima:g('desafio_clima').value.trim(),
+    frentes:buildFrentesStr(),
+    tem_compliance:!!toggleVals['compliance'],
+    obs_compliance:g('obs_compliance').value.trim(),
+    historico_desorganizado:!!toggleVals['historico'],
+    desorg_frentes:chipVals('chips-desorg'),
+    expectativas:g('expectativas').value.trim(),
+    prazo_inicio:g('prazo_inicio').value,
+    como_conheceu:g('como_conheceu').value,
+    observacoes:g('observacoes').value.trim(),
+    status:'novo'
+  }
+
+  const {error}=await sb.from('diagnostico_requests').insert(dados)
+  if(error){
+    btn.disabled=false;btn.textContent='Iniciar diagnostico HRaaS'
+    alert('Erro ao enviar. Tente novamente.')
+    console.error(error)
+    return
+  }
+
+  try{
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        to:'patricia@azumirh.com.br',
+        subject:'['+protocolo+'] Diagnostico HRaaS — '+dados.nome_empresa,
+        html:'<h2>Novo Diagnostico HRaaS</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Decisor:</b> '+dados.nome_decisor+' — '+dados.email+'</p><p><b>Colaboradores:</b> '+dados.num_colaboradores+'</p><p><b>Segmento:</b> '+dados.segmento+'</p><p><b>Frentes:</b> '+dados.frentes+'</p>'
+      })
+    })
+  }catch(e){console.warn('Email nao enviado',e)}
+
+  g('accWrap').style.display='none'
+  g('submitWrap').style.display='none'
+  const sEl=g('success')
+  sEl.style.display='block'
+  sEl.classList.add('active')
+  g('s-prot').textContent=protocolo
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+</script>
+</body>
+</html>

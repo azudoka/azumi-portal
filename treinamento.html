@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treinamentos In Company · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+
+/* HERO */
+.hero{text-align:center;padding:44px 24px 28px;width:100%}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:480px;margin:0 auto}
+
+/* PROGRESS BAR */
+.prog-wrap{width:100%;max-width:720px;padding:0 24px 20px}
+.prog-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-bar-txt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+.prog-bar-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6;font-weight:600}
+.prog-bar-track{height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6);border-radius:100px;transition:width .4s ease;width:0%}
+
+/* ACCORDION */
+.acc-wrap{width:100%;max-width:720px;padding:0 24px 24px;display:flex;flex-direction:column;gap:10px}
+.acc-section{border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .25s}
+.acc-section.filled{border-color:rgba(59,130,246,.3)}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;background:var(--surface);transition:background .2s;gap:14px}
+.acc-header:hover{background:rgba(255,255,255,.04)}
+.acc-hd-left{display:flex;align-items:center;gap:14px;flex:1}
+.acc-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(147,197,253,.6);width:24px;flex-shrink:0}
+.acc-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--tp)}
+.acc-check{width:20px;height:20px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s}
+.acc-section.filled .acc-check{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.4)}
+.acc-chevron{flex-shrink:0;transition:transform .25s;color:var(--ts)}
+.acc-section.open .acc-chevron{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 20px 20px;animation:fadeup .25s ease}
+.acc-section.open .acc-body{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.acc-divider{height:1px;background:var(--border);margin:0 0 18px}
+
+/* FIELDS */
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr}header{padding:0 20px}}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+
+/* TEMA CHIPS (single-select) */
+.tema-chips{display:flex;flex-wrap:wrap;gap:8px}
+.tema-chip{padding:9px 18px;border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--ts);cursor:pointer;background:var(--surface);font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.tema-chip:hover{border-color:rgba(59,130,246,.3);color:var(--tp)}
+.tema-chip.on{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.5);color:#93C5FD;font-weight:600}
+
+/* SLIDER */
+.slider-wrap{margin-bottom:4px}
+.slider-track{display:flex;align-items:center;gap:14px}
+.slider-track input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:100px;outline:none;cursor:pointer}
+.slider-track input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+.slider-val{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#3B82F6;min-width:40px;text-align:right}
+.slider-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:4px}
+
+/* PACKAGE CARDS */
+.pkg-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:560px){.pkg-cards{grid-template-columns:1fr}}
+.pkg-card{padding:20px 16px;border:1px solid var(--border);border-radius:16px;background:var(--surface);cursor:pointer;transition:all .3s;text-align:center}
+.pkg-card:hover{border-color:rgba(59,130,246,.3)}
+.pkg-card.active{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.07)}
+.pkg-card-icon{width:44px;height:44px;border-radius:12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.pkg-card.active .pkg-card-icon{background:rgba(59,130,246,.2);border-color:rgba(59,130,246,.35)}
+.pkg-card-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.pkg-card.active .pkg-card-name{color:#93C5FD}
+.pkg-card-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--tp);margin-bottom:6px}
+.pkg-card-desc{font-size:11px;color:var(--ts);line-height:1.5}
+.pkg-radio{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);margin:12px auto 0;position:relative;transition:all .2s}
+.pkg-card.active .pkg-radio{border-color:#3B82F6}
+.pkg-card.active .pkg-radio::after{content:'';position:absolute;inset:2px;border-radius:50%;background:#3B82F6}
+
+/* FORMAT CARDS */
+.fmt-cards{display:flex;gap:10px;flex-wrap:wrap}
+.fmt-card{flex:1;min-width:120px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .25s;text-align:center}
+.fmt-card:hover{border-color:rgba(59,130,246,.3)}
+.fmt-card.active{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.07)}
+.fmt-card strong{display:block;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;color:var(--tp)}
+.fmt-card span{font-size:11px;color:var(--ts)}
+
+/* COND BLOCK */
+.cond-block{display:none;margin-top:12px;padding:14px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:12px;animation:fadeup .25s ease}
+.cond-block.visible{display:block}
+.warn-block{display:none;margin-top:10px;padding:12px 14px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:10px;font-size:12px;color:rgba(253,230,138,.85);line-height:1.5}
+.warn-block.visible{display:block}
+
+/* LGPD */
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.lgpd-row.on .lgpd-box{background:#3B82F6;border-color:#3B82F6}
+
+/* SUBMIT */
+.submit-wrap{width:100%;max-width:720px;padding:0 24px 40px}
+.btn-sub{width:100%;padding:15px;border:none;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block;animation:fadeup .4s ease}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo-wrap">
+    <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
+      <defs>
+        <linearGradient id="lg-t" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#034C8B"/>
+          <stop offset="50%" stop-color="#3B82F6"/>
+          <stop offset="100%" stop-color="#8B5CF6"/>
+        </linearGradient>
+      </defs>
+      <circle cx="44" cy="48" r="34" fill="url(#lg-t)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg-t)" opacity=".7"/>
+    </svg>
+    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
+  </a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">Desenvolvimento · In Company</div>
+    <h1>Treinamentos <span>In Company</span></h1>
+    <p>Programas de desenvolvimento personalizados para sua equipe — do diagnostico a entrega, presencial ou remoto.</p>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-wrap">
+    <div class="prog-bar-label">
+      <div class="prog-bar-txt" id="prog-txt">0 de 5 secoes preenchidas</div>
+      <div class="prog-bar-pct" id="prog-pct">0%</div>
+    </div>
+    <div class="prog-bar-track">
+      <div class="prog-bar-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <!-- ACCORDION -->
+  <div class="acc-wrap" id="accWrap">
+
+    <!-- SECAO 1 — EMPRESA -->
+    <div class="acc-section open" id="sec1">
+      <div class="acc-header" onclick="toggleAcc(1)">
+        <div class="acc-hd-left">
+          <div class="acc-num">01</div>
+          <div class="acc-title">Empresa e Responsavel</div>
+        </div>
+        <div class="acc-check" id="check1"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg1"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body1">
+        <div class="acc-divider"></div>
+        <div class="row2">
+          <div class="field" id="f-empresa">
+            <label>Nome da empresa<span class="req">*</span></label>
+            <input type="text" id="empresa" placeholder="Razao social ou nome fantasia" oninput="markFilled(1)">
+            <div class="err-msg">Campo obrigatorio</div>
+          </div>
+          <div class="field">
+            <label>Filial / unidade<span class="opt">(opcional)</span></label>
+            <input type="text" id="filial" placeholder="Ex: Filial Sao Paulo" oninput="markFilled(1)">
+          </div>
+        </div>
+        <div class="field" id="f-responsavel">
+          <label>Nome do responsavel<span class="req">*</span></label>
+          <input type="text" id="responsavel" placeholder="Quem sera o ponto de contato" oninput="markFilled(1)">
+          <div class="err-msg">Campo obrigatorio</div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Cargo<span class="opt">(opcional)</span></label>
+            <input type="text" id="cargo" placeholder="Ex: Gerente de RH" oninput="markFilled(1)">
+          </div>
+          <div class="field" id="f-email">
+            <label>E-mail<span class="req">*</span></label>
+            <input type="email" id="email" placeholder="contato@empresa.com.br" oninput="markFilled(1)">
+            <div class="err-msg">Informe um e-mail valido</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>WhatsApp<span class="opt">(opcional)</span></label>
+          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" oninput="markFilled(1)">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 2 — TEMA E PUBLICO -->
+    <div class="acc-section" id="sec2">
+      <div class="acc-header" onclick="toggleAcc(2)">
+        <div class="acc-hd-left">
+          <div class="acc-num">02</div>
+          <div class="acc-title">Tema e Publico-Alvo</div>
+        </div>
+        <div class="acc-check" id="check2"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg2"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body2">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Tema principal do treinamento</label>
+          <div class="tema-chips" id="chips-tema">
+            <button class="tema-chip" type="button" data-v="Lideranca e Gestao de Pessoas" onclick="selTema(this,2)">Lideranca e Gestao</button>
+            <button class="tema-chip" type="button" data-v="Comunicacao e Feedback" onclick="selTema(this,2)">Comunicacao e Feedback</button>
+            <button class="tema-chip" type="button" data-v="Cultura e Clima Organizacional" onclick="selTema(this,2)">Cultura Organizacional</button>
+            <button class="tema-chip" type="button" data-v="Saude Mental e Bem-Estar" onclick="selTema(this,2)">Saude Mental</button>
+            <button class="tema-chip" type="button" data-v="Recrutamento e Selecao" onclick="selTema(this,2)">Recrutamento e Selecao</button>
+            <button class="tema-chip" type="button" data-v="Diversidade e Inclusao" onclick="selTema(this,2)">Diversidade e Inclusao</button>
+            <button class="tema-chip" type="button" data-v="Gestao de Performance" onclick="selTema(this,2)">Gestao de Performance</button>
+            <button class="tema-chip" type="button" data-v="Vendas e Negociacao" onclick="selTema(this,2)">Vendas e Negociacao</button>
+            <button class="tema-chip" type="button" data-v="Onboarding e Integracao" onclick="selTema(this,2)">Onboarding</button>
+            <button class="tema-chip" type="button" data-v="Outro" onclick="selTema(this,2)">Outro</button>
+          </div>
+        </div>
+        <div class="cond-block" id="cond-tema-outro">
+          <div class="field">
+            <label>Descreva o tema<span class="req">*</span></label>
+            <input type="text" id="tema_outro" placeholder="Ex: Gestao de conflitos interpessoais" oninput="markFilled(2)">
+          </div>
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label>Publico-alvo</label>
+          <div class="chips" id="chips-publico">
+            <button class="chip" type="button" data-v="Operacional" onclick="togChip(this,2)">Operacional</button>
+            <button class="chip" type="button" data-v="Supervisores" onclick="togChip(this,2)">Supervisores</button>
+            <button class="chip" type="button" data-v="Coordenadores" onclick="togChip(this,2)">Coordenadores</button>
+            <button class="chip" type="button" data-v="Gerentes" onclick="togChip(this,2)">Gerentes</button>
+            <button class="chip" type="button" data-v="Diretores" onclick="togChip(this,2)">Diretores</button>
+            <button class="chip" type="button" data-v="RH" onclick="togChip(this,2)">RH</button>
+            <button class="chip" type="button" data-v="Toda a empresa" onclick="togChip(this,2)">Toda a empresa</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Objetivo principal<span class="opt">(opcional)</span></label>
+          <textarea id="objetivo" placeholder="O que a empresa deseja transformar ou desenvolver com este treinamento?" style="min-height:72px" oninput="markFilled(2)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 3 — PACOTE E PARTICIPANTES -->
+    <div class="acc-section" id="sec3">
+      <div class="acc-header" onclick="toggleAcc(3)">
+        <div class="acc-hd-left">
+          <div class="acc-num">03</div>
+          <div class="acc-title">Pacote e Participantes</div>
+        </div>
+        <div class="acc-check" id="check3"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg3"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body3">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Selecione o pacote de treinamento</label>
+          <div class="pkg-cards">
+            <!-- SPARK -->
+            <div class="pkg-card" id="pkg-spark" onclick="selPacote('SPARK',this,3)">
+              <div class="pkg-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div class="pkg-card-name">SPARK</div>
+              <div class="pkg-card-title">Workshop Pontual</div>
+              <div class="pkg-card-desc">1 encontro intensivo de 4h. Ideal para sensibilizacao e introducao ao tema.</div>
+              <div class="pkg-radio"></div>
+            </div>
+            <!-- TRAIL -->
+            <div class="pkg-card" id="pkg-trail" onclick="selPacote('TRAIL',this,3)">
+              <div class="pkg-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="pkg-card-name">TRAIL</div>
+              <div class="pkg-card-title">Jornada Estruturada</div>
+              <div class="pkg-card-desc">3 a 6 encontros progressivos. Desenvolve habilidades com continuidade e pratica.</div>
+              <div class="pkg-radio"></div>
+            </div>
+            <!-- SHIFT -->
+            <div class="pkg-card" id="pkg-shift" onclick="selPacote('SHIFT',this,3)">
+              <div class="pkg-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 7.76a6 6 0 0 0 0 8.49"/></svg>
+              </div>
+              <div class="pkg-card-name">SHIFT</div>
+              <div class="pkg-card-title">Transformacao Continua</div>
+              <div class="pkg-card-desc">Programa longo de 3 a 6 meses com suporte continuo e acompanhamento de resultados.</div>
+              <div class="pkg-radio"></div>
+            </div>
+          </div>
+        </div>
+        <!-- ENCONTROS (TRAIL e SHIFT) -->
+        <div class="cond-block" id="cond-encontros">
+          <div class="field">
+            <label>Numero de encontros desejados</label>
+            <div class="slider-wrap">
+              <div class="slider-track">
+                <input type="range" id="num_encontros" min="3" max="12" value="4" oninput="updSlider('num_encontros','val-encontros');markFilled(3)">
+                <div class="slider-val" id="val-encontros">4</div>
+              </div>
+              <div class="slider-labels"><span>3 encontros</span><span>12 encontros</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- PARTICIPANTES -->
+        <div class="field">
+          <label>Numero de participantes</label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="num_participantes" min="5" max="200" value="20" step="5" oninput="updSlider('num_participantes','val-participantes');markFilled(3)">
+              <div class="slider-val" id="val-participantes">20</div>
+            </div>
+            <div class="slider-labels"><span>5 pessoas</span><span>200 pessoas</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Numero de turmas</label>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <input type="range" id="num_turmas" min="1" max="10" value="1" oninput="updSlider('num_turmas','val-turmas');markFilled(3)">
+              <div class="slider-val" id="val-turmas">1</div>
+            </div>
+            <div class="slider-labels"><span>1 turma</span><span>10 turmas</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 4 — LOGISTICA -->
+    <div class="acc-section" id="sec4">
+      <div class="acc-header" onclick="toggleAcc(4)">
+        <div class="acc-hd-left">
+          <div class="acc-num">04</div>
+          <div class="acc-title">Logistica e Formato</div>
+        </div>
+        <div class="acc-check" id="check4"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg4"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body4">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Formato preferencial</label>
+          <div class="fmt-cards">
+            <div class="fmt-card" id="fmt-presencial" onclick="selFormato('Presencial',this,4)">
+              <strong>Presencial</strong>
+              <span>Na empresa ou local definido</span>
+            </div>
+            <div class="fmt-card" id="fmt-online" onclick="selFormato('Online',this,4)">
+              <strong>Online</strong>
+              <span>Via videoconferencia</span>
+            </div>
+            <div class="fmt-card" id="fmt-hibrido" onclick="selFormato('Hibrido',this,4)">
+              <strong>Hibrido</strong>
+              <span>Combinacao presencial + online</span>
+            </div>
+          </div>
+          <div class="warn-block" id="warn-deslocamento">
+            Para treinamentos presenciais fora de Sao Paulo / Grande SP, pode haver incidencia de custos de deslocamento e hospedagem. A proposta da Azumi incluira esses custos detalhados para sua analise.
+          </div>
+        </div>
+        <!-- INFRA PRESENCIAL -->
+        <div class="cond-block" id="cond-presencial">
+          <div class="field">
+            <label>A empresa possui espaco fisico para o treinamento?</label>
+            <div class="chips" id="chips-espaco">
+              <button class="chip" type="button" data-v="Sim, sala propria" onclick="togChip(this,4)">Sim, sala propria</button>
+              <button class="chip" type="button" data-v="Sim, auditorio" onclick="togChip(this,4)">Sim, auditorio</button>
+              <button class="chip" type="button" data-v="Nao, precisamos locar" onclick="togChip(this,4)">Nao, precisamos locar</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Equipamentos disponiveis<span class="opt">(opcional)</span></label>
+            <div class="chips" id="chips-equip">
+              <button class="chip" type="button" data-v="Projetor" onclick="togChip(this,4)">Projetor</button>
+              <button class="chip" type="button" data-v="TV / Monitor" onclick="togChip(this,4)">TV / Monitor</button>
+              <button class="chip" type="button" data-v="Som / Microfone" onclick="togChip(this,4)">Som / Microfone</button>
+              <button class="chip" type="button" data-v="Computadores" onclick="togChip(this,4)">Computadores</button>
+              <button class="chip" type="button" data-v="Wi-Fi" onclick="togChip(this,4)">Wi-Fi</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Cidade / estado<span class="opt">(opcional)</span></label>
+            <input type="text" id="cidade" placeholder="Ex: Sao Paulo, SP" oninput="markFilled(4)">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Data desejada (aproximada)<span class="opt">(opcional)</span></label>
+            <input type="date" id="data_desejada" oninput="markFilled(4)">
+          </div>
+          <div class="field">
+            <label>Horario preferencial<span class="opt">(opcional)</span></label>
+            <select id="horario" onchange="markFilled(4)">
+              <option value="">Selecionar</option>
+              <option>Manha (8h–12h)</option>
+              <option>Tarde (13h–18h)</option>
+              <option>Dia inteiro</option>
+              <option>Sem preferencia</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECAO 5 — CONTEXTO E ENVIO -->
+    <div class="acc-section" id="sec5">
+      <div class="acc-header" onclick="toggleAcc(5)">
+        <div class="acc-hd-left">
+          <div class="acc-num">05</div>
+          <div class="acc-title">Contexto e Envio</div>
+        </div>
+        <div class="acc-check" id="check5"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg5"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="acc-body" id="body5">
+        <div class="acc-divider"></div>
+        <div class="field">
+          <label>Contexto e expectativas<span class="opt">(opcional)</span></label>
+          <textarea id="contexto" placeholder="O que motivou este treinamento? Qual problema ou oportunidade esta sendo endereçado? O que voce espera que mude?" oninput="markFilled(5)"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Budget estimado<span class="opt">(opcional)</span></label>
+            <select id="budget" onchange="markFilled(5)">
+              <option value="">Sem referencia de budget</option>
+              <option>Ate R$ 3.000</option>
+              <option>R$ 3.000 a R$ 8.000</option>
+              <option>R$ 8.000 a R$ 15.000</option>
+              <option>R$ 15.000 a R$ 30.000</option>
+              <option>Acima de R$ 30.000</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Como conheceu a Azumi RH<span class="opt">(opcional)</span></label>
+            <select id="como_conheceu" onchange="markFilled(5)">
+              <option value="">Selecionar</option>
+              <option>LinkedIn</option>
+              <option>Indicacao</option>
+              <option>Busca no Google</option>
+              <option>Instagram</option>
+              <option>Evento / palestra</option>
+              <option>Ja sou cliente</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Observacoes adicionais<span class="opt">(opcional)</span></label>
+          <textarea id="observacoes" placeholder="Demandas especificas, restricoes de datas, perfil da equipe, experiencias anteriores com treinamento..." style="min-height:72px" oninput="markFilled(5)"></textarea>
+        </div>
+        <div class="field" id="f-lgpd">
+          <label>Protecao de dados</label>
+          <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
+            <div class="lgpd-box" id="lgpd-box">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" id="lgpd-tick" style="display:none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitacao para fins de elaboracao de proposta de treinamento, conforme a LGPD — Lei 13.709/2018. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+          </div>
+          <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap" id="submitWrap">
+    <button class="btn-sub" id="btn-sub" onclick="enviar()">Solicitar proposta de treinamento</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="s-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Proposta solicitada!</h2>
+    <p>Recebemos sua solicitacao de treinamento. Nossa equipe entrara em contato em ate 24h para alinhar os detalhes e enviar a proposta comercial.</p>
+    <div class="prot-badge" id="s-prot"></div>
+    <br>
+    <a href="/" class="btn-home">Voltar ao inicio</a>
+  </div>
+</main>
+
+<footer>© 2026 Azumi RH · contato@azumirh.com.br · azumirh.com.br</footer>
+
+<script>
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+function gerarProtocolo(){
+  const d=new Date()
+  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
+  return 'AZ-TRN-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+}
+
+let lgpd=false, temaSel='', pacoteSel='', formatoSel=''
+const secFilled=new Set()
+
+function toggleAcc(n){
+  const sec=document.getElementById('sec'+n)
+  const isOpen=sec.classList.contains('open')
+  for(let i=1;i<=5;i++)document.getElementById('sec'+i).classList.remove('open')
+  if(!isOpen)sec.classList.add('open')
+}
+
+function markFilled(n){
+  secFilled.add(n)
+  document.getElementById('sec'+n).classList.add('filled')
+  document.getElementById('checksvg'+n).style.display='block'
+  updateProgress()
+}
+
+function updateProgress(){
+  const pct=Math.round(secFilled.size/5*100)
+  document.getElementById('prog-fill').style.width=pct+'%'
+  document.getElementById('prog-pct').textContent=pct+'%'
+  document.getElementById('prog-txt').textContent=secFilled.size+' de 5 secoes preenchidas'
+}
+
+function selTema(el,sec){
+  document.querySelectorAll('.tema-chip').forEach(c=>c.classList.remove('on'))
+  el.classList.add('on')
+  temaSel=el.dataset.v
+  const condOutro=document.getElementById('cond-tema-outro')
+  condOutro.classList.toggle('visible',temaSel==='Outro')
+  markFilled(sec)
+}
+
+function togChip(el,sec){
+  el.classList.toggle('on')
+  markFilled(sec)
+}
+
+function selPacote(pkg,el,sec){
+  pacoteSel=pkg
+  document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('active'))
+  el.classList.add('active')
+  const cond=document.getElementById('cond-encontros')
+  cond.classList.toggle('visible',pkg==='TRAIL'||pkg==='SHIFT')
+  markFilled(sec)
+}
+
+function selFormato(fmt,el,sec){
+  formatoSel=fmt
+  document.querySelectorAll('.fmt-card').forEach(c=>c.classList.remove('active'))
+  el.classList.add('active')
+  const condPres=document.getElementById('cond-presencial')
+  condPres.classList.toggle('visible',fmt==='Presencial'||fmt==='Hibrido')
+  const warn=document.getElementById('warn-deslocamento')
+  warn.classList.toggle('visible',fmt==='Presencial'||fmt==='Hibrido')
+  markFilled(sec)
+}
+
+function updSlider(id,valId){
+  document.getElementById(valId).textContent=document.getElementById(id).value
+}
+
+function toggleLGPD(){
+  lgpd=!lgpd
+  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
+  document.getElementById('lgpd-box').style.background=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-box').style.borderColor=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
+  document.getElementById('lgpd-err').style.display='none'
+  document.getElementById('f-lgpd').classList.remove('err')
+}
+
+function g(id){return document.getElementById(id)}
+function chipVals(id){return Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c=>c.dataset.v).join(', ')}
+function temaChipVals(id){return Array.from(document.querySelectorAll('#'+id+' .tema-chip.on')).map(c=>c.dataset.v).join(', ')}
+
+function validar(){
+  let ok=true
+  if(!g('empresa').value.trim()){g('f-empresa').classList.add('err');ok=false}
+  if(!g('responsavel').value.trim()){g('f-responsavel').classList.add('err');ok=false}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(g('email').value.trim())){g('f-email').classList.add('err');ok=false}
+  if(!ok)document.getElementById('sec1').classList.add('open')
+  return ok
+}
+
+async function enviar(){
+  if(!lgpd){
+    document.getElementById('f-lgpd').classList.add('err')
+    document.getElementById('lgpd-err').style.display='block'
+    document.getElementById('sec5').classList.add('open')
+    return
+  }
+  if(!validar())return
+
+  const btn=g('btn-sub')
+  btn.disabled=true;btn.textContent='Enviando...'
+  const protocolo=gerarProtocolo()
+
+  const dados={
+    protocolo,
+    nome_empresa:g('empresa').value.trim(),
+    filial:g('filial').value.trim(),
+    nome_responsavel:g('responsavel').value.trim(),
+    cargo_responsavel:g('cargo').value.trim(),
+    email:g('email').value.trim(),
+    whatsapp:g('whatsapp').value.trim(),
+    tema_principal:temaSel,
+    tema_especifico:g('tema_outro').value.trim(),
+    publico_alvo:chipVals('chips-publico'),
+    objetivo:g('objetivo').value.trim(),
+    pacote:pacoteSel,
+    num_encontros:Number(g('num_encontros').value)||null,
+    num_participantes:Number(g('num_participantes').value)||20,
+    num_turmas:Number(g('num_turmas').value)||1,
+    formato:formatoSel,
+    espaco_fisico:chipVals('chips-espaco'),
+    equipamentos:chipVals('chips-equip'),
+    cidade:g('cidade').value.trim(),
+    data_desejada:g('data_desejada').value||null,
+    horario:g('horario').value,
+    contexto:g('contexto').value.trim(),
+    budget:g('budget').value,
+    como_conheceu:g('como_conheceu').value,
+    observacoes:g('observacoes').value.trim(),
+    status:'novo'
+  }
+
+  const {error}=await sb.from('training_requests').insert(dados)
+  if(error){
+    btn.disabled=false;btn.textContent='Solicitar proposta de treinamento'
+    alert('Erro ao enviar. Tente novamente.')
+    console.error(error)
+    return
+  }
+
+  try{
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        to:'patricia@azumirh.com.br',
+        subject:'['+protocolo+'] Treinamento In Company — '+dados.nome_empresa,
+        html:'<h2>Nova Solicitacao de Treinamento</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Tema:</b> '+dados.tema_principal+'</p><p><b>Pacote:</b> '+dados.pacote+'</p><p><b>Participantes:</b> '+dados.num_participantes+'</p><p><b>Responsavel:</b> '+dados.nome_responsavel+' — '+dados.email+'</p>'
+      })
+    })
+  }catch(e){console.warn('Email nao enviado',e)}
+
+  g('accWrap').style.display='none'
+  g('submitWrap').style.display='none'
+  const sEl=g('success')
+  sEl.style.display='block'
+  sEl.classList.add('active')
+  g('s-prot').textContent=protocolo
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+</script>
+</body>
+</html>

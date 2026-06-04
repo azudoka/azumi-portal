@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · Azumi RH</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#031D38;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--blue:#3B82F6;--purple:#8B5CF6;--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.45);--gm:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)}
@@ -15,8 +15,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* LOGIN */
 #login-page{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
 .login-box{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:400px;backdrop-filter:blur(12px)}
-.login-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:22px;text-align:center;margin-bottom:28px}
-.login-logo span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
 .login-field{margin-bottom:16px}
 .login-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
 .login-field input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--tp);outline:none;transition:border-color .2s}
@@ -27,14 +26,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* ADMIN */
 #admin-page{display:none;position:relative;z-index:1;min-height:100vh}
-.admin-header{padding:14px 28px;background:rgba(3,29,56,.9);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}
-.admin-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:16px}
-.admin-logo span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-header{padding:12px 28px;background:rgba(3,29,56,.9);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);position:sticky;top:0;z-index:20}
+.admin-logo-wrap{display:flex;align-items:center;gap:8px}
 .admin-user{font-size:12px;color:var(--ts);display:flex;align-items:center;gap:12px}
 .btn-sair{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);background:none;border:1px solid var(--border);border-radius:100px;padding:4px 12px;cursor:pointer;transition:all .2s}
 .btn-sair:hover{color:var(--tp);border-color:rgba(239,68,68,.4)}
-.admin-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);padding:0 28px}
-.nav-tab{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ts);padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.admin-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);padding:0 28px;overflow-x:auto}
+.nav-tab{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ts);padding:14px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;flex-shrink:0}
 .nav-tab.active{color:var(--tp);border-bottom-color:var(--blue)}
 .nav-tab:hover:not(.active){color:var(--tp)}
 .admin-body{padding:24px 28px;max-width:1100px}
@@ -76,6 +74,63 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .chip-fechado{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25)}
 .chip-arquivado{background:rgba(255,255,255,.06);color:var(--ts);border:1px solid var(--border)}
 .emitido-por{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.5);margin-left:auto}
+
+/* DRAWER OVERLAY */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:560px;background:#041e36;border-left:1px solid var(--border);z-index:51;transform:translateX(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;overflow:hidden}
+.drawer.open{transform:translateX(0)}
+.drawer-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(3,29,56,.95)}
+.drawer-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
+.drawer-subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);margin-top:2px}
+.drawer-close{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--ts);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
+.drawer-close:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 24px}
+.drawer-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;background:rgba(3,29,56,.95)}
+.drawer-footer .btn-calc{flex:1;padding:12px;border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#93C5FD;border-radius:100px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.drawer-footer .btn-calc:hover{background:rgba(59,130,246,.18)}
+.drawer-footer .btn-pdf{flex:1;padding:12px;background:var(--gm);color:#fff;border:none;border-radius:100px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.drawer-footer .btn-pdf:hover{opacity:.88}
+.drawer-footer .btn-save{padding:12px 20px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.1);color:#6ee7b7;border-radius:100px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.drawer-footer .btn-save:hover{background:rgba(16,185,129,.18)}
+
+/* CALC FIELDS */
+.calc-section{margin-bottom:20px}
+.calc-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.6);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.calc-field{margin-bottom:10px}
+.calc-field label{display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:5px}
+.calc-field input,.calc-field select{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.calc-field input:focus,.calc-field select:focus{border-color:rgba(59,130,246,.5)}
+.calc-field select option{background:#0a2540}
+.calc-field textarea{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;resize:vertical;min-height:60px;line-height:1.5}
+
+/* RESULT BOX */
+.result-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:16px;margin-bottom:16px}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.result-row:last-child{border-bottom:none}
+.result-lbl{color:var(--ts)}
+.result-val{font-family:'JetBrains Mono',monospace;font-weight:600;color:#93C5FD}
+.result-total{display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;margin-top:8px}
+.result-total-lbl{font-weight:700;font-size:13px}
+.result-total-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#3B82F6}
+
+/* REQUEST INFO IN DRAWER */
+.req-info-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px}
+.req-info-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.req-info-row{display:flex;gap:8px;font-size:11px;padding:2px 0}
+.req-info-lbl{color:var(--ts);min-width:90px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
+.req-info-val{color:var(--tp)}
+
+/* ADICIONAIS CHECKBOXES */
+.adicionais-list{display:flex;flex-direction:column;gap:6px}
+.adicional-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.02);cursor:pointer;transition:border-color .2s;font-size:12px}
+.adicional-item.on{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.06)}
+.adicional-item .ck{width:16px;height:16px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.adicional-item.on .ck{background:#3B82F6;border-color:#3B82F6}
+.adicional-nome{flex:1;color:var(--tp)}
+.adicional-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7)}
+
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#031D38;border:1px solid var(--border);color:var(--tp);padding:11px 20px;border-radius:100px;font-size:12px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 </style>
@@ -85,15 +140,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- LOGIN -->
 <div id="login-page">
   <div class="login-box">
-    <div class="login-logo">azumi<span>RH</span> · Admin</div>
-    <div class="login-field">
-      <label>E-mail</label>
-      <input type="email" id="inp-email" placeholder="voce@azumirh.com.br" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-logo">
+      <svg width="28" height="23" viewBox="0 0 120 96" fill="none">
+        <defs><linearGradient id="lg-a" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#034C8B"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+        <circle cx="44" cy="48" r="34" fill="url(#lg-a)" opacity=".9"/>
+        <circle cx="76" cy="48" r="34" fill="url(#lg-a)" opacity=".7"/>
+      </svg>
+      <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:18px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:18px;color:#93C5FD;margin-left:1px">RH</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);margin-left:8px">Admin</span>
     </div>
-    <div class="login-field">
-      <label>Senha</label>
-      <input type="password" id="inp-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
+    <div class="login-field"><label>E-mail</label><input type="email" id="inp-email" placeholder="voce@azumirh.com.br" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" onclick="doLogin()">Entrar</button>
     <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
   </div>
@@ -102,7 +159,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- ADMIN -->
 <div id="admin-page">
   <div class="admin-header">
-    <div class="admin-logo">azumi<span>RH</span></div>
+    <div class="admin-logo-wrap">
+      <svg width="28" height="23" viewBox="0 0 120 96" fill="none">
+        <defs><linearGradient id="lg-ah" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#034C8B"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+        <circle cx="44" cy="48" r="34" fill="url(#lg-ah)" opacity=".9"/>
+        <circle cx="76" cy="48" r="34" fill="url(#lg-ah)" opacity=".7"/>
+      </svg>
+      <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:17px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:17px;color:#93C5FD;margin-left:1px">RH</span>
+    </div>
     <div class="admin-user">
       <span id="admin-nome-header"></span>
       <button class="btn-sair" onclick="sair()">Sair</button>
@@ -110,31 +174,50 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
   <div class="admin-nav">
     <button class="nav-tab active" onclick="abaAtiva('career',this)">Career Plan</button>
-    <button class="nav-tab" onclick="abaAtiva('vaga',this)">Solicitação de Vaga</button>
+    <button class="nav-tab" onclick="abaAtiva('vaga',this)">Solicitacao de Vaga</button>
     <button class="nav-tab" onclick="abaAtiva('nr1',this)">NR-1</button>
+    <button class="nav-tab" onclick="abaAtiva('treinamento',this)">Treinamento</button>
+    <button class="nav-tab" onclick="abaAtiva('diagnostico',this)">Diagnostico HRaaS</button>
   </div>
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
-      <div class="tab-header">
-        <div class="tab-title">Career Plan</div>
-        <div class="tab-count" id="count-career">0</div>
-      </div>
+      <div class="tab-header"><div class="tab-title">Career Plan</div><div class="tab-count" id="count-career">0</div></div>
       <div id="cards-career"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-vaga" class="tab-content">
-      <div class="tab-header">
-        <div class="tab-title">Solicitação de Vaga</div>
-        <div class="tab-count" id="count-vaga">0</div>
-      </div>
+      <div class="tab-header"><div class="tab-title">Solicitacao de Vaga</div><div class="tab-count" id="count-vaga">0</div></div>
       <div id="cards-vaga"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-nr1" class="tab-content">
-      <div class="tab-header">
-        <div class="tab-title">NR-1</div>
-        <div class="tab-count" id="count-nr1">0</div>
-      </div>
+      <div class="tab-header"><div class="tab-title">NR-1</div><div class="tab-count" id="count-nr1">0</div></div>
       <div id="cards-nr1"><div class="loading">Carregando...</div></div>
     </div>
+    <div id="tab-treinamento" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Treinamento In Company</div><div class="tab-count" id="count-treinamento">0</div></div>
+      <div id="cards-treinamento"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-diagnostico" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Diagnostico HRaaS</div><div class="tab-count" id="count-diagnostico">0</div></div>
+      <div id="cards-diagnostico"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="overlay" onclick="fecharDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-title" id="drawer-title">Gerar Proposta</div>
+      <div class="drawer-subtitle" id="drawer-subtitle"></div>
+    </div>
+    <button class="drawer-close" onclick="fecharDrawer()">&#x2715;</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+  <div class="drawer-footer">
+    <button class="btn-calc" onclick="calcular()">Calcular</button>
+    <button class="btn-pdf" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn-save" onclick="salvarProposta()">Salvar</button>
   </div>
 </div>
 
@@ -149,11 +232,10 @@ const USERS=[
   {nome:'Patricia Lima',email:'patricia@azumirh.com.br',senha:'azumi@2026#pati',role:'admin'},
   {nome:'Consultora Azumi',email:'consultora@azumirh.com.br',senha:'azumi@2026#cons',role:'consultora'}
 ]
-
 const STS_LBL={novo:'Novo',contato:'Em contato',proposta:'Proposta enviada',fechado:'Fechado',arquivado:'Arquivado'}
 const STS_CLS={novo:'chip-novo',contato:'chip-contato',proposta:'chip-proposta',fechado:'chip-fechado',arquivado:'chip-arquivado'}
 
-let sessao=null
+let sessao=null, proposalCtx={}
 
 function doLogin(){
   const email=document.getElementById('inp-email').value.trim().toLowerCase()
@@ -164,67 +246,33 @@ function doLogin(){
   sessionStorage.setItem('azumi_admin',JSON.stringify({nome:u.nome,email:u.email,role:u.role,loginAt:Date.now()}))
   document.getElementById('login-page').style.display='none'
   document.getElementById('admin-page').style.display='block'
-  document.getElementById('admin-nome-header').textContent='Olá, '+u.nome.split(' ')[0]
+  document.getElementById('admin-nome-header').textContent='Ola, '+u.nome.split(' ')[0]
   carregarTudo()
 }
-
-function sair(){
-  sessionStorage.removeItem('azumi_admin')
-  location.reload()
-}
-
-function toast(msg){
-  const t=document.getElementById('toast')
-  t.textContent=msg;t.classList.add('show')
-  setTimeout(()=>t.classList.remove('show'),3000)
-}
-
+function sair(){sessionStorage.removeItem('azumi_admin');location.reload()}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 function abaAtiva(aba,btn){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'))
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
-  document.getElementById('tab-'+aba).classList.add('active')
-  btn.classList.add('active')
+  document.getElementById('tab-'+aba).classList.add('active');btn.classList.add('active')
 }
+async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico()}
+function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
 
-async function carregarTudo(){
-  carregarCareer()
-  carregarVaga()
-  carregarNr1()
-}
-
+// ── CAREER ──────────────────────────────────────────────
 async function carregarCareer(){
   const cont=document.getElementById('cards-career')
   const {data,error}=await sb.from('career_plan_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-career').textContent=data.length
-  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=data.map(r=>careerCard(r)).join('')
 }
-
-async function carregarVaga(){
-  const cont=document.getElementById('cards-vaga')
-  const {data,error}=await sb.from('job_requests').select('*').order('created_at',{ascending:false})
-  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
-  document.getElementById('count-vaga').textContent=data.length
-  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
-  cont.innerHTML=data.map(r=>vagaCard(r)).join('')
-}
-
-async function carregarNr1(){
-  const cont=document.getElementById('cards-nr1')
-  const {data,error}=await sb.from('nr1_requests').select('*').order('created_at',{ascending:false})
-  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
-  document.getElementById('count-nr1').textContent=data.length
-  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
-  cont.innerHTML=data.map(r=>nr1Card(r)).join('')
-}
-
-function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
-
 function careerCard(r){
   const srvs=r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[]
-  const SRV_CX={'Atualização de currículo':'C1','Currículo do zero':'C1','Currículo internacional':'C1','Otimização do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transição':'C2','Repositório de projetos':'C2','Preparação para entrevista':'C2','Simulação de entrevista':'C2','Entrevista internacional':'C2','Negociação salarial':'C2','Networking e candidatura':'C2','Diagnóstico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
+  const SRV_CX={'Atualizacao de curriculo':'C1','Curriculo do zero':'C1','Curriculo internacional':'C1','Otimizacao do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transicao':'C2','Repositorio de projetos':'C2','Preparacao para entrevista':'C2','Simulacao de entrevista':'C2','Entrevista internacional':'C2','Negociacao salarial':'C2','Networking e candidatura':'C2','Diagnostico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
   const cxStyle={C1:'background:rgba(34,197,94,.12);color:#16a34a;border:1px solid rgba(34,197,94,.25)',C2:'background:rgba(234,179,8,.12);color:#a16207;border:1px solid rgba(234,179,8,.25)',C3:'background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.25)'}
+  const rid=r.id||''
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -238,7 +286,6 @@ function careerCard(r){
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
             ${r.senioridade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.senioridade}</span>`:''}
             ${r.prazo_desejado?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo_desejado}</span>`:''}
-            ${r.modelo_atendimento?`<span style="font-size:10px;color:rgba(167,139,250,.8);background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:100px;padding:2px 9px">${r.modelo_atendimento}</span>`:''}
           </div>
         </div>
         <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
@@ -249,34 +296,33 @@ function careerCard(r){
         ${r.email?`<div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email}</div></div>`:''}
         ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
         ${r.cidade?`<div class="req-item"><div class="req-item-lbl">Cidade</div><div class="req-item-val">${[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')}</div></div>`:''}
-        ${r.tempo_experiencia?`<div class="req-item"><div class="req-item-lbl">Experiência</div><div class="req-item-val">${r.tempo_experiencia}</div></div>`:''}
-        ${r.escolaridade?`<div class="req-item"><div class="req-item-lbl">Escolaridade</div><div class="req-item-val">${r.escolaridade}</div></div>`:''}
-        ${r.idiomas?`<div class="req-item"><div class="req-item-lbl">Idiomas</div><div class="req-item-val">${r.idiomas}</div></div>`:''}
-        ${r.suporte_desejado?`<div class="req-item"><div class="req-item-lbl">Suporte</div><div class="req-item-val">${r.suporte_desejado}</div></div>`:''}
-        ${r.linkedin_url?`<div class="req-item"><div class="req-item-lbl">LinkedIn</div><div class="req-item-val"><a href="${r.linkedin_url}" target="_blank" style="color:#93C5FD;text-decoration:none">Ver perfil</a></div></div>`:''}
+        ${r.tempo_experiencia?`<div class="req-item"><div class="req-item-lbl">Experiencia</div><div class="req-item-val">${r.tempo_experiencia}</div></div>`:''}
       </div>
-      ${r.objetivo_principal?`<div style="margin-bottom:8px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Objetivos</div><div style="font-size:11px;color:var(--ts);line-height:1.6">${r.objetivo_principal}</div></div>`:''}
-      ${srvs.length?`<div class="req-servicos"><div class="req-servicos-lbl">Serviços (${srvs.length})</div>${srvs.map(s=>{const cx=SRV_CX[s]||'';const badge=cx?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:1px 6px;border-radius:100px;flex-shrink:0;${cxStyle[cx]||''}">${cx}</span>`:'';return`<div class="srv-item">${badge}<span>${s}</span></div>`}).join('')}</div>`:''}
+      ${srvs.length?`<div class="req-servicos"><div class="req-servicos-lbl">Servicos (${srvs.length})</div>${srvs.map(s=>{const cx=SRV_CX[s]||'';const badge=cx?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:1px 6px;border-radius:100px;flex-shrink:0;${cxStyle[cx]||''}">${cx}</span>`:'';return`<div class="srv-item">${badge}<span>${s}</span></div>`}).join('')}</div>`:''}
       ${r.situacao_atual?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.situacao_atual}"</div>`:''}
     </div>
     <div class="req-card-footer">
       ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
       <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-      <select class="status-sel" onchange="atualizarStatus('career_plan_requests','${r.id}',this.value,this)">
-        <option value="">Mudar status</option>
-        <option value="novo">Novo</option>
-        <option value="contato">Em contato</option>
-        <option value="proposta">Proposta enviada</option>
-        <option value="fechado">Fechado</option>
-        <option value="arquivado">Arquivado</option>
-      </select>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('career',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('career_plan_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
       ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
-      <button class="btn-sm btn-del" onclick="excluir('career_plan_requests','${r.id}','${(r.nome||'').replace(/'/g,'')}',carregarCareer)">Excluir</button>
+      <button class="btn-sm btn-del" onclick="excluir('career_plan_requests','${rid}','${(r.nome||'').replace(/'/g,'')}',carregarCareer)">Excluir</button>
     </div>
   </div>`
 }
 
+// ── VAGA ──────────────────────────────────────────────
+async function carregarVaga(){
+  const cont=document.getElementById('cards-vaga')
+  const {data,error}=await sb.from('job_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-vaga').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>vagaCard(r)).join('')
+}
 function vagaCard(r){
+  const rid=r.id||''
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -288,7 +334,7 @@ function vagaCard(r){
           </div>
           <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_vaga||''}${r.nivel_vaga?' · '+r.nivel_vaga:''}</div>
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
-            ${r.tipo_recrutamento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atração de Talentos'}</span>`:''}
+            ${r.tipo_recrutamento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atracao de Talentos'}</span>`:''}
             ${r.urgencia?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.urgencia}</span>`:''}
           </div>
         </div>
@@ -296,96 +342,523 @@ function vagaCard(r){
       </div>
     </div>
     <div class="req-card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
-        <div class="req-item"><div class="req-item-lbl">Responsável</div><div class="req-item-val">${r.nome_responsavel||'—'}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">Responsavel</div><div class="req-item-val">${r.nome_responsavel||'—'}</div></div>
         <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
-        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
         ${r.senioridade?`<div class="req-item"><div class="req-item-lbl">Senioridade</div><div class="req-item-val">${r.senioridade}</div></div>`:''}
+        ${r.salario?`<div class="req-item"><div class="req-item-lbl">Salario</div><div class="req-item-val">R$ ${r.salario}</div></div>`:''}
+        ${r.num_vagas?`<div class="req-item"><div class="req-item-lbl">Qtd vagas</div><div class="req-item-val">${r.num_vagas}</div></div>`:''}
         ${r.contrato?`<div class="req-item"><div class="req-item-lbl">Contrato</div><div class="req-item-val">${r.contrato}</div></div>`:''}
-        ${r.jornada?`<div class="req-item"><div class="req-item-lbl">Jornada</div><div class="req-item-val">${r.jornada}</div></div>`:''}
-        ${r.salario?`<div class="req-item"><div class="req-item-lbl">Salário</div><div class="req-item-val">R$ ${r.salario}</div></div>`:''}
-        ${r.local?`<div class="req-item"><div class="req-item-lbl">Local</div><div class="req-item-val">${r.local}</div></div>`:''}
-        ${r.num_vagas?`<div class="req-item"><div class="req-item-lbl">Nº vagas</div><div class="req-item-val">${r.num_vagas}</div></div>`:''}
       </div>
-      ${r.requisitos?`<div style="margin-top:6px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6">${r.requisitos}</div>`:''}
     </div>
     <div class="req-card-footer">
       ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
       <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-      <select class="status-sel" onchange="atualizarStatus('job_requests','${r.id}',this.value,this)">
-        <option value="">Mudar status</option>
-        <option value="novo">Novo</option>
-        <option value="contato">Em contato</option>
-        <option value="proposta">Proposta enviada</option>
-        <option value="fechado">Fechado</option>
-        <option value="arquivado">Arquivado</option>
-      </select>
-      <button class="btn-sm btn-del" onclick="excluir('job_requests','${r.id}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarVaga)">Excluir</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('vaga',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('job_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      <button class="btn-sm btn-del" onclick="excluir('job_requests','${rid}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarVaga)">Excluir</button>
     </div>
   </div>`
 }
 
+// ── NR-1 ──────────────────────────────────────────────
+async function carregarNr1(){
+  const cont=document.getElementById('cards-nr1')
+  const {data,error}=await sb.from('nr1_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-nr1').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>nr1Card(r)).join('')
+}
 function nr1Card(r){
+  const rid=r.id||''
+  const empresa=r.nome_empresa||r.empresa_nome||'—'
+  const resp=r.nome_responsavel||r.decisor_nome||'—'
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
         <div>
           <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
-            <div class="req-nome">${r.empresa_nome||'—'}</div>
+            <div class="req-nome">${empresa}</div>
             <div class="req-meta">${r.protocolo||''}</div>
             <div class="req-meta">${dt(r.created_at)}</div>
           </div>
-          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.decisor_nome||''} · ${r.cidade||''}${r.estado?' / '+r.estado:''}</div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${resp}${r.segmento?' · '+r.segmento:''}</div>
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
-            ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colaboradores</span>`:''}
-            ${r.segmento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.segmento}</span>`:''}
-            ${r.inicio?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.inicio}</span>`:''}
+            ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colab</span>`:''}
+            ${r.urgencia_implementacao?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.urgencia_implementacao.split(' — ')[0]||r.urgencia_implementacao}</span>`:''}
           </div>
         </div>
         <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
       </div>
     </div>
     <div class="req-card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
         <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
         ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
-        ${r.pgr_situacao?`<div class="req-item"><div class="req-item-lbl">PGR atual</div><div class="req-item-val">${r.pgr_situacao}</div></div>`:''}
-        ${r.motivacao?`<div class="req-item"><div class="req-item-lbl">Motivação</div><div class="req-item-val">${r.motivacao}</div></div>`:''}
-        ${r.clima?`<div class="req-item"><div class="req-item-lbl">Clima</div><div class="req-item-val">${r.clima}/10</div></div>`:''}
+        ${r.tem_programa?`<div class="req-item"><div class="req-item-lbl">Programa atual</div><div class="req-item-val">${r.tem_programa}</div></div>`:''}
+        ${r.frentes_prioritarias?`<div class="req-item"><div class="req-item-lbl">Prioridades</div><div class="req-item-val">${r.frentes_prioritarias}</div></div>`:''}
       </div>
-      ${r.observacoes?`<div style="margin-top:6px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.observacoes}"</div>`:''}
     </div>
     <div class="req-card-footer">
       ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
       <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-      <select class="status-sel" onchange="atualizarStatus('nr1_requests','${r.id}',this.value,this)">
-        <option value="">Mudar status</option>
-        <option value="novo">Novo</option>
-        <option value="contato">Em contato</option>
-        <option value="proposta">Proposta enviada</option>
-        <option value="fechado">Fechado</option>
-        <option value="arquivado">Arquivado</option>
-      </select>
-      <button class="btn-sm btn-del" onclick="excluir('nr1_requests','${r.id}','${(r.empresa_nome||'').replace(/'/g,'')}',carregarNr1)">Excluir</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('nr1',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('nr1_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      <button class="btn-sm btn-del" onclick="excluir('nr1_requests','${rid}','${empresa.replace(/'/g,'')}',carregarNr1)">Excluir</button>
     </div>
   </div>`
 }
 
-async function atualizarStatus(tabela,id,status,sel){
-  if(!status)return
-  sel.value=''
-  await sb.from(tabela).update({status}).eq('id',id)
-  toast('Status atualizado')
-  if(tabela==='career_plan_requests')carregarCareer()
-  else if(tabela==='job_requests')carregarVaga()
-  else carregarNr1()
+// ── TREINAMENTO ──────────────────────────────────────────────
+async function carregarTreinamento(){
+  const cont=document.getElementById('cards-treinamento')
+  const {data,error}=await sb.from('training_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-treinamento').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>treinamentoCard(r)).join('')
+}
+function treinamentoCard(r){
+  const rid=r.id||''
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome_empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.tema_principal||''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.pacote?`<span style="font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 9px">${r.pacote}</span>`:''}
+            ${r.formato?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.formato}</span>`:''}
+            ${r.num_participantes?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_participantes} participantes</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">Responsavel</div><div class="req-item-val">${r.nome_responsavel||'—'}</div></div>
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.publico_alvo?`<div class="req-item"><div class="req-item-lbl">Publico</div><div class="req-item-val">${r.publico_alvo}</div></div>`:''}
+        ${r.num_turmas?`<div class="req-item"><div class="req-item-lbl">Turmas</div><div class="req-item-val">${r.num_turmas}</div></div>`:''}
+        ${r.budget?`<div class="req-item"><div class="req-item-lbl">Budget</div><div class="req-item-val">${r.budget}</div></div>`:''}
+      </div>
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('treinamento',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('training_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      <button class="btn-sm btn-del" onclick="excluir('training_requests','${rid}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarTreinamento)">Excluir</button>
+    </div>
+  </div>`
 }
 
+// ── DIAGNOSTICO ──────────────────────────────────────────────
+async function carregarDiagnostico(){
+  const cont=document.getElementById('cards-diagnostico')
+  const {data,error}=await sb.from('diagnostico_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-diagnostico').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>diagnosticoCard(r)).join('')
+}
+function diagnosticoCard(r){
+  const rid=r.id||''
+  const colab=r.num_colaboradores
+  const pkg=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome_empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_decisor||'—'}${r.segmento?' · '+r.segmento:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            <span style="font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 9px">${pkg}</span>
+            ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colab</span>`:''}
+            ${r.regiao?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.regiao}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.maturidade_lideranca?`<div class="req-item"><div class="req-item-lbl">Maturidade lideranca</div><div class="req-item-val">${r.maturidade_lideranca}/5</div></div>`:''}
+        ${r.clima_score?`<div class="req-item"><div class="req-item-lbl">Clima</div><div class="req-item-val">${r.clima_score}/5</div></div>`:''}
+      </div>
+      ${r.frentes?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6">${r.frentes}</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('diagnostico',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('diagnostico_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      <button class="btn-sm btn-del" onclick="excluir('diagnostico_requests','${rid}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarDiagnostico)">Excluir</button>
+    </div>
+  </div>`
+}
+
+// ── STATUS / DELETE ──────────────────────────────────────────────
+async function atualizarStatus(tabela,id,status,sel){
+  if(!status)return;sel.value=''
+  await sb.from(tabela).update({status}).eq('id',id);toast('Status atualizado')
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico}
+  if(m[tabela])m[tabela]()
+}
 async function excluir(tabela,id,nome,reload){
   if(!confirm('Excluir "'+nome+'"?'))return
-  await sb.from(tabela).delete().eq('id',id)
-  toast('Excluído')
-  reload()
+  await sb.from(tabela).delete().eq('id',id);toast('Excluido');reload()
+}
+
+// ── DRAWER ──────────────────────────────────────────────
+function abrirProposta(tipo, dados){
+  proposalCtx={tipo, dados: typeof dados==='string'?JSON.parse(dados.replace(/&quot;/g,'"')):dados}
+  const empresa=dados.nome_empresa||dados.nome||'—'
+  document.getElementById('drawer-title').textContent=tipo.charAt(0).toUpperCase()+tipo.slice(1)+' — Proposta'
+  document.getElementById('drawer-subtitle').textContent=empresa+' · '+(dados.protocolo||'')
+  renderDrawer(tipo,proposalCtx.dados)
+  document.getElementById('drawer').classList.add('open')
+  document.getElementById('overlay').classList.add('open')
+}
+function fecharDrawer(){
+  document.getElementById('drawer').classList.remove('open')
+  document.getElementById('overlay').classList.remove('open')
+}
+
+function renderDrawer(tipo,r){
+  const b=document.getElementById('drawer-body')
+  if(tipo==='vaga')b.innerHTML=drawerVaga(r)
+  else if(tipo==='nr1')b.innerHTML=drawerNr1(r)
+  else if(tipo==='treinamento')b.innerHTML=drawerTreinamento(r)
+  else if(tipo==='diagnostico')b.innerHTML=drawerDiagnostico(r)
+  else b.innerHTML=drawerCareer(r)
+}
+
+function infoBlock(r,campos){
+  const rows=campos.filter(([k])=>r[k]).map(([k,lbl])=>`<div class="req-info-row"><div class="req-info-lbl">${lbl}</div><div class="req-info-val">${r[k]}</div></div>`).join('')
+  return `<div class="req-info-block"><div class="req-info-title">Dados da solicitacao</div>${rows}</div>`
+}
+function calcField(id,label,val='',type='number',step='1'){
+  return `<div class="calc-field"><label>${label}</label><input type="${type}" id="${id}" value="${val}" step="${step}"></div>`
+}
+function calcSelect(id,label,opts,val=''){
+  return `<div class="calc-field"><label>${label}</label><select id="${id}">${opts.map(([v,l])=>`<option value="${v}"${v==val?' selected':''}>${l}</option>`).join('')}</select></div>`
+}
+function resultBox(id){return`<div class="result-box" id="${id}" style="display:none"></div>`}
+
+function drawerVaga(r){
+  const salStr=(r.salario||'').replace(/[^\d]/g,'')
+  const sal=parseInt(salStr)||5000
+  const senMap={'Junior':10,'Pleno':12,'Senior':15,'Especialista':15,'Coordenador':18,'Gerente':18,'Diretor':20,'C-Level':20}
+  const pct=senMap[r.senioridade]||12
+  return infoBlock(r,[['nome_empresa','Empresa'],['nome_vaga','Vaga'],['senioridade','Senioridade'],['tipo_recrutamento','Tipo'],['urgencia','Urgencia']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Calculadora de Honorarios</div>
+    <div class="calc-row">
+      ${calcField('v-sal','Salario mensal (R$)',sal)}
+      ${calcField('v-pct','Comissao (%)',pct)}
+    </div>
+    <div class="calc-row">
+      ${calcField('v-cand','Candidatos apresentados',3)}
+      ${calcField('v-cand-valor','Valor por candidato (R$)',110)}
+    </div>
+    <div class="calc-section-title" style="margin-top:16px">Adicionais</div>
+    <div class="adicionais-list">
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="450"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Urgencia (priorizacao imediata)</div><div class="adicional-val">+ R$ 450</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="800"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Upgrade para Head Hunting</div><div class="adicional-val">+ R$ 800</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="250"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Background check e referencias</div><div class="adicional-val">+ R$ 250</div></div>
+    </div>
+    <div class="calc-row" style="margin-top:12px">
+      ${calcField('v-desc','Desconto (%)',0)}
+      ${calcField('v-entrada','Entrada (%)',50)}
+    </div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="v-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-vaga')}`
+}
+
+function drawerNr1(r){
+  const colab=r.num_colaboradores||30
+  const base=colab<=30?900:colab<=80?1400:2200
+  return infoBlock(r,[['nome_empresa','Empresa'],['nome_responsavel','Responsavel'],['num_colaboradores','Colaboradores'],['segmento','Segmento'],['urgencia_implementacao','Urgencia']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Calculadora NR-1</div>
+    <div class="calc-row">
+      ${calcField('n-mensal','Mensalidade (R$)',base)}
+      ${calcField('n-impl','Implantacao (R$)',base)}
+    </div>
+    <div class="calc-row">
+      ${calcField('n-prazo','Prazo contrato (meses)',12)}
+      ${calcField('n-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-field"><label>Escopo incluido</label><textarea id="n-escopo" placeholder="O que esta incluido no programa..."></textarea></div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="n-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-nr1')}`
+}
+
+function drawerTreinamento(r){
+  const basePkg={SPARK:1800,TRAIL:3200,SHIFT:5500}
+  const base=basePkg[r.pacote]||2000
+  return infoBlock(r,[['nome_empresa','Empresa'],['tema_principal','Tema'],['pacote','Pacote'],['num_participantes','Participantes'],['formato','Formato'],['num_turmas','Turmas']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Calculadora de Treinamento</div>
+    <div class="calc-row">
+      ${calcSelect('t-pkg','Pacote',[['SPARK','SPARK — Workshop (R$1.800)'],['TRAIL','TRAIL — Jornada (R$3.200)'],['SHIFT','SHIFT — Transformacao (R$5.500)']],r.pacote||'TRAIL')}
+      ${calcField('t-turmas','Numero de turmas',r.num_turmas||1)}
+    </div>
+    <div class="calc-row">
+      ${calcSelect('t-pub','Publico',[['1','Operacional (x1.0)'],['1.15','Supervisores/Coord (x1.15)'],['1.3','Gerentes (x1.3)'],['1.5','Diretores+ (x1.5)']],1)}
+      ${calcSelect('t-fmt','Formato',[['1','Online (x1.0)'],['1.1','Hibrido (x1.1)'],['1.2','Presencial (x1.2)']],1)}
+    </div>
+    ${calcSelect('t-part','Participantes por turma',[['1','Ate 20 (x1.0)'],['1.15','21 a 40 (x1.15)'],['1.3','41+ (x1.3)']],1)}
+    <div class="calc-section-title" style="margin-top:14px">Adicionais</div>
+    <div class="adicionais-list">
+      <div class="adicional-item" id="adic-material" onclick="this.classList.toggle('on');calcular()" data-val-per-p="150"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Material didatico</div><div class="adicional-val">R$ 150/p</div></div>
+      <div class="adicional-item" id="adic-coffee" onclick="this.classList.toggle('on');calcular()" data-val-per-p="50"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Coffee break (presencial)</div><div class="adicional-val">R$ 50/p</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="500"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Relatorio pos-treinamento</div><div class="adicional-val">+ R$ 500</div></div>
+    </div>
+    <div class="calc-row" style="margin-top:12px">
+      ${calcField('t-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="t-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-treinamento')}`
+}
+
+function drawerDiagnostico(r){
+  const colab=r.num_colaboradores||30
+  const pkg=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
+  const baseMap={START:1800,ONGOING:2800,GROWTH:4200}
+  const base=baseMap[pkg]
+  const regiaoMap={'Grande Sao Paulo':0,'Interior SP':-0.05,'Rio de Janeiro':0.05,'Atuacao nacional':0.15}
+  const regiaoAdj=regiaoMap[r.regiao]||0
+  return infoBlock(r,[['nome_empresa','Empresa'],['nome_decisor','Decisor'],['num_colaboradores','Colaboradores'],['segmento','Segmento'],['regiao','Regiao']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Calculadora HRaaS</div>
+    ${calcSelect('d-pkg','Pacote sugerido',[['START','START — ate 30 colab (R$1.800/mes)'],['ONGOING','ONGOING — 31-80 colab (R$2.800/mes)'],['GROWTH','GROWTH — 81+ colab (R$4.200/mes)']],pkg)}
+    <div class="calc-row">
+      ${calcField('d-colab','Nº colaboradores',colab)}
+      ${calcSelect('d-regiao','Regiao',[['0','Grande SP (base)'],['0.05','Rio de Janeiro (+5%)'],['0.15','Nacional (+15%)'],['0.1','MG / Sul (+10%)'],['0','-5%: Interior'],['0.1','Nordeste / Norte']],regiaoAdj)}
+    </div>
+    <div class="calc-row">
+      ${calcField('d-frentes','Frentes adicionais (alem de 3)',0)}
+      ${calcField('d-prazo','Prazo contrato (meses)',12)}
+    </div>
+    <div class="calc-row">
+      ${calcField('d-impl-pct','Implantacao (% da mensalidade)',100)}
+      ${calcField('d-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-section-title" style="margin-top:14px">Adicionais mensais</div>
+    <div class="adicionais-list">
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="400"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Azumi Connect (app bem-estar)</div><div class="adicional-val">+ R$ 400/mes</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="300"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Recrutamento express (ate 2 vagas)</div><div class="adicional-val">+ R$ 300/mes</div></div>
+    </div>
+    <div class="calc-field" style="margin-top:12px"><label>Observacoes</label><textarea id="d-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-diagnostico')}`
+}
+
+function drawerCareer(r){
+  return infoBlock(r,[['nome','Nome'],['email','E-mail'],['cargo_atual','Cargo atual'],['senioridade','Senioridade'],['servicos_interesse','Servicos']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta Career Plan</div>
+    <div class="calc-row">
+      ${calcField('c-valor','Valor total (R$)',0)}
+      ${calcField('c-parcelas','Parcelas',1)}
+    </div>
+    ${calcField('c-inc','O que esta incluido','')}
+    <div class="calc-row">
+      ${calcField('c-prazo','Prazo de entrega (dias)',30)}
+      ${calcField('c-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="c-obs" placeholder="Detalhes da proposta, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-career')}`
+}
+
+// ── CALCULAR ──────────────────────────────────────────────
+function v(id){const el=document.getElementById(id);return el?parseFloat(el.value)||0:0}
+function vstr(id){const el=document.getElementById(id);return el?el.value:'' }
+function adicionaisTotal(){return Array.from(document.querySelectorAll('.adicional-item.on')).reduce((s,el)=>s+(parseFloat(el.dataset.val)||0),0)}
+function fmt(n){return'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function round50(n){return Math.ceil(n/50)*50}
+
+function calcular(){
+  const tipo=proposalCtx.tipo
+  if(tipo==='vaga')calcVaga()
+  else if(tipo==='nr1')calcNr1()
+  else if(tipo==='treinamento')calcTreinamento()
+  else if(tipo==='diagnostico')calcDiagnostico()
+  else calcCareer()
+}
+
+function calcVaga(){
+  const sal=v('v-sal'),pct=v('v-pct'),cand=v('v-cand'),cvl=v('v-cand-valor'),desc=v('v-desc'),ent=v('v-entrada')
+  const honor=sal*12*(pct/100)
+  const candVal=cand*cvl
+  const adics=adicionaisTotal()
+  const subtotal=honor+candVal+adics
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  const entrada=total*(ent/100)
+  const sucesso=total-entrada
+  proposalCtx.resultado={honor,candVal,adics,subtotal,descVal,total,entrada,sucesso,desc,ent}
+  const box=document.getElementById('result-vaga')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Honorarios (salario anual x ${pct}%)</div><div class="result-val">${fmt(honor)}</div></div>
+    <div class="result-row"><div class="result-lbl">Candidatos (${cand} x ${fmt(cvl)})</div><div class="result-val">${fmt(candVal)}</div></div>
+    ${adics?`<div class="result-row"><div class="result-lbl">Adicionais</div><div class="result-val">${fmt(adics)}</div></div>`:''}
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmt(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmt(total)}</div></div>
+    <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Entrada (${ent}%)</div><div class="result-val">${fmt(entrada)}</div></div>
+      <div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Sucesso (${100-ent}%)</div><div class="result-val">${fmt(sucesso)}</div></div>
+    </div>`
+}
+
+function calcNr1(){
+  const mensal=v('n-mensal'),impl=v('n-impl'),prazo=v('n-prazo'),desc=v('n-desc')
+  const totalBruto=mensal*prazo+impl
+  const descVal=totalBruto*(desc/100)
+  const total=totalBruto-descVal
+  proposalCtx.resultado={mensal,impl,prazo,descVal,total}
+  const box=document.getElementById('result-nr1')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Mensalidade</div><div class="result-val">${fmt(mensal)}</div></div>
+    <div class="result-row"><div class="result-lbl">Implantacao</div><div class="result-val">${fmt(impl)}</div></div>
+    <div class="result-row"><div class="result-lbl">Prazo</div><div class="result-val">${prazo} meses</div></div>
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmt(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total contrato</div><div class="result-total-val">${fmt(total)}</div></div>`
+}
+
+function calcTreinamento(){
+  const pkgBase={SPARK:1800,TRAIL:3200,SHIFT:5500}
+  const pkg=vstr('t-pkg'),turmas=v('t-turmas')||1,pub=v('t-pub')||1,fmt_=v('t-fmt')||1,part=v('t-part')||1,desc=v('t-desc')
+  const base=pkgBase[pkg]||2000
+  const porTurma=base*pub*fmt_*part
+  const subTurmas=porTurma*turmas
+  const p=proposalCtx.dados.num_participantes||20
+  const adicMaterial=document.getElementById('adic-material')?.classList.contains('on')?150*p:0
+  const adicCoffee=document.getElementById('adic-coffee')?.classList.contains('on')?50*p:0
+  const outrasAdics=Array.from(document.querySelectorAll('.adicional-item.on')).filter(el=>!el.id).reduce((s,el)=>s+(parseFloat(el.dataset.val)||0),0)
+  const adics=adicMaterial+adicCoffee+outrasAdics
+  const subtotal=subTurmas+adics
+  const descVal=subtotal*(desc/100)
+  const total=round50(subtotal-descVal)
+  proposalCtx.resultado={pkg,porTurma,turmas,adics,subtotal,descVal,total}
+  const box=document.getElementById('result-treinamento')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Pacote ${pkg} por turma (calculado)</div><div class="result-val">${fmtNum(porTurma)}</div></div>
+    <div class="result-row"><div class="result-lbl">Total ${turmas} turma(s)</div><div class="result-val">${fmtNum(subTurmas)}</div></div>
+    ${adics?`<div class="result-row"><div class="result-lbl">Adicionais</div><div class="result-val">${fmtNum(adics)}</div></div>`:''}
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>`
+}
+function fmtNum(n){return'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+function calcDiagnostico(){
+  const pkgBase={START:1800,ONGOING:2800,GROWTH:4200}
+  const pkg=vstr('d-pkg'),regiao=v('d-regiao'),frentes=v('d-frentes'),prazo=v('d-prazo')||12,implPct=v('d-impl-pct'),desc=v('d-desc')
+  const base=pkgBase[pkg]||1800
+  const frAjuste=frentes>0?frentes*200:0
+  const adicsRecorr=adicionaisTotal()
+  const mensal=(base*(1+regiao)+frAjuste+adicsRecorr)
+  const implVal=mensal*(implPct/100)
+  const totalContratoBruto=mensal*prazo+implVal
+  const descVal=totalContratoBruto*(desc/100)
+  const totalFinal=totalContratoBruto-descVal
+  proposalCtx.resultado={pkg,mensal,implVal,prazo,descVal,totalFinal}
+  const box=document.getElementById('result-diagnostico')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Mensalidade (${pkg})</div><div class="result-val">${fmtNum(mensal)}</div></div>
+    <div class="result-row"><div class="result-lbl">Implantacao (${implPct}%)</div><div class="result-val">${fmtNum(implVal)}</div></div>
+    <div class="result-row"><div class="result-lbl">Prazo</div><div class="result-val">${prazo} meses</div></div>
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total contrato</div><div class="result-total-val">${fmtNum(totalFinal)}</div></div>`
+}
+
+function calcCareer(){
+  const val=v('c-valor'),parc=v('c-parcelas')||1,desc=v('c-desc')
+  const descVal=val*(desc/100),total=val-descVal,pv=total/parc
+  proposalCtx.resultado={total,parc,pv}
+  const box=document.getElementById('result-career')
+  box.style.display='block'
+  box.innerHTML=`<div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>
+    ${parc>1?`<div class="result-row" style="margin-top:8px"><div class="result-lbl">${parc}x de</div><div class="result-val">${fmtNum(pv)}</div></div>`:''}`
+}
+
+// ── PDF ──────────────────────────────────────────────
+function gerarPDF(){
+  calcular()
+  const tipo=proposalCtx.tipo,r=proposalCtx.dados,res=proposalCtx.resultado||{}
+  const empresa=r.nome_empresa||r.nome||'—'
+  const data=new Date().toLocaleDateString('pt-BR')
+  const prot=r.protocolo||''
+  let conteudo=''
+  if(tipo==='vaga'){
+    conteudo=`<h3>Vaga: ${r.nome_vaga||'—'}</h3><p><b>Tipo:</b> ${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atracao de Talentos'}</p><p><b>Senioridade:</b> ${r.senioridade||'—'}</p><hr><h3>Honorarios</h3><p>Salario anual x ${v('v-pct')}%: ${fmtNum(res.honor||0)}</p><p>Candidatos: ${fmtNum(res.candVal||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p>Entrada: ${fmtNum(res.entrada||0)} | Sucesso: ${fmtNum(res.sucesso||0)}</p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('v-obs')}</p>`
+  } else if(tipo==='nr1'){
+    conteudo=`<h3>Colaboradores: ${r.num_colaboradores||'—'} | Segmento: ${r.segmento||'—'}</h3><hr><h3>Proposta NR-1</h3><p>Mensalidade: ${fmtNum(v('n-mensal'))}</p><p>Implantacao: ${fmtNum(v('n-impl'))}</p><p>Prazo: ${v('n-prazo')} meses</p><p><b>Total contrato: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('n-escopo')}<br>${vstr('n-obs')}</p>`
+  } else if(tipo==='treinamento'){
+    conteudo=`<h3>Tema: ${r.tema_principal||'—'} | Pacote: ${vstr('t-pkg')}</h3><p><b>Participantes:</b> ${r.num_participantes||'—'} | <b>Turmas:</b> ${v('t-turmas')}</p><hr><p>Valor por turma: ${fmtNum(res.porTurma||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('t-obs')}</p>`
+  } else if(tipo==='diagnostico'){
+    conteudo=`<h3>Pacote: ${res.pkg||'—'} | Colaboradores: ${r.num_colaboradores||'—'}</h3><hr><p>Mensalidade: ${fmtNum(res.mensal||0)}</p><p>Implantacao: ${fmtNum(res.implVal||0)}</p><p>Prazo: ${v('d-prazo')} meses</p><p><b>Total contrato: ${fmtNum(res.totalFinal||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('d-obs')}</p>`
+  } else {
+    conteudo=`<h3>Servicos: ${r.servicos_interesse||'—'}</h3><hr><p>Valor: ${fmtNum(v('c-valor'))}</p><p>${vstr('c-obs')}</p>`
+  }
+  const win=window.open('','_blank')
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Proposta ${prot}</title><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;color:#111;font-size:13px}h1{font-size:22px;margin-bottom:4px}h2{font-size:15px;color:#034C8B;margin:20px 0 8px}h3{font-size:13px;margin:12px 0 6px}p{margin:4px 0;line-height:1.6}hr{border:none;border-top:1px solid #ddd;margin:16px 0}.header{border-bottom:2px solid #034C8B;padding-bottom:16px;margin-bottom:24px}.footer{margin-top:40px;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:12px}@media print{body{margin:20px}}</style></head><body>
+    <div class="header"><h1>Proposta Comercial</h1><p><b>Empresa:</b> ${empresa} &nbsp;|&nbsp; <b>Data:</b> ${data} &nbsp;|&nbsp; <b>Protocolo:</b> ${prot}</p><p><b>Emitida por:</b> ${sessao?sessao.nome:'Azumi RH'}</p></div>
+    <h2>Azumi RH — ${tipo.charAt(0).toUpperCase()+tipo.slice(1)}</h2>
+    ${conteudo}
+    <div class="footer"><p>Azumi RH · contato@azumirh.com.br · azumirh.com.br · Proposta valida por 15 dias</p></div>
+    <script>window.onload=function(){setTimeout(()=>window.print(),400)}<\/script>
+    </body></html>`)
+  win.document.close()
+}
+
+// ── SALVAR PROPOSTA ──────────────────────────────────────────────
+async function salvarProposta(){
+  calcular()
+  const tipo=proposalCtx.tipo,r=proposalCtx.dados,res=proposalCtx.resultado||{}
+  const emitido=sessao?sessao.nome:'—'
+  const protProp='PROP-'+tipo.toUpperCase()+'-'+Date.now().toString().slice(-6)
+  let tabela='',dados={}
+  if(tipo==='vaga'){
+    tabela='job_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,nome_vaga:r.nome_vaga,salario:v('v-sal'),percentual:v('v-pct'),honorarios_base:res.honor,qtd_candidatos:v('v-cand'),adicionais_valor:res.adics,desconto_pct:v('v-desc'),desconto_valor:res.descVal,total_final:res.total,entrada_pct:v('v-entrada'),entrada_valor:res.entrada,sucesso_pct:100-v('v-entrada'),sucesso_valor:res.sucesso,obs:vstr('v-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='nr1'){
+    tabela='nr1_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa||r.empresa_nome,decisor:r.nome_responsavel||r.decisor_nome,num_colaboradores:r.num_colaboradores,segmento:r.segmento,valor_mensal:v('n-mensal'),implantacao:v('n-impl'),prazo_impl:v('n-prazo'),desconto_pct:v('n-desc'),desconto_valor:res.descVal,valor_final:res.total,escopo:vstr('n-obs'),obs:vstr('n-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='treinamento'){
+    tabela='training_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,responsavel:r.nome_responsavel,tema:r.tema_principal,pacote:vstr('t-pkg'),num_participantes:r.num_participantes,num_turmas:v('t-turmas'),total_final:res.total,desconto_pct:v('t-desc'),obs:vstr('t-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='diagnostico'){
+    tabela='diagnostico_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,decisor:r.nome_decisor,pacote:res.pkg,colab:r.num_colaboradores,valor_mensal:res.mensal,implantacao:res.implVal,meses:v('d-prazo'),desconto_pct:v('d-desc'),desconto_valor:res.descVal,valor_final:res.totalFinal,obs:vstr('d-obs'),status:'enviada',emitido_por:emitido}
+  }
+  if(!tabela){toast('Career Plan: salvar manualmente');return}
+  const {error}=await sb.from(tabela).insert(dados)
+  if(error){console.error(error);toast('Erro ao salvar proposta');return}
+  toast('Proposta salva com sucesso!')
+  fecharDrawer()
 }
 
 window.addEventListener('load',()=>{
@@ -394,7 +867,7 @@ window.addEventListener('load',()=>{
     sessao=JSON.parse(s)
     document.getElementById('login-page').style.display='none'
     document.getElementById('admin-page').style.display='block'
-    document.getElementById('admin-nome-header').textContent='Olá, '+sessao.nome.split(' ')[0]
+    document.getElementById('admin-nome-header').textContent='Ola, '+sessao.nome.split(' ')[0]
     carregarTudo()
   }
 })
