@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa NR-1 · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--tp);text-decoration:none;letter-spacing:-.3px}
+.logo span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+.hero{text-align:center;padding:52px 24px 36px;width:100%;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 70%)}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px;background:linear-gradient(160deg,#fff 55%,rgba(139,92,246,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);max-width:480px;margin:0 auto}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:680px;padding:24px 24px 16px}
+.prog-steps{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);color:var(--ts);transition:all .3s;flex-shrink:0}
+.dot.active{background:linear-gradient(135deg,#3B82F6,#8B5CF6);border-color:transparent;color:#fff}
+.dot.done{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#3B82F6}
+.line{flex:1;height:1px;background:var(--border);transition:background .3s}
+.line.done{background:rgba(59,130,246,.35)}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+
+/* FORM */
+.form-wrap{width:100%;max-width:680px;padding:4px 24px 80px}
+.step{display:none}
+.step.active{display:block;animation:up .35s ease}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.step-sub{font-size:13px;color:var(--ts);margin-bottom:22px}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr}header{padding:0 20px}}
+
+/* ESCALA */
+.scale-row{display:flex;gap:8px;align-items:center}
+.scale-btn{flex:1;padding:10px 6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ts);transition:all .2s}
+.scale-btn:hover{border-color:rgba(59,130,246,.3);color:var(--tp)}
+.scale-btn.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+.scale-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:4px;padding:0 2px}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+
+/* LGPD */
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+
+/* NAV */
+.nav{display:flex;gap:10px;margin-top:28px}
+.btn-back{padding:12px 24px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--ts);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-back:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
+.btn-next,.btn-sub{flex:1;padding:13px;border:none;border-radius:100px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-next:hover,.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.s-icon svg{width:32px;height:32px;stroke:#3B82F6;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">azumi<span>RH</span></a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">Conformidade · NR-1</div>
+    <h1>Programa NR-1</h1>
+    <p>Diagnóstico e implementação do programa de saúde mental e gestão de riscos psicossociais obrigatório pelo MTE.</p>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-steps">
+      <div class="dot active" id="d1">1</div><div class="line" id="l1"></div>
+      <div class="dot" id="d2">2</div><div class="line" id="l2"></div>
+      <div class="dot" id="d3">3</div><div class="line" id="l3"></div>
+      <div class="dot" id="d4">4</div>
+    </div>
+    <div class="prog-label" id="prog-label">Passo 1 de 4 — Identificação</div>
+  </div>
+
+  <div class="form-wrap">
+
+    <!-- STEP 1 — Identificação -->
+    <div class="step active" id="s1">
+      <div class="step-title">Identificação</div>
+      <div class="step-sub">Dados da empresa e do decisor responsável pelo programa.</div>
+
+      <div class="field" id="f-empresa_nome">
+        <label>Nome da empresa<span class="req">*</span></label>
+        <input type="text" id="empresa_nome" placeholder="Razão social ou nome fantasia">
+        <div class="err-msg">Campo obrigatório</div>
+      </div>
+      <div class="field" id="f-decisor_nome">
+        <label>Nome do decisor<span class="req">*</span></label>
+        <input type="text" id="decisor_nome" placeholder="Quem vai conduzir o programa internamente">
+        <div class="err-msg">Campo obrigatório</div>
+      </div>
+      <div class="row2">
+        <div class="field" id="f-email">
+          <label>E-mail<span class="req">*</span></label>
+          <input type="email" id="email" placeholder="contato@empresa.com.br">
+          <div class="err-msg">Informe um e-mail válido</div>
+        </div>
+        <div class="field">
+          <label>WhatsApp<span class="opt">(opcional)</span></label>
+          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999">
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Cidade</label>
+          <input type="text" id="cidade" placeholder="São Paulo">
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <input type="text" id="estado" placeholder="SP">
+        </div>
+        <div class="field">
+          <label>Segmento</label>
+          <input type="text" id="segmento" placeholder="Ex: Indústria, Saúde...">
+        </div>
+      </div>
+      <div class="field">
+        <label>Número de colaboradores</label>
+        <div class="chips" id="chips-colab">
+          <button class="chip" type="button" data-v="Até 20">Até 20</button>
+          <button class="chip" type="button" data-v="21 a 50">21–50</button>
+          <button class="chip" type="button" data-v="51 a 100">51–100</button>
+          <button class="chip" type="button" data-v="101 a 300">101–300</button>
+          <button class="chip" type="button" data-v="301 a 500">301–500</button>
+          <button class="chip" type="button" data-v="Acima de 500">Acima de 500</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-next" onclick="go(2)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — Situação atual -->
+    <div class="step" id="s2">
+      <div class="step-title">Situação atual</div>
+      <div class="step-sub">Como está a empresa em relação à NR-1 e riscos psicossociais hoje.</div>
+
+      <div class="field">
+        <label>Situação do PGR (Programa de Gerenciamento de Riscos)</label>
+        <div class="chips" id="chips-pgr">
+          <button class="chip" type="button" data-v="Não temos PGR">Não temos PGR</button>
+          <button class="chip" type="button" data-v="Em elaboração">Em elaboração</button>
+          <button class="chip" type="button" data-v="PGR desatualizado">PGR desatualizado</button>
+          <button class="chip" type="button" data-v="PGR atualizado mas sem risco psi">Atualizado sem risco psi</button>
+          <button class="chip" type="button" data-v="PGR completo e atualizado">Completo e atualizado</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Risco psicossocial mapeado?</label>
+        <div class="chips" id="chips-risco_psi">
+          <button class="chip" type="button" data-v="Não">Não</button>
+          <button class="chip" type="button" data-v="Parcialmente">Parcialmente</button>
+          <button class="chip" type="button" data-v="Sim, mapeado">Sim, mapeado</button>
+          <button class="chip" type="button" data-v="Sim, mapeado e com plano de ação">Mapeado com plano de ação</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Canal de denúncia / escuta ativa existe?</label>
+        <div class="chips" id="chips-canal_denuncia">
+          <button class="chip" type="button" data-v="Não existe">Não existe</button>
+          <button class="chip" type="button" data-v="Informal (via RH)">Informal (via RH)</button>
+          <button class="chip" type="button" data-v="Existe mas pouco usado">Existe mas pouco usado</button>
+          <button class="chip" type="button" data-v="Sim, ativo e funcional">Sim, ativo e funcional</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Empresa já sofreu autuação ou notificação do MTE?</label>
+        <div class="chips" id="chips-autuacao">
+          <button class="chip" type="button" data-v="Não">Não</button>
+          <button class="chip" type="button" data-v="Notificação informal">Notificação informal</button>
+          <button class="chip" type="button" data-v="Autuação formal">Autuação formal</button>
+          <button class="chip" type="button" data-v="Em processo administrativo">Em processo administrativo</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(1)">Voltar</button>
+        <button class="btn-next" onclick="go(3)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Clima e ocorrências -->
+    <div class="step" id="s3">
+      <div class="step-title">Clima e ocorrências</div>
+      <div class="step-sub">Percepção do ambiente e eventos relacionados à saúde mental.</div>
+
+      <div class="field">
+        <label>Como você avalia o clima organizacional atual?</label>
+        <div class="scale-row" id="chips-clima">
+          <button class="chip" type="button" data-v="1">1</button>
+          <button class="chip" type="button" data-v="2">2</button>
+          <button class="chip" type="button" data-v="3">3</button>
+          <button class="chip" type="button" data-v="4">4</button>
+          <button class="chip" type="button" data-v="5">5</button>
+          <button class="chip" type="button" data-v="6">6</button>
+          <button class="chip" type="button" data-v="7">7</button>
+          <button class="chip" type="button" data-v="8">8</button>
+          <button class="chip" type="button" data-v="9">9</button>
+          <button class="chip" type="button" data-v="10">10</button>
+        </div>
+        <div class="scale-labels"><span>Muito ruim</span><span>Excelente</span></div>
+      </div>
+
+      <div class="field">
+        <label>Ocorrências identificadas nos últimos 12 meses</label>
+        <div class="chips" id="chips-ocorrencias">
+          <button class="chip" type="button" data-v="Afastamentos por saúde mental">Afastamentos por saúde mental</button>
+          <button class="chip" type="button" data-v="Alta rotatividade">Alta rotatividade</button>
+          <button class="chip" type="button" data-v="Burnout relatado">Burnout relatado</button>
+          <button class="chip" type="button" data-v="Conflitos frequentes entre equipes">Conflitos frequentes</button>
+          <button class="chip" type="button" data-v="Absenteísmo elevado">Absenteísmo elevado</button>
+          <button class="chip" type="button" data-v="Assédio relatado">Assédio relatado</button>
+          <button class="chip" type="button" data-v="Queda de produtividade generalizada">Queda de produtividade</button>
+          <button class="chip" type="button" data-v="Nenhuma ocorrência relevante">Nenhuma relevante</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Líderes estão preparados para lidar com saúde mental?</label>
+        <div class="chips" id="chips-lider_preparo">
+          <button class="chip" type="button" data-v="Não, sem capacitação">Não, sem capacitação</button>
+          <button class="chip" type="button" data-v="Parcialmente capacitados">Parcialmente capacitados</button>
+          <button class="chip" type="button" data-v="Sim, maioria capacitada">Sim, maioria capacitada</button>
+          <button class="chip" type="button" data-v="Sim, programa estruturado">Sim, programa estruturado</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Existe canal de comunicação claro sobre saúde mental?</label>
+        <div class="chips" id="chips-canal_claro">
+          <button class="chip" type="button" data-v="Não">Não</button>
+          <button class="chip" type="button" data-v="Parcialmente">Parcialmente</button>
+          <button class="chip" type="button" data-v="Sim">Sim</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>A empresa coleta feedback de bem-estar dos colaboradores?</label>
+        <div class="chips" id="chips-feedback">
+          <button class="chip" type="button" data-v="Nunca">Nunca</button>
+          <button class="chip" type="button" data-v="Esporadicamente">Esporadicamente</button>
+          <button class="chip" type="button" data-v="Anualmente">Anualmente</button>
+          <button class="chip" type="button" data-v="Semestralmente ou mais">Semestralmente ou mais</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>O que mais você conhece sobre a NR-1?</label>
+        <div class="chips" id="chips-conhecimento">
+          <button class="chip" type="button" data-v="Nunca ouvi falar">Nunca ouvi falar</button>
+          <button class="chip" type="button" data-v="Sei que existe, mas não conheço os detalhes">Sei que existe</button>
+          <button class="chip" type="button" data-v="Conheço parcialmente">Conheço parcialmente</button>
+          <button class="chip" type="button" data-v="Conheço bem e sei das obrigações">Conheço bem</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(2)">Voltar</button>
+        <button class="btn-next" onclick="go(4)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Motivação e envio -->
+    <div class="step" id="s4">
+      <div class="step-title">Motivação e envio</div>
+      <div class="step-sub">O que levou a buscar a Azumi e quando quer começar.</div>
+
+      <div class="field">
+        <label>Principal motivação para implementar o programa</label>
+        <div class="chips" id="chips-motivacao">
+          <button class="chip" type="button" data-v="Conformidade legal / evitar multas">Conformidade legal</button>
+          <button class="chip" type="button" data-v="Reduzir afastamentos e absenteísmo">Reduzir afastamentos</button>
+          <button class="chip" type="button" data-v="Melhorar clima e engajamento">Melhorar clima</button>
+          <button class="chip" type="button" data-v="Auditoria / certificação ESG">Auditoria / ESG</button>
+          <button class="chip" type="button" data-v="Recomendação interna ou de consultoria">Recomendação interna</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Principal preocupação com o processo</label>
+        <div class="chips" id="chips-preocupacao">
+          <button class="chip" type="button" data-v="Custo do programa">Custo do programa</button>
+          <button class="chip" type="button" data-v="Tempo de implementação">Tempo de implementação</button>
+          <button class="chip" type="button" data-v="Resistência dos líderes">Resistência dos líderes</button>
+          <button class="chip" type="button" data-v="Engajamento dos colaboradores">Engajamento dos colaboradores</button>
+          <button class="chip" type="button" data-v="Exposição de problemas internos">Exposição de problemas internos</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Prazo para início do programa</label>
+        <div class="chips" id="chips-inicio">
+          <button class="chip" type="button" data-v="Urgente — até 30 dias">Urgente — até 30 dias</button>
+          <button class="chip" type="button" data-v="Curto prazo — até 60 dias">Curto prazo — 60 dias</button>
+          <button class="chip" type="button" data-v="Médio prazo — 3 a 6 meses">Médio prazo — 3–6 meses</button>
+          <button class="chip" type="button" data-v="Em planejamento">Em planejamento</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Observações adicionais<span class="opt">(opcional)</span></label>
+        <textarea id="observacoes" placeholder="Contexto adicional, situações específicas, informações que a Azumi precisa saber..."></textarea>
+      </div>
+
+      <div class="field" id="f-lgpd">
+        <label>Proteção de dados</label>
+        <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
+          <div class="lgpd-box" id="lgpd-box">
+            <svg width="12" height="12" viewBox="0 0 12 12" id="lgpd-tick" style="display:none" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitação para fins de consultoria em saúde mental organizacional, conforme a LGPD — Lei 13.709/2018. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+        </div>
+        <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(3)">Voltar</button>
+        <button class="btn-sub" id="btn-sub" onclick="enviar()">Solicitar diagnóstico</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="success" id="success">
+    <div class="s-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h2>Solicitação enviada!</h2>
+    <p>Recebemos seu diagnóstico NR-1. Nossa equipe especializada em saúde mental organizacional entrará em contato em até 24h.</p>
+    <div class="prot-badge" id="s-prot"></div>
+    <br>
+    <a href="/" class="btn-home">Voltar ao início</a>
+  </div>
+</main>
+
+<script>
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+function gerarProtocolo(){
+  const d=new Date()
+  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
+  return 'AZ-NR1-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+}
+
+let cur=1,lgpd=false
+const LABELS=['','Passo 1 de 4 — Identificação','Passo 2 de 4 — Situação atual','Passo 3 de 4 — Clima e ocorrências','Passo 4 de 4 — Motivação e envio']
+
+function go(n){
+  if(n>cur&&!validar(cur))return
+  document.getElementById('s'+cur).classList.remove('active')
+  cur=n
+  document.getElementById('s'+cur).classList.add('active')
+  atualizarProg()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+function atualizarProg(){
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('d'+i)
+    d.classList.remove('active','done')
+    if(i<cur)d.classList.add('done')
+    else if(i===cur)d.classList.add('active')
+    if(i<4)document.getElementById('l'+i).classList.toggle('done',i<cur)
+  }
+  document.getElementById('prog-label').textContent=LABELS[cur]
+}
+function validar(step){
+  let ok=true
+  if(step===1){ok=req('empresa_nome','f-empresa_nome')&req('decisor_nome','f-decisor_nome')&reqEmail('email','f-email')}
+  return !!ok
+}
+function req(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  const inv=!el.value.trim()
+  field.classList.toggle('err',inv)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return !inv
+}
+function reqEmail(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
+  field.classList.toggle('err',!ok)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return ok
+}
+
+// Single-select chips
+['chips-colab','chips-pgr','chips-risco_psi','chips-canal_denuncia','chips-autuacao',
+ 'chips-clima','chips-lider_preparo','chips-canal_claro','chips-feedback','chips-conhecimento',
+ 'chips-motivacao','chips-preocupacao','chips-inicio'].forEach(id=>{
+  const g=document.getElementById(id)
+  if(!g)return
+  g.querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click',()=>{g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on')})
+  })
+})
+// Multi-select chips
+document.getElementById('chips-ocorrencias').querySelectorAll('.chip').forEach(c=>{
+  c.addEventListener('click',()=>c.classList.toggle('on'))
+})
+
+function toggleLGPD(){
+  lgpd=!lgpd
+  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
+  const box=document.getElementById('lgpd-box')
+  box.style.background=lgpd?'#3B82F6':''
+  box.style.borderColor=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
+  document.getElementById('lgpd-err').style.display='none'
+  document.getElementById('f-lgpd').classList.remove('err')
+}
+
+function chip1(id){const s=document.querySelector('#'+id+' .chip.on');return s?s.dataset.v:''}
+function chipM(id){return Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c=>c.dataset.v)}
+function g(id){return document.getElementById(id)}
+
+function collectData(){
+  return{
+    empresa_nome:g('empresa_nome').value.trim(),
+    decisor_nome:g('decisor_nome').value.trim(),
+    email:g('email').value.trim(),
+    whatsapp:g('whatsapp').value.trim(),
+    cidade:g('cidade').value.trim(),
+    estado:g('estado').value.trim(),
+    segmento:g('segmento').value.trim(),
+    num_colaboradores:chip1('chips-colab'),
+    pgr_situacao:chip1('chips-pgr'),
+    risco_psi:chip1('chips-risco_psi'),
+    canal_denuncia:chip1('chips-canal_denuncia'),
+    autuacao:chip1('chips-autuacao'),
+    clima:chip1('chips-clima'),
+    ocorrencias:chipM('chips-ocorrencias'),
+    lider_preparo:chip1('chips-lider_preparo'),
+    canal_claro:chip1('chips-canal_claro'),
+    feedback:chip1('chips-feedback'),
+    conhecimento:chip1('chips-conhecimento'),
+    motivacao:chip1('chips-motivacao'),
+    preocupacao:chip1('chips-preocupacao'),
+    inicio:chip1('chips-inicio'),
+    observacoes:g('observacoes').value.trim()
+  }
+}
+
+async function enviar(){
+  if(!lgpd){
+    document.getElementById('f-lgpd').classList.add('err')
+    document.getElementById('lgpd-err').style.display='block'
+    return
+  }
+  const btn=g('btn-sub')
+  btn.disabled=true;btn.textContent='Enviando...'
+  const protocolo=gerarProtocolo()
+  const data=collectData()
+
+  const {error}=await sb.from('nr1_requests').insert({
+    protocolo,
+    empresa_nome:data.empresa_nome,
+    decisor_nome:data.decisor_nome,
+    email:data.email,
+    whatsapp:data.whatsapp,
+    cidade:data.cidade,
+    estado:data.estado,
+    num_colaboradores:data.num_colaboradores,
+    segmento:data.segmento,
+    pgr_situacao:data.pgr_situacao,
+    risco_psi:data.risco_psi,
+    canal_denuncia:data.canal_denuncia,
+    autuacao:data.autuacao,
+    clima:data.clima,
+    ocorrencias:(data.ocorrencias||[]).join(', '),
+    conhecimento:data.conhecimento,
+    lider_preparo:data.lider_preparo,
+    canal_claro:data.canal_claro,
+    feedback:data.feedback,
+    motivacao:data.motivacao,
+    preocupacao:data.preocupacao,
+    inicio:data.inicio,
+    observacoes:data.observacoes,
+    status:'novo'
+  })
+
+  if(error){btn.disabled=false;btn.textContent='Solicitar diagnóstico';alert('Erro ao enviar. Tente novamente.');console.error(error);return}
+  document.querySelector('.form-wrap').style.display='none'
+  document.querySelector('.prog-wrap').style.display='none'
+  document.getElementById('success').classList.add('active')
+  document.getElementById('s-prot').textContent=protocolo
+}
+
+g('whatsapp').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').slice(0,11)
+  if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7)
+  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2)
+  this.value=v
+})
+</script>
+</body>
+</html>

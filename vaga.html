@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitação de Vaga · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--tp);text-decoration:none;letter-spacing:-.3px}
+.logo span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+.hero{text-align:center;padding:52px 24px 36px;width:100%;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 70%)}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px;background:linear-gradient(160deg,#fff 55%,rgba(139,92,246,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts)}
+
+/* MODO SELECTOR */
+.modo-wrap{width:100%;max-width:720px;padding:24px 24px 0}
+.modo-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.modo-btns{display:flex;gap:10px}
+.modo-btn{flex:1;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;text-align:center;transition:all .25s;font-family:'Space Grotesk',sans-serif}
+.modo-btn:hover{border-color:rgba(59,130,246,.3)}
+.modo-btn.active{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.08)}
+.modo-btn strong{display:block;font-size:14px;font-weight:700;color:var(--tp);margin-bottom:3px;font-family:'Sora',sans-serif}
+.modo-btn span{font-size:12px;color:var(--ts)}
+@media(max-width:500px){.modo-btns{flex-direction:column}}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:720px;padding:20px 24px 16px}
+.prog-steps{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);color:var(--ts);transition:all .3s;flex-shrink:0}
+.dot.active{background:linear-gradient(135deg,#3B82F6,#8B5CF6);border-color:transparent;color:#fff}
+.dot.done{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#3B82F6}
+.line{flex:1;height:1px;background:var(--border);transition:background .3s}
+.line.done{background:rgba(59,130,246,.35)}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+
+/* FORM */
+.form-wrap{width:100%;max-width:720px;padding:4px 24px 80px}
+.step{display:none}
+.step.active{display:block;animation:up .35s ease}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.step-sub{font-size:13px;color:var(--ts);margin-bottom:22px}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr}header{padding:0 20px}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+.chip.multi-on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+
+/* CONDITIONAL SECTION */
+.cond-section{display:none;padding:16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.15);border-radius:12px;margin-top:6px}
+.cond-section.visible{display:block;animation:up .25s ease}
+.cond-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+
+/* LGPD */
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+
+/* NAV */
+.nav{display:flex;gap:10px;margin-top:28px}
+.btn-back{padding:12px 24px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--ts);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-back:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
+.btn-next,.btn-sub{flex:1;padding:13px;border:none;border-radius:100px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-next:hover,.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.s-icon svg{width:32px;height:32px;stroke:#3B82F6;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">azumi<span>RH</span></a>
+  <a href="/" class="back">Voltar</a>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">Recrutamento &amp; Seleção</div>
+    <h1>Solicitação de Vaga</h1>
+    <p>Preencha o formulário e a Azumi cuida de todo o processo seletivo para você.</p>
+  </div>
+
+  <!-- MODO -->
+  <div class="modo-wrap">
+    <div class="modo-label">Tipo de recrutamento</div>
+    <div class="modo-btns">
+      <div class="modo-btn active" id="modo-atracão" onclick="setModo('atracao')">
+        <strong>Atração de Talentos</strong>
+        <span>Divulgação e triagem de candidatos</span>
+      </div>
+      <div class="modo-btn" id="modo-hunting" onclick="setModo('hunting')">
+        <strong>Head Hunting</strong>
+        <span>Busca ativa e abordagem de profissionais</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-steps">
+      <div class="dot active" id="d1">1</div><div class="line" id="l1"></div>
+      <div class="dot" id="d2">2</div><div class="line" id="l2"></div>
+      <div class="dot" id="d3">3</div><div class="line" id="l3"></div>
+      <div class="dot" id="d4">4</div>
+    </div>
+    <div class="prog-label" id="prog-label">Passo 1 de 4 — Empresa</div>
+  </div>
+
+  <div class="form-wrap">
+
+    <!-- STEP 1 — Empresa -->
+    <div class="step active" id="s1">
+      <div class="step-title">Dados da empresa</div>
+      <div class="step-sub">Informações sobre a empresa solicitante.</div>
+
+      <div class="row2">
+        <div class="field" id="f-empresa">
+          <label>Nome da empresa<span class="req">*</span></label>
+          <input type="text" id="empresa" placeholder="Razão social ou nome fantasia">
+          <div class="err-msg">Campo obrigatório</div>
+        </div>
+        <div class="field">
+          <label>Filial / unidade<span class="opt">(opcional)</span></label>
+          <input type="text" id="filial" placeholder="Ex: Filial São Paulo">
+        </div>
+      </div>
+      <div class="field" id="f-solicitante">
+        <label>Nome do solicitante<span class="req">*</span></label>
+        <input type="text" id="solicitante" placeholder="Quem está fazendo a solicitação">
+        <div class="err-msg">Campo obrigatório</div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Cargo do solicitante</label>
+          <input type="text" id="cargo_solicitante" placeholder="Ex: Gerente de RH">
+        </div>
+        <div class="field" id="f-email">
+          <label>E-mail<span class="req">*</span></label>
+          <input type="email" id="email" placeholder="contato@empresa.com.br">
+          <div class="err-msg">Informe um e-mail válido</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-next" onclick="go(2)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — A vaga -->
+    <div class="step" id="s2">
+      <div class="step-title">Detalhes da vaga</div>
+      <div class="step-sub">Descreva a posição que precisa ser preenchida.</div>
+
+      <div class="row2">
+        <div class="field" id="f-nome_vaga">
+          <label>Título da vaga<span class="req">*</span></label>
+          <input type="text" id="nome_vaga" placeholder="Ex: Analista de RH Pleno">
+          <div class="err-msg">Campo obrigatório</div>
+        </div>
+        <div class="field" id="f-nivel_vaga">
+          <label>Nível / área<span class="req">*</span></label>
+          <input type="text" id="nivel_vaga" placeholder="Ex: Recursos Humanos / Médio">
+          <div class="err-msg">Campo obrigatório</div>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Senioridade</label>
+          <select id="senioridade">
+            <option value="">Selecionar</option>
+            <option>Júnior</option>
+            <option>Pleno</option>
+            <option>Sênior</option>
+            <option>Especialista</option>
+            <option>Coordenador</option>
+            <option>Gerente</option>
+            <option>Diretor</option>
+            <option>C-Level</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Qtd. de vagas</label>
+          <input type="number" id="num_vagas" value="1" min="1" max="99">
+        </div>
+        <div class="field">
+          <label>Tipo de contrato</label>
+          <select id="contrato">
+            <option value="">Selecionar</option>
+            <option>CLT</option>
+            <option>PJ</option>
+            <option>Temporário</option>
+            <option>Estágio</option>
+            <option>Terceirizado</option>
+          </select>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Jornada</label>
+          <select id="jornada">
+            <option value="">Selecionar</option>
+            <option>Presencial</option>
+            <option>Híbrido</option>
+            <option>Remoto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Salário / faixa</label>
+          <input type="text" id="salario" placeholder="Ex: R$ 5.000 a R$ 7.000">
+        </div>
+        <div class="field">
+          <label>Carga horária</label>
+          <input type="text" id="carga_horaria" placeholder="Ex: 44h semanais">
+        </div>
+      </div>
+      <div class="field">
+        <label>Local de trabalho</label>
+        <input type="text" id="local" placeholder="Ex: São Paulo, SP — Paulista">
+      </div>
+      <div class="field">
+        <label>Benefícios</label>
+        <div class="chips" id="chips-benef">
+          <button class="chip" type="button" data-v="VR">Vale Refeição</button>
+          <button class="chip" type="button" data-v="VA">Vale Alimentação</button>
+          <button class="chip" type="button" data-v="VT">Vale Transporte</button>
+          <button class="chip" type="button" data-v="Plano de saúde">Plano de saúde</button>
+          <button class="chip" type="button" data-v="Plano odontológico">Plano odontológico</button>
+          <button class="chip" type="button" data-v="PLR">PLR</button>
+          <button class="chip" type="button" data-v="Seguro de vida">Seguro de vida</button>
+          <button class="chip" type="button" data-v="Gympass">Gympass</button>
+          <button class="chip" type="button" data-v="Auxílio home office">Auxílio home office</button>
+        </div>
+        <input type="text" id="beneficios_outros" placeholder="Outros benefícios..." style="margin-top:10px">
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(1)">Voltar</button>
+        <button class="btn-next" onclick="go(3)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Perfil e processo -->
+    <div class="step" id="s3">
+      <div class="step-title">Perfil e processo seletivo</div>
+      <div class="step-sub">Requisitos do candidato e etapas do processo.</div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Requisitos obrigatórios</label>
+          <textarea id="requisitos" placeholder="Formação, experiências, habilidades técnicas essenciais..." style="min-height:100px"></textarea>
+        </div>
+        <div class="field">
+          <label>Gênero / diversidade</label>
+          <textarea id="genero" placeholder="Preferências, políticas de diversidade da empresa..." style="min-height:100px"></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Urgência da contratação</label>
+        <div class="chips" id="chips-urgencia">
+          <button class="chip" type="button" data-v="Urgente — até 15 dias">Urgente</button>
+          <button class="chip" type="button" data-v="Curto — até 30 dias">Curto prazo</button>
+          <button class="chip" type="button" data-v="Médio — 60 a 90 dias">Médio prazo</button>
+          <button class="chip" type="button" data-v="Sem pressa">Sem pressa</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Etapas técnicas do processo</label>
+        <div class="chips" id="chips-etapa">
+          <button class="chip" type="button" data-v="Teste técnico">Teste técnico</button>
+          <button class="chip" type="button" data-v="Case/desafio">Case / desafio</button>
+          <button class="chip" type="button" data-v="Teste de perfil">Teste de perfil</button>
+          <button class="chip" type="button" data-v="Teste de idiomas">Teste de idiomas</button>
+          <button class="chip" type="button" data-v="Dinâmica de grupo">Dinâmica de grupo</button>
+          <button class="chip" type="button" data-v="Apresentação">Apresentação</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Entrevistador responsável</label>
+        <div class="row3">
+          <input type="text" id="entrevistador_nome" placeholder="Nome" style="padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none">
+          <input type="email" id="entrevistador_email" placeholder="E-mail" style="padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none">
+          <input type="tel" id="entrevistador_whatsapp" placeholder="WhatsApp" style="padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Disponibilidade de agenda para entrevistas</label>
+        <input type="text" id="agenda" placeholder="Ex: Seg–Sex 9h–18h, evitar às sextas à tarde">
+      </div>
+
+      <div class="field">
+        <label>Etapa adicional ou diferenciada<span class="opt">(opcional)</span></label>
+        <input type="text" id="etapa_adicional" placeholder="Ex: Banca com CEO, visita técnica...">
+      </div>
+
+      <div class="field">
+        <label>Adicionais do processo</label>
+        <div class="chips" id="chips-adicionais">
+          <button class="chip" type="button" data-v="Processo confidencial">Processo confidencial</button>
+          <button class="chip" type="button" data-v="Substituição imediata">Substituição imediata</button>
+          <button class="chip" type="button" data-v="Vaga nova">Vaga nova</button>
+          <button class="chip" type="button" data-v="Reativação de banco">Reativação de banco</button>
+        </div>
+      </div>
+
+      <!-- HUNTING SECTION -->
+      <div class="cond-section" id="hunting-section">
+        <div class="cond-title">Informações de Head Hunting</div>
+        <div class="row2">
+          <div class="field">
+            <label>Segmento alvo</label>
+            <input type="text" id="segmento_hunting" placeholder="Ex: Fintechs, Indústria farmacêutica">
+          </div>
+          <div class="field">
+            <label>Prazo para apresentação</label>
+            <select id="prazo_hunting">
+              <option value="">Selecionar</option>
+              <option>7 dias</option>
+              <option>15 dias</option>
+              <option>30 dias</option>
+              <option>45 dias</option>
+            </select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Empresas de referência</label>
+            <input type="text" id="empresas_referencia" placeholder="Ex: Ambev, Nubank, Magazine Luiza">
+          </div>
+          <div class="field">
+            <label>Remuneração variável</label>
+            <input type="text" id="remuneracao_variavel" placeholder="Ex: Bônus anual 3 salários + stock options">
+          </div>
+        </div>
+        <div class="field">
+          <label>Confidencialidade</label>
+          <div class="chips" id="chips-conf">
+            <button class="chip" type="button" data-v="Não revelar empresa">Não revelar empresa</button>
+            <button class="chip" type="button" data-v="Revelar empresa na entrevista">Revelar na entrevista</button>
+            <button class="chip" type="button" data-v="Processo aberto">Processo aberto</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(2)">Voltar</button>
+        <button class="btn-next" onclick="go(4)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Contexto e envio -->
+    <div class="step" id="s4">
+      <div class="step-title">Contexto e envio</div>
+      <div class="step-sub">Informações finais e aceite dos termos.</div>
+
+      <div class="field">
+        <label>Observações gerais<span class="opt">(opcional)</span></label>
+        <textarea id="observacoes" placeholder="Contexto da vaga, motivo da abertura, perfil cultural esperado, informações que a Azumi precisa saber..."></textarea>
+      </div>
+
+      <div class="field" id="f-lgpd">
+        <label>Proteção de dados</label>
+        <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
+          <div class="lgpd-box" id="lgpd-box">
+            <svg width="12" height="12" viewBox="0 0 12 12" id="lgpd-tick" style="display:none" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitação para fins de recrutamento e seleção, conforme a LGPD — Lei 13.709/2018. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+        </div>
+        <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(3)">Voltar</button>
+        <button class="btn-sub" id="btn-sub" onclick="enviar()">Enviar solicitação</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="success" id="success">
+    <div class="s-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h2>Solicitação enviada!</h2>
+    <p>Recebemos a solicitação de vaga. Nossa equipe entrará em contato em até 24h para alinhar os próximos passos.</p>
+    <div class="prot-badge" id="s-prot"></div>
+    <br>
+    <a href="/" class="btn-home">Voltar ao início</a>
+  </div>
+</main>
+
+<script>
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+function gerarProtocolo(){
+  const d=new Date()
+  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
+  return 'AZ-VAG-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+}
+
+let modoAtual='atracao',cur=1,lgpd=false
+const LABELS=['','Passo 1 de 4 — Empresa','Passo 2 de 4 — A vaga','Passo 3 de 4 — Perfil e processo','Passo 4 de 4 — Contexto e envio']
+
+function setModo(m){
+  modoAtual=m
+  document.getElementById('modo-atracão').classList.toggle('active',m==='atracao')
+  document.getElementById('modo-hunting').classList.toggle('active',m==='hunting')
+  document.getElementById('hunting-section').classList.toggle('visible',m==='hunting')
+}
+
+function go(n){
+  if(n>cur&&!validar(cur))return
+  document.getElementById('s'+cur).classList.remove('active')
+  cur=n
+  document.getElementById('s'+cur).classList.add('active')
+  atualizarProg()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function atualizarProg(){
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('d'+i)
+    d.classList.remove('active','done')
+    if(i<cur)d.classList.add('done')
+    else if(i===cur)d.classList.add('active')
+    if(i<4)document.getElementById('l'+i).classList.toggle('done',i<cur)
+  }
+  document.getElementById('prog-label').textContent=LABELS[cur]
+}
+
+function validar(step){
+  let ok=true
+  if(step===1){ok=req('empresa','f-empresa')&req('solicitante','f-solicitante')&reqEmail('email','f-email')}
+  if(step===2){ok=req('nome_vaga','f-nome_vaga')&req('nivel_vaga','f-nivel_vaga')}
+  return !!ok
+}
+function req(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  const inv=!el.value.trim()
+  field.classList.toggle('err',inv)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return !inv
+}
+function reqEmail(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
+  field.classList.toggle('err',!ok)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return ok
+}
+
+// Multi-select chips
+['chips-benef','chips-etapa','chips-adicionais'].forEach(id=>{
+  document.getElementById(id).querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click',()=>c.classList.toggle('on'))
+  })
+})
+// Single-select chips
+['chips-urgencia','chips-conf'].forEach(id=>{
+  const g=document.getElementById(id)
+  if(!g)return
+  g.querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click',()=>{g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on')})
+  })
+})
+
+function toggleLGPD(){
+  lgpd=!lgpd
+  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
+  const box=document.getElementById('lgpd-box')
+  box.style.background=lgpd?'#3B82F6':''
+  box.style.borderColor=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
+  document.getElementById('lgpd-err').style.display='none'
+  document.getElementById('f-lgpd').classList.remove('err')
+}
+
+function multiChips(id){return Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c=>c.dataset.v)}
+function chip1(id){const s=document.querySelector('#'+id+' .chip.on');return s?s.dataset.v:''}
+function g(id){return document.getElementById(id)}
+
+async function enviar(){
+  if(!lgpd){
+    document.getElementById('f-lgpd').classList.add('err')
+    document.getElementById('lgpd-err').style.display='block'
+    return
+  }
+  const btn=g('btn-sub')
+  btn.disabled=true;btn.textContent='Enviando...'
+  const protocolo=gerarProtocolo()
+
+  const dados={
+    empresa:g('empresa').value.trim(),
+    filial:g('filial').value.trim(),
+    solicitante:g('solicitante').value.trim(),
+    cargo_solicitante:g('cargo_solicitante').value.trim(),
+    email:g('email').value.trim(),
+    tipo_recrutamento:modoAtual==='hunting'?'hunting':'atracao',
+    nome_vaga:g('nome_vaga').value.trim(),
+    nivel_vaga:g('nivel_vaga').value.trim(),
+    num_vagas:g('num_vagas').value,
+    senioridade:g('senioridade').value,
+    contrato:g('contrato').value,
+    jornada:g('jornada').value,
+    salario:g('salario').value.trim(),
+    carga_horaria:g('carga_horaria').value.trim(),
+    local:g('local').value.trim(),
+    requisitos:g('requisitos').value.trim(),
+    genero:g('genero').value.trim(),
+    beneficios:multiChips('chips-benef'),
+    beneficios_outros:g('beneficios_outros').value.trim(),
+    urgencia:chip1('chips-urgencia'),
+    etapa_tecnica:multiChips('chips-etapa'),
+    entrevistador_nome:g('entrevistador_nome').value.trim(),
+    entrevistador_email:g('entrevistador_email').value.trim(),
+    entrevistador_whatsapp:g('entrevistador_whatsapp').value.trim(),
+    agenda:g('agenda').value.trim(),
+    etapa_adicional:g('etapa_adicional').value.trim(),
+    adicionais:multiChips('chips-adicionais'),
+    segmento_hunting:g('segmento_hunting').value.trim(),
+    empresas_referencia:g('empresas_referencia').value.trim(),
+    remuneracao_variavel:g('remuneracao_variavel').value.trim(),
+    confidencialidade:chip1('chips-conf'),
+    prazo_hunting:g('prazo_hunting').value,
+    observacoes:g('observacoes').value.trim()
+  }
+
+  const {error}=await sb.from('job_requests').insert({
+    protocolo,
+    nome_empresa:dados.empresa,
+    filial:dados.filial,
+    nome_responsavel:dados.solicitante,
+    cargo_responsavel:dados.cargo_solicitante,
+    email:dados.email,
+    tipo_solicitacao:modoAtual,
+    tipo_recrutamento:dados.tipo_recrutamento,
+    nome_vaga:dados.nome_vaga,
+    nivel_vaga:dados.nivel_vaga,
+    num_vagas:Number(dados.num_vagas)||1,
+    senioridade:dados.senioridade,
+    contrato:dados.contrato,
+    jornada:dados.jornada,
+    salario:dados.salario,
+    carga_horaria:dados.carga_horaria,
+    local:dados.local,
+    requisitos:dados.requisitos,
+    genero:dados.genero,
+    beneficios:(dados.beneficios||[]).join(', '),
+    beneficios_outros:dados.beneficios_outros,
+    urgencia:dados.urgencia,
+    etapa_tecnica:(dados.etapa_tecnica||[]).join(', '),
+    entrevistador_nome:dados.entrevistador_nome,
+    entrevistador_email:dados.entrevistador_email,
+    entrevistador_whatsapp:dados.entrevistador_whatsapp,
+    agenda:dados.agenda,
+    etapa_adicional:dados.etapa_adicional,
+    adicionais:(dados.adicionais||[]).join(', '),
+    segmento_hunting:dados.segmento_hunting,
+    empresas_referencia:dados.empresas_referencia,
+    remuneracao_variavel:dados.remuneracao_variavel,
+    confidencialidade:dados.confidencialidade,
+    prazo_hunting:dados.prazo_hunting,
+    observacoes:dados.observacoes,
+    status:'novo'
+  })
+
+  if(error){btn.disabled=false;btn.textContent='Enviar solicitação';alert('Erro ao enviar. Tente novamente.');console.error(error);return}
+  document.querySelector('.form-wrap').style.display='none'
+  document.querySelector('.prog-wrap').style.display='none'
+  document.querySelector('.modo-wrap').style.display='none'
+  document.getElementById('success').classList.add('active')
+  document.getElementById('s-prot').textContent=protocolo
+}
+</script>
+</body>
+</html>

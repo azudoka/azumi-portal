@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Azumi RH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#031D38;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--blue:#3B82F6;--purple:#8B5CF6;--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.45);--gm:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(3,76,139,.25) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* LOGIN */
+#login-page{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.login-box{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:400px;backdrop-filter:blur(12px)}
+.login-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:22px;text-align:center;margin-bottom:28px}
+.login-logo span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-field{margin-bottom:16px}
+.login-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.login-field input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--tp);outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--blue)}
+.login-btn{width:100%;padding:13px;background:var(--gm);border:none;border-radius:100px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.login-btn:hover{opacity:.9}
+.login-err{color:#f87171;font-size:12px;margin-top:8px;display:none;text-align:center}
+
+/* ADMIN */
+#admin-page{display:none;position:relative;z-index:1;min-height:100vh}
+.admin-header{padding:14px 28px;background:rgba(3,29,56,.9);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}
+.admin-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:16px}
+.admin-logo span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-user{font-size:12px;color:var(--ts);display:flex;align-items:center;gap:12px}
+.btn-sair{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);background:none;border:1px solid var(--border);border-radius:100px;padding:4px 12px;cursor:pointer;transition:all .2s}
+.btn-sair:hover{color:var(--tp);border-color:rgba(239,68,68,.4)}
+.admin-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);padding:0 28px}
+.nav-tab{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ts);padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.nav-tab.active{color:var(--tp);border-bottom-color:var(--blue)}
+.nav-tab:hover:not(.active){color:var(--tp)}
+.admin-body{padding:24px 28px;max-width:1100px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.tab-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:700}
+.tab-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:3px 10px}
+.loading{color:var(--ts);font-size:13px;padding:40px;text-align:center}
+.empty{color:var(--ts);font-size:13px;padding:40px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:14px}
+
+/* REQ CARD */
+.req-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .2s}
+.req-card:hover{border-color:rgba(59,130,246,.25)}
+.req-card-header{padding:16px 20px 14px;border-bottom:1px solid var(--border)}
+.req-nome{font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
+.req-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)}
+.req-card-body{padding:14px 20px}
+.req-item{display:flex;gap:8px;align-items:baseline;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.req-item:last-child{border-bottom:none}
+.req-item-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;min-width:100px;flex-shrink:0}
+.req-item-val{color:var(--tp);font-weight:500}
+.req-servicos{margin-top:10px}
+.req-servicos-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.srv-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--tp);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.srv-item:last-child{border-bottom:none}
+.req-card-footer{padding:10px 20px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:rgba(0,0,0,.15);border-top:1px solid var(--border)}
+.btn-sm{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;border:none;border-radius:100px;cursor:pointer;transition:opacity .2s}
+.btn-sm:hover{opacity:.85}
+.btn-wa{background:rgba(37,211,102,.15);color:#25d366;border:1px solid rgba(37,211,102,.3)}
+.btn-email{background:rgba(59,130,246,.1);color:#93C5FD;border:1px solid rgba(59,130,246,.2)}
+.btn-prop{background:var(--gm);color:#fff}
+.btn-del{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);margin-left:auto}
+.status-sel{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:5px 12px;color:var(--ts);cursor:pointer;outline:none}
+.chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:2px 8px;border-radius:100px;margin-right:4px}
+.chip-novo{background:rgba(59,130,246,.15);color:#93C5FD;border:1px solid rgba(59,130,246,.25)}
+.chip-contato{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.chip-proposta{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.25)}
+.chip-fechado{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25)}
+.chip-arquivado{background:rgba(255,255,255,.06);color:var(--ts);border:1px solid var(--border)}
+.emitido-por{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.5);margin-left:auto}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#031D38;border:1px solid var(--border);color:var(--tp);padding:11px 20px;border-radius:100px;font-size:12px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-box">
+    <div class="login-logo">azumi<span>RH</span> · Admin</div>
+    <div class="login-field">
+      <label>E-mail</label>
+      <input type="email" id="inp-email" placeholder="voce@azumirh.com.br" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="inp-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-page">
+  <div class="admin-header">
+    <div class="admin-logo">azumi<span>RH</span></div>
+    <div class="admin-user">
+      <span id="admin-nome-header"></span>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </div>
+  <div class="admin-nav">
+    <button class="nav-tab active" onclick="abaAtiva('career',this)">Career Plan</button>
+    <button class="nav-tab" onclick="abaAtiva('vaga',this)">Solicitação de Vaga</button>
+    <button class="nav-tab" onclick="abaAtiva('nr1',this)">NR-1</button>
+  </div>
+  <div class="admin-body">
+    <div id="tab-career" class="tab-content active">
+      <div class="tab-header">
+        <div class="tab-title">Career Plan</div>
+        <div class="tab-count" id="count-career">0</div>
+      </div>
+      <div id="cards-career"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-vaga" class="tab-content">
+      <div class="tab-header">
+        <div class="tab-title">Solicitação de Vaga</div>
+        <div class="tab-count" id="count-vaga">0</div>
+      </div>
+      <div id="cards-vaga"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-nr1" class="tab-content">
+      <div class="tab-header">
+        <div class="tab-title">NR-1</div>
+        <div class="tab-count" id="count-nr1">0</div>
+      </div>
+      <div id="cards-nr1"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+const USERS=[
+  {nome:'Patricia Lima',email:'patricia@azumirh.com.br',senha:'azumi@2026#pati',role:'admin'},
+  {nome:'Consultora Azumi',email:'consultora@azumirh.com.br',senha:'azumi@2026#cons',role:'consultora'}
+]
+
+const STS_LBL={novo:'Novo',contato:'Em contato',proposta:'Proposta enviada',fechado:'Fechado',arquivado:'Arquivado'}
+const STS_CLS={novo:'chip-novo',contato:'chip-contato',proposta:'chip-proposta',fechado:'chip-fechado',arquivado:'chip-arquivado'}
+
+let sessao=null
+
+function doLogin(){
+  const email=document.getElementById('inp-email').value.trim().toLowerCase()
+  const senha=document.getElementById('inp-senha').value
+  const u=USERS.find(u=>u.email===email&&u.senha===senha)
+  if(!u){document.getElementById('login-err').style.display='block';return}
+  sessao=u
+  sessionStorage.setItem('azumi_admin',JSON.stringify({nome:u.nome,email:u.email,role:u.role,loginAt:Date.now()}))
+  document.getElementById('login-page').style.display='none'
+  document.getElementById('admin-page').style.display='block'
+  document.getElementById('admin-nome-header').textContent='Olá, '+u.nome.split(' ')[0]
+  carregarTudo()
+}
+
+function sair(){
+  sessionStorage.removeItem('azumi_admin')
+  location.reload()
+}
+
+function toast(msg){
+  const t=document.getElementById('toast')
+  t.textContent=msg;t.classList.add('show')
+  setTimeout(()=>t.classList.remove('show'),3000)
+}
+
+function abaAtiva(aba,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'))
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
+  document.getElementById('tab-'+aba).classList.add('active')
+  btn.classList.add('active')
+}
+
+async function carregarTudo(){
+  carregarCareer()
+  carregarVaga()
+  carregarNr1()
+}
+
+async function carregarCareer(){
+  const cont=document.getElementById('cards-career')
+  const {data,error}=await sb.from('career_plan_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-career').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
+  cont.innerHTML=data.map(r=>careerCard(r)).join('')
+}
+
+async function carregarVaga(){
+  const cont=document.getElementById('cards-vaga')
+  const {data,error}=await sb.from('job_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-vaga').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
+  cont.innerHTML=data.map(r=>vagaCard(r)).join('')
+}
+
+async function carregarNr1(){
+  const cont=document.getElementById('cards-nr1')
+  const {data,error}=await sb.from('nr1_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-nr1').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitação.</div>';return}
+  cont.innerHTML=data.map(r=>nr1Card(r)).join('')
+}
+
+function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
+
+function careerCard(r){
+  const srvs=r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[]
+  const SRV_CX={'Atualização de currículo':'C1','Currículo do zero':'C1','Currículo internacional':'C1','Otimização do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transição':'C2','Repositório de projetos':'C2','Preparação para entrevista':'C2','Simulação de entrevista':'C2','Entrevista internacional':'C2','Negociação salarial':'C2','Networking e candidatura':'C2','Diagnóstico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
+  const cxStyle={C1:'background:rgba(34,197,94,.12);color:#16a34a;border:1px solid rgba(34,197,94,.25)',C2:'background:rgba(234,179,8,.12);color:#a16207;border:1px solid rgba(234,179,8,.25)',C3:'background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.25)'}
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.cargo_atual||''}${r.area_atuacao?' · '+r.area_atuacao:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.senioridade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.senioridade}</span>`:''}
+            ${r.prazo_desejado?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo_desejado}</span>`:''}
+            ${r.modelo_atendimento?`<span style="font-size:10px;color:rgba(167,139,250,.8);background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:100px;padding:2px 9px">${r.modelo_atendimento}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
+        ${r.email?`<div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email}</div></div>`:''}
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.cidade?`<div class="req-item"><div class="req-item-lbl">Cidade</div><div class="req-item-val">${[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')}</div></div>`:''}
+        ${r.tempo_experiencia?`<div class="req-item"><div class="req-item-lbl">Experiência</div><div class="req-item-val">${r.tempo_experiencia}</div></div>`:''}
+        ${r.escolaridade?`<div class="req-item"><div class="req-item-lbl">Escolaridade</div><div class="req-item-val">${r.escolaridade}</div></div>`:''}
+        ${r.idiomas?`<div class="req-item"><div class="req-item-lbl">Idiomas</div><div class="req-item-val">${r.idiomas}</div></div>`:''}
+        ${r.suporte_desejado?`<div class="req-item"><div class="req-item-lbl">Suporte</div><div class="req-item-val">${r.suporte_desejado}</div></div>`:''}
+        ${r.linkedin_url?`<div class="req-item"><div class="req-item-lbl">LinkedIn</div><div class="req-item-val"><a href="${r.linkedin_url}" target="_blank" style="color:#93C5FD;text-decoration:none">Ver perfil</a></div></div>`:''}
+      </div>
+      ${r.objetivo_principal?`<div style="margin-bottom:8px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Objetivos</div><div style="font-size:11px;color:var(--ts);line-height:1.6">${r.objetivo_principal}</div></div>`:''}
+      ${srvs.length?`<div class="req-servicos"><div class="req-servicos-lbl">Serviços (${srvs.length})</div>${srvs.map(s=>{const cx=SRV_CX[s]||'';const badge=cx?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:1px 6px;border-radius:100px;flex-shrink:0;${cxStyle[cx]||''}">${cx}</span>`:'';return`<div class="srv-item">${badge}<span>${s}</span></div>`}).join('')}</div>`:''}
+      ${r.situacao_atual?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.situacao_atual}"</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <select class="status-sel" onchange="atualizarStatus('career_plan_requests','${r.id}',this.value,this)">
+        <option value="">Mudar status</option>
+        <option value="novo">Novo</option>
+        <option value="contato">Em contato</option>
+        <option value="proposta">Proposta enviada</option>
+        <option value="fechado">Fechado</option>
+        <option value="arquivado">Arquivado</option>
+      </select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('career_plan_requests','${r.id}','${(r.nome||'').replace(/'/g,'')}',carregarCareer)">Excluir</button>
+    </div>
+  </div>`
+}
+
+function vagaCard(r){
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.nome_empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_vaga||''}${r.nivel_vaga?' · '+r.nivel_vaga:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.tipo_recrutamento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atração de Talentos'}</span>`:''}
+            ${r.urgencia?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.urgencia}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
+        <div class="req-item"><div class="req-item-lbl">Responsável</div><div class="req-item-val">${r.nome_responsavel||'—'}</div></div>
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.senioridade?`<div class="req-item"><div class="req-item-lbl">Senioridade</div><div class="req-item-val">${r.senioridade}</div></div>`:''}
+        ${r.contrato?`<div class="req-item"><div class="req-item-lbl">Contrato</div><div class="req-item-val">${r.contrato}</div></div>`:''}
+        ${r.jornada?`<div class="req-item"><div class="req-item-lbl">Jornada</div><div class="req-item-val">${r.jornada}</div></div>`:''}
+        ${r.salario?`<div class="req-item"><div class="req-item-lbl">Salário</div><div class="req-item-val">R$ ${r.salario}</div></div>`:''}
+        ${r.local?`<div class="req-item"><div class="req-item-lbl">Local</div><div class="req-item-val">${r.local}</div></div>`:''}
+        ${r.num_vagas?`<div class="req-item"><div class="req-item-lbl">Nº vagas</div><div class="req-item-val">${r.num_vagas}</div></div>`:''}
+      </div>
+      ${r.requisitos?`<div style="margin-top:6px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6">${r.requisitos}</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <select class="status-sel" onchange="atualizarStatus('job_requests','${r.id}',this.value,this)">
+        <option value="">Mudar status</option>
+        <option value="novo">Novo</option>
+        <option value="contato">Em contato</option>
+        <option value="proposta">Proposta enviada</option>
+        <option value="fechado">Fechado</option>
+        <option value="arquivado">Arquivado</option>
+      </select>
+      <button class="btn-sm btn-del" onclick="excluir('job_requests','${r.id}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarVaga)">Excluir</button>
+    </div>
+  </div>`
+}
+
+function nr1Card(r){
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.empresa_nome||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.decisor_nome||''} · ${r.cidade||''}${r.estado?' / '+r.estado:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colaboradores</span>`:''}
+            ${r.segmento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.segmento}</span>`:''}
+            ${r.inicio?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.inicio}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.pgr_situacao?`<div class="req-item"><div class="req-item-lbl">PGR atual</div><div class="req-item-val">${r.pgr_situacao}</div></div>`:''}
+        ${r.motivacao?`<div class="req-item"><div class="req-item-lbl">Motivação</div><div class="req-item-val">${r.motivacao}</div></div>`:''}
+        ${r.clima?`<div class="req-item"><div class="req-item-lbl">Clima</div><div class="req-item-val">${r.clima}/10</div></div>`:''}
+      </div>
+      ${r.observacoes?`<div style="margin-top:6px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.observacoes}"</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <select class="status-sel" onchange="atualizarStatus('nr1_requests','${r.id}',this.value,this)">
+        <option value="">Mudar status</option>
+        <option value="novo">Novo</option>
+        <option value="contato">Em contato</option>
+        <option value="proposta">Proposta enviada</option>
+        <option value="fechado">Fechado</option>
+        <option value="arquivado">Arquivado</option>
+      </select>
+      <button class="btn-sm btn-del" onclick="excluir('nr1_requests','${r.id}','${(r.empresa_nome||'').replace(/'/g,'')}',carregarNr1)">Excluir</button>
+    </div>
+  </div>`
+}
+
+async function atualizarStatus(tabela,id,status,sel){
+  if(!status)return
+  sel.value=''
+  await sb.from(tabela).update({status}).eq('id',id)
+  toast('Status atualizado')
+  if(tabela==='career_plan_requests')carregarCareer()
+  else if(tabela==='job_requests')carregarVaga()
+  else carregarNr1()
+}
+
+async function excluir(tabela,id,nome,reload){
+  if(!confirm('Excluir "'+nome+'"?'))return
+  await sb.from(tabela).delete().eq('id',id)
+  toast('Excluído')
+  reload()
+}
+
+window.addEventListener('load',()=>{
+  const s=sessionStorage.getItem('azumi_admin')
+  if(s){
+    sessao=JSON.parse(s)
+    document.getElementById('login-page').style.display='none'
+    document.getElementById('admin-page').style.display='block'
+    document.getElementById('admin-nome-header').textContent='Olá, '+sessao.nome.split(' ')[0]
+    carregarTudo()
+  }
+})
+</script>
+</body>
+</html>
