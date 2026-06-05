@@ -155,7 +155,7 @@
           Dados usados exclusivamente pela Azumi RH · Sem compartilhamento com terceiros<br>
           Tratamento em conformidade com a LGPD — Lei 13.709/2018 · Art. 7º, IX
         </div>
-        <button class="az-pv-btn" id="az-aceitar">Entendi e aceito continuar</button>
+        <button class="az-pv-btn" id="az-pv-aceitar">Entendi e aceito continuar</button>
         <div class="az-pv-nota">
           Ao clicar você concorda com o uso descrito acima.<br>
           Seus dados de contato só são coletados se você concluir o envio.
@@ -164,7 +164,7 @@
     `;
     document.body.appendChild(overlay);
 
-    document.getElementById('az-aceitar').addEventListener('click', function () {
+    document.getElementById('az-pv-aceitar').addEventListener('click', function () {
       localStorage.setItem(KEY, 'aceito');
       localStorage.setItem(KEY_DATE, Date.now().toString());
       liberarFormulario();
