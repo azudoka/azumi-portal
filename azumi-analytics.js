@@ -5,7 +5,7 @@
  */
 const AzumiAnalytics = (function () {
   const SURL = 'https://yxtirmonrjmlasnrqwwl.supabase.co';
-  const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmpsbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTI4MjYsImV4cCI6MjA2MTA4ODgyNn0.zHHkAMSRP_2aqqEBFkzWPYgTzAnzTgBk0xHBYDHJtmA';
+  const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmptbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzAxNjAsImV4cCI6MjA4Njk0NjE2MH0.3jEvmlcjrOGLOf1kxjy3TURE2SQ6UMbiCUlDN_HAXb0';
 
   let sid = null, slug = null, t0 = null;
   let secAtual = 1, secMax = 1, totalSec = 0;
