@@ -709,32 +709,49 @@ async function enviar(){
 
   const dados={
     protocolo,
-    nome_empresa:empresa,
-    nome_decisor:decisor,
-    cargo_decisor:g('cargo').value.trim(),
+    empresa_nome:empresa,
+    decisor_nome:decisor,
     email:g('email').value.trim(),
     whatsapp:g('whatsapp').value.trim(),
-    segmento:g('segmento').value,
-    cidade:g('cidade').value.trim(),
     estado:g('estado').value,
+    cidade:g('cidade').value.trim(),
     num_colaboradores:Number(g('num_colaboradores').value)||null,
     num_unidades:Number(g('num_unidades').value)||1,
-    num_vagas_mes:Number(g('num_vagas_mes').value)||null,
-    tem_rh_interno:!!toggleVals['hr'],
-    rh_senioridade:g('rh_senioridade').value,
-    como_azumi_atuaria:g('como_azumi_atuaria').value,
-    abertura_parceria:scaleVals.parceria||null,
-    lideranca_scores:liderancaScores,
-    clima_scores:climaScores,
-    processos_rh:processos,
+    vagas_mes:Number(g('num_vagas_mes').value)||null,
+    tipo_consultora:g('tipo_consultora').value||null,
+    visitas_mes:!!toggleVals['visita'],
+    localizacao_visita:g('regiao_visita').value||null,
+    rh_atual:!!toggleVals['hr'],
+    rh_senioridade:g('rh_senioridade').value||null,
+    rh_tempo_casa:null,
+    rh_cobre:null,
+    rh_necessidade:g('como_azumi_atuaria').value||null,
+    rh_abertura:scaleVals.parceria||null,
+    docs_rh:processos.filter(p=>['Código de conduta','Política salarial','PDI (Plano de Desenvolvimento Individual)'].includes(p)).join(' | ')||null,
+    plataformas:null,
+    dif_contratar:null,
+    processo_seletivo:processos.includes('Recrutamento estruturado'),
+    onboarding:processos.includes('Onboarding documentado'),
+    onboarding_outsourcing:null,
+    maturidade_lideranca:JSON.stringify(liderancaScores),
+    avaliacao_desempenho:processos.includes('Avaliação de desempenho'),
+    gestao_outsourcing:null,
+    risco_psicossocial:null,
+    canal_escuta:processos.includes('Canal de comunicação interna'),
+    clima_equipe:JSON.stringify(climaScores),
+    historico_conflitos:null,
+    nrs:null,
+    registros_assinados:processos.includes('Controles trabalhistas'),
+    reclamacao_trabalhista:null,
     frentes:frentesArr.join(' | '),
-    visita_presencial:!!toggleVals['visita'],
-    tipo_consultora:g('tipo_consultora').value,
-    regiao_visita:g('regiao_visita').value,
-    principal_desafio:g('principal_desafio').value.trim(),
-    expectativa_azumi:g('expectativa_azumi').value.trim(),
-    prazo_inicio:g('prazo_inicio').value,
-    budget_estimado:g('budget_estimado').value,
+    prioridade_90dias:null,
+    urgencia:null,
+    inicio:g('prazo_inicio').value||null,
+    observacoes:[
+      g('principal_desafio').value.trim()?'Desafio: '+g('principal_desafio').value.trim():'',
+      g('expectativa_azumi').value.trim()?'Expectativa: '+g('expectativa_azumi').value.trim():'',
+      g('budget_estimado').value?'Budget: '+g('budget_estimado').value:''
+    ].filter(Boolean).join('\n\n')||null,
     status:'novo'
   }
 
@@ -753,28 +770,25 @@ async function enviar(){
         subject:'[AZ-DIAG] '+empresa+' — '+decisor,
         html:'<h2 style="color:#1e40af">Novo Diagnóstico HRaaS</h2>'
           +'<p><b>Protocolo:</b> '+protocolo+'</p>'
-          +'<p><b>Empresa:</b> '+empresa+'</p>'
-          +'<p><b>Decisor:</b> '+decisor+' ('+dados.cargo_decisor+')</p>'
+          +'<p><b>Empresa:</b> '+dados.empresa_nome+'</p>'
+          +'<p><b>Decisor:</b> '+dados.decisor_nome+'</p>'
           +'<p><b>E-mail:</b> '+dados.email+'</p>'
           +(dados.whatsapp?'<p><b>WhatsApp:</b> '+dados.whatsapp+'</p>':'')
-          +'<p><b>Segmento:</b> '+dados.segmento+'</p>'
           +'<p><b>Localização:</b> '+dados.cidade+'/'+dados.estado+'</p>'
           +'<hr>'
           +'<p><b>Colaboradores:</b> '+dados.num_colaboradores+'</p>'
           +'<p><b>Unidades:</b> '+dados.num_unidades+'</p>'
-          +'<p><b>Vagas/mês:</b> '+dados.num_vagas_mes+'</p>'
-          +'<p><b>RH interno:</b> '+(dados.tem_rh_interno?'Sim':'Não')+'</p>'
-          +(dados.tem_rh_interno?'<p><b>Senioridade RH:</b> '+dados.rh_senioridade+'</p>'+'<p><b>Atuação Azumi:</b> '+dados.como_azumi_atuaria+'</p>':'')
+          +'<p><b>Vagas/mês:</b> '+dados.vagas_mes+'</p>'
+          +'<p><b>RH interno:</b> '+(dados.rh_atual?'Sim':'Não')+'</p>'
+          +(dados.rh_atual?'<p><b>Senioridade RH:</b> '+(dados.rh_senioridade||'—')+'</p>'+'<p><b>Necessidade:</b> '+(dados.rh_necessidade||'—')+'</p>':'')
           +'<hr>'
           +'<p><b>Frentes de interesse:</b> '+dados.frentes+'</p>'
           +'<p><b>Processos existentes:</b> '+(processos.length?processos.join(', '):'Nenhum selecionado')+'</p>'
           +'<hr>'
-          +(dados.visita_presencial?'<p><b>Visita presencial:</b> Sim — '+dados.tipo_consultora+' / '+dados.regiao_visita+'</p>':'<p><b>Visita presencial:</b> Não</p>')
+          +(dados.visitas_mes?'<p><b>Visita presencial:</b> Sim — '+(dados.tipo_consultora||'—')+' / '+(dados.localizacao_visita||'—')+'</p>':'<p><b>Visita presencial:</b> Não</p>')
           +'<hr>'
-          +(dados.principal_desafio?'<p><b>Principal desafio:</b> '+dados.principal_desafio+'</p>':'')
-          +(dados.expectativa_azumi?'<p><b>Expectativa:</b> '+dados.expectativa_azumi+'</p>':'')
-          +'<p><b>Prazo:</b> '+dados.prazo_inicio+'</p>'
-          +'<p><b>Budget:</b> '+dados.budget_estimado+'</p>'
+          +(dados.observacoes?'<p><b>Observações:</b><br>'+dados.observacoes.replace(/\n/g,'<br>')+'</p>':'')
+          +'<p><b>Início:</b> '+(dados.inicio||'—')+'</p>'
       })
     })
   }catch(e){console.warn('Email não enviado',e)}
