@@ -133,6 +133,29 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#031D38;border:1px solid var(--border);color:var(--tp);padding:11px 20px;border-radius:100px;font-size:12px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
+/* SOBRE AZUMI */
+.sobre-wrap{padding:8px 28px 0;position:relative;z-index:1}
+.sobre-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .2s}
+.sobre-toggle:hover{background:rgba(255,255,255,.05)}
+.sobre-toggle-title{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(147,197,253,.6)}
+.sobre-toggle-icon{transition:transform .3s;color:var(--ts)}
+.sobre-toggle.open .sobre-toggle-icon{transform:rotate(180deg)}
+.sobre-body{display:none;padding:16px 0 4px}
+.sobre-toggle.open+.sobre-body{display:block}
+.sobre-sec-title{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(147,197,253,.45);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.cica-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:900px){.cica-grid{grid-template-columns:1fr 1fr}}
+.cica-card{padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px}
+.cica-card-title{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;margin-bottom:7px;color:var(--tp)}
+.cica-card-body{font-size:11px;color:var(--ts);line-height:1.6}
+.tres-p-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.tres-p-card{padding:12px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:10px}
+.tres-p-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#93C5FD;margin-bottom:4px}
+.tres-p-title{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;margin-bottom:4px}
+.tres-p-body{font-size:11px;color:var(--ts);line-height:1.55}
+.sobre-contatos{display:flex;gap:14px;flex-wrap:wrap}
+.sobre-contato{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);display:flex;align-items:center;gap:5px}
+.sobre-contato a{color:#93C5FD;text-decoration:none}
 </style>
 </head>
 <body>
@@ -172,6 +195,33 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <button class="btn-sair" onclick="sair()">Sair</button>
     </div>
   </div>
+  <div class="sobre-wrap">
+    <div class="sobre-toggle" id="sobre-toggle" onclick="toggleSobre()">
+      <div class="sobre-toggle-title">Sobre a Azumi RH &nbsp;/&nbsp; CICA &nbsp;/&nbsp; 3P's</div>
+      <div class="sobre-toggle-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="sobre-body" id="sobre-body">
+      <div class="sobre-sec-title">CICA — Guardia da Cultura &nbsp;·&nbsp; Confianca · Integridade · Colaboracao · Amor</div>
+      <div class="cica-grid">
+        <div class="cica-card"><div class="cica-card-title">Confianca</div><div class="cica-card-body">Previsibilidade. Cumprir o que foi combinado. Sustentar conversa dificil sem sumir. Proposta com escopo claro, devolutiva com criterio.</div></div>
+        <div class="cica-card"><div class="cica-card-title">Integridade</div><div class="cica-card-body">Coerencia e etica. Nao usar informacao sensivel como poder. LGPD na pratica: minimo necessario, acesso controlado. Diagnostico que nao existe para agradar.</div></div>
+        <div class="cica-card"><div class="cica-card-title">Colaboracao</div><div class="cica-card-body">Parceria real, sem dependencia e sem submissao. Trabalha com o cliente, nao para o cliente. Co-construcao de rotinas sustentaveis.</div></div>
+        <div class="cica-card"><div class="cica-card-title">Amor</div><div class="cica-card-body">Humanidade com responsabilidade. Fazer o certo sem desumanizar. Padrao alto de entrega: nao entregar qualquer coisa so para fechar.</div></div>
+      </div>
+      <div class="sobre-sec-title">Metodo 3P's — People · Process · Performance</div>
+      <div class="tres-p-grid">
+        <div class="tres-p-card"><div class="tres-p-label">People</div><div class="tres-p-title">Pessoas</div><div class="tres-p-body">Maturidade de lideranca, comportamentos, habitos, clareza de expectativa.</div></div>
+        <div class="tres-p-card"><div class="tres-p-label">Process</div><div class="tres-p-title">Processos</div><div class="tres-p-body">Rotinas, rituais, fluxos, criterios — previsibilidade sem microgestao.</div></div>
+        <div class="tres-p-card"><div class="tres-p-label">Performance</div><div class="tres-p-title">Resultados</div><div class="tres-p-body">Resultados mensuraveis, KPIs, acompanhamento consistente.</div></div>
+      </div>
+      <div class="sobre-sec-title">Contatos rapidos</div>
+      <div class="sobre-contatos" style="margin-bottom:8px">
+        <div class="sobre-contato"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:contato@azumirh.com.br">contato@azumirh.com.br</a></div>
+        <div class="sobre-contato"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.3 19.79 19.79 0 0 1 1.6 4.72 2 2 0 0 1 3.6 2.52h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.81-.81a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.72 17z"/></svg><span>+55 41 98835-0743</span></div>
+        <div class="sobre-contato"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="https://azumirh.com.br" target="_blank">azumirh.com.br</a></div>
+      </div>
+    </div>
+  </div>
   <div class="admin-nav">
     <button class="nav-tab active" onclick="abaAtiva('career',this)">Career Plan</button>
     <button class="nav-tab" onclick="abaAtiva('vaga',this)">Solicitacao de Vaga</button>
@@ -181,6 +231,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="nav-tab" onclick="abaAtiva('cultura',this)">Cultura</button>
     <button class="nav-tab" onclick="abaAtiva('gtm',this)">GTM Pessoal</button>
     <button class="nav-tab" onclick="abaAtiva('impulso',this)">Impulso</button>
+    <button class="nav-tab" onclick="abaAtiva('diagorg',this)">Diag. Org.</button>
+    <button class="nav-tab" onclick="abaAtiva('lideres',this)">Prog. Lideres</button>
+    <button class="nav-tab" onclick="abaAtiva('relatorios',this)">Relatorios</button>
   </div>
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
@@ -214,6 +267,32 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div id="tab-impulso" class="tab-content">
       <div class="tab-header"><div class="tab-title">Programa Impulso</div><div class="tab-count" id="count-impulso">0</div></div>
       <div id="cards-impulso"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-diagorg" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Diagnostico Organizacional</div><div class="tab-count" id="count-diagorg">0</div></div>
+      <div id="cards-diagorg"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-lideres" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Programa de Lideres</div><div class="tab-count" id="count-lideres">0</div></div>
+      <div id="cards-lideres"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-relatorios" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Relatorios de Vagas</div></div>
+      <div id="relatorios-content">
+        <div style="font-size:13px;color:var(--ts);margin-bottom:20px">Calculadora de honorarios para processos de recrutamento e selecao.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px">
+          <div class="calc-field"><label>Salario mensal (R$)</label><input type="number" id="rel-sal" value="5000" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+          <div class="calc-field"><label>Comissao (%)</label><input type="number" id="rel-pct" value="12" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+          <div class="calc-field"><label>Candidatos apresentados</label><input type="number" id="rel-cand" value="3" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+          <div class="calc-field"><label>Valor por candidato (R$)</label><input type="number" id="rel-cval" value="110" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+        </div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px">
+          <div class="calc-field"><label>Desconto (%)</label><input type="number" id="rel-desc" value="0" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+          <div class="calc-field"><label>Entrada (%)</label><input type="number" id="rel-ent" value="50" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none"></div>
+        </div>
+        <button onclick="calcRelatorio()" style="margin-top:14px;padding:10px 24px;background:var(--gm);border:none;border-radius:100px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Calcular</button>
+        <div id="rel-result" style="margin-top:16px;max-width:560px"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -271,7 +350,13 @@ function abaAtiva(aba,btn){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
   document.getElementById('tab-'+aba).classList.add('active');btn.classList.add('active')
 }
-async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico();carregarCultura();carregarGtm();carregarImpulso()}
+function toggleSobre(){
+  const t=document.getElementById('sobre-toggle')
+  const b=document.getElementById('sobre-body')
+  t.classList.toggle('open')
+  b.style.display=t.classList.contains('open')?'block':'none'
+}
+async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico();carregarCultura();carregarGtm();carregarImpulso();carregarDiagOrg();carregarLideres()}
 function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
 
 // ── CAREER ──────────────────────────────────────────────
@@ -677,11 +762,112 @@ function impulsoCard(r){
   </div>`
 }
 
+// ── DIAG ORG ──────────────────────────────────────────────
+async function carregarDiagOrg(){
+  const cont=document.getElementById('cards-diagorg')
+  const {data,error}=await sb.from('diag_org_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-diagorg').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>diagOrgCard(r)).join('')
+}
+function diagOrgCard(r){
+  const rid=r.id||''
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.responsavel||''}${r.cargo?' · '+r.cargo:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.segmento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.segmento}</span>`:''}
+            ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colab</span>`:''}
+            ${r.budget?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.budget}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.momento_empresa?`<div class="req-item"><div class="req-item-lbl">Momento</div><div class="req-item-val">${r.momento_empresa}</div></div>`:''}
+        ${r.prazo?`<div class="req-item"><div class="req-item-lbl">Prazo</div><div class="req-item-val">${r.prazo}</div></div>`:''}
+      </div>
+      ${r.performance_transformar?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.performance_transformar}"</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('diagorg',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('diag_org_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('diag_org_requests','${rid}','${(r.empresa||'').replace(/'/g,'')}',carregarDiagOrg)">Excluir</button>
+    </div>
+  </div>`
+}
+
+// ── LIDERES ──────────────────────────────────────────────
+async function carregarLideres(){
+  const cont=document.getElementById('cards-lideres')
+  const {data,error}=await sb.from('lideres_requests').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-lideres').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
+  cont.innerHTML=data.map(r=>lideresCard(r)).join('')
+}
+function lideresCard(r){
+  const rid=r.id||''
+  const niveis=Array.isArray(r.niveis_lideranca)?r.niveis_lideranca.join(', '):(r.niveis_lideranca||'')
+  return `<div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
+            <div class="req-nome">${r.empresa||'—'}</div>
+            <div class="req-meta">${r.protocolo||''}</div>
+            <div class="req-meta">${dt(r.created_at)}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.responsavel||''}${r.cargo?' · '+r.cargo:''}</div>
+          <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+            ${niveis?`<span style="font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 9px">${niveis}</span>`:''}
+            ${r.num_lideres?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_lideres} lideres</span>`:''}
+            ${r.budget?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.budget}</span>`:''}
+          </div>
+        </div>
+        <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${r.formato?`<div class="req-item"><div class="req-item-lbl">Formato</div><div class="req-item-val">${r.formato}</div></div>`:''}
+        ${r.duracao?`<div class="req-item"><div class="req-item-lbl">Duracao</div><div class="req-item-val">${r.duracao}</div></div>`:''}
+      </div>
+      ${r.gap_principal?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.gap_principal}"</div>`:''}
+    </div>
+    <div class="req-card-footer">
+      ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-sm btn-prop" onclick="abrirProposta('lideres',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="status-sel" onchange="atualizarStatus('lideres_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
+      ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
+      <button class="btn-sm btn-del" onclick="excluir('lideres_requests','${rid}','${(r.empresa||'').replace(/'/g,'')}',carregarLideres)">Excluir</button>
+    </div>
+  </div>`
+}
+
 // ── STATUS / DELETE ──────────────────────────────────────────────
 async function atualizarStatus(tabela,id,status,sel){
   if(!status)return;sel.value=''
   await sb.from(tabela).update({status}).eq('id',id);toast('Status atualizado')
-  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso}
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres}
   if(m[tabela])m[tabela]()
 }
 async function excluir(tabela,id,nome,reload){
@@ -713,6 +899,8 @@ function renderDrawer(tipo,r){
   else if(tipo==='cultura')b.innerHTML=drawerCultura(r)
   else if(tipo==='gtm')b.innerHTML=drawerGtm(r)
   else if(tipo==='impulso')b.innerHTML=drawerImpulso(r)
+  else if(tipo==='diagorg')b.innerHTML=drawerDiagOrg(r)
+  else if(tipo==='lideres')b.innerHTML=drawerLideres(r)
   else b.innerHTML=drawerCareer(r)
 }
 
@@ -940,6 +1128,8 @@ function calcular(){
   else if(tipo==='cultura')calcCultura()
   else if(tipo==='gtm')calcGtm()
   else if(tipo==='impulso')calcImpulso()
+  else if(tipo==='diagorg')calcDiagOrg()
+  else if(tipo==='lideres')calcLideres()
   else calcCareer()
 }
 
@@ -1101,6 +1291,83 @@ function calcImpulso(){
     ${parc>1?`<div class="result-row" style="margin-top:8px"><div class="result-lbl">${parc}x de</div><div class="result-val">${fmtNum(pv)}</div></div>`:''}`
 }
 
+function drawerDiagOrg(r){
+  return infoBlock(r,[['empresa','Empresa'],['responsavel','Responsavel'],['segmento','Segmento'],['num_colaboradores','Colaboradores'],['momento_empresa','Momento'],['budget','Budget']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta Diagnostico Organizacional</div>
+    ${calcSelect('do-pkg','Escopo',[['ESSENCIAL','ESSENCIAL — Diagnostico 3P (R$4.500)'],['COMPLETO','COMPLETO — Diag + Plano Acao (R$8.500)'],['PREMIUM','PREMIUM — Diag + Plano + Acompanhamento (R$14.000)']],'COMPLETO')}
+    <div class="calc-row">
+      ${calcField('do-prazo','Duracao (semanas)',6)}
+      ${calcField('do-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="do-obs" placeholder="Escopo, condicoes, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-diagorg')}`
+}
+function calcDiagOrg(){
+  const pkgBase={ESSENCIAL:4500,COMPLETO:8500,PREMIUM:14000}
+  const pkg=vstr('do-pkg'),desc=v('do-desc')
+  const base=pkgBase[pkg]||8500
+  const descVal=base*(desc/100)
+  const total=base-descVal
+  proposalCtx.resultado={pkg,base,descVal,total}
+  const box=document.getElementById('result-diagorg')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">Escopo ${pkg}</div><div class="result-val">${fmtNum(base)}</div></div>
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div>`
+}
+
+function drawerLideres(r){
+  return infoBlock(r,[['empresa','Empresa'],['responsavel','Responsavel'],['num_lideres','Lideres'],['formato','Formato'],['duracao','Duracao'],['budget','Budget']])+`
+  <div class="calc-section">
+    <div class="calc-section-title">Proposta Programa de Lideres</div>
+    ${calcSelect('l-ciclo','Ciclo do programa',[['3','3 meses'],['6','6 meses'],['9','9 meses'],['12','12 meses']],'6')}
+    <div class="calc-row">
+      ${calcField('l-lideres','Numero de lideres',r.num_lideres||10)}
+      ${calcField('l-valor-lider','Valor por lider/ciclo (R$)',480)}
+    </div>
+    <div class="calc-row">
+      ${calcSelect('l-fmt','Formato',[['1','Remoto (x1.0)'],['1.15','Hibrido (x1.15)'],['1.3','Presencial (x1.3)']],1)}
+      ${calcField('l-desc','Desconto (%)',0)}
+    </div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="l-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+  </div>
+  ${resultBox('result-lideres')}`
+}
+function calcLideres(){
+  const ciclo=v('l-ciclo')||6,lideres=v('l-lideres')||10,valorLider=v('l-valor-lider')||480,fmt=v('l-fmt')||1,desc=v('l-desc')
+  const subtotal=lideres*valorLider*ciclo*fmt
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  proposalCtx.resultado={ciclo,lideres,valorLider,fmt,subtotal,descVal,total}
+  const box=document.getElementById('result-lideres')
+  box.style.display='block'
+  box.innerHTML=`
+    <div class="result-row"><div class="result-lbl">${lideres} lideres × ${ciclo} meses × ${fmtNum(valorLider)}/lider (x${fmt})</div><div class="result-val">${fmtNum(subtotal)}</div></div>
+    ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
+    <div class="result-total"><div class="result-total-lbl">Total programa</div><div class="result-total-val">${fmtNum(total)}</div></div>`
+}
+
+function calcRelatorio(){
+  const sal=parseFloat(document.getElementById('rel-sal').value)||0
+  const pct=parseFloat(document.getElementById('rel-pct').value)||12
+  const cand=parseFloat(document.getElementById('rel-cand').value)||3
+  const cval=parseFloat(document.getElementById('rel-cval').value)||110
+  const desc=parseFloat(document.getElementById('rel-desc').value)||0
+  const ent=parseFloat(document.getElementById('rel-ent').value)||50
+  const honor=sal*12*(pct/100)
+  const candVal=cand*cval
+  const subtotal=honor+candVal
+  const descVal=subtotal*(desc/100)
+  const total=subtotal-descVal
+  const entrada=total*(ent/100)
+  const sucesso=total-entrada
+  const box=document.getElementById('rel-result')
+  box.innerHTML=`<div class="result-box"><div class="result-row"><div class="result-lbl">Honorarios (salario anual × ${pct}%)</div><div class="result-val">${fmtNum(honor)}</div></div><div class="result-row"><div class="result-lbl">Candidatos (${cand} × ${fmtNum(cval)})</div><div class="result-val">${fmtNum(candVal)}</div></div>${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}<div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div><div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Entrada (${ent}%)</div><div class="result-val">${fmtNum(entrada)}</div></div><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Sucesso (${100-ent}%)</div><div class="result-val">${fmtNum(sucesso)}</div></div></div></div>`
+}
+
 // ── PDF ──────────────────────────────────────────────
 function gerarPDF(){
   calcular()
@@ -1123,6 +1390,10 @@ function gerarPDF(){
     conteudo=`<h3>${r.nome||'—'} | ${r.area_atuacao||'—'}</h3><hr><h3>Proposta GTM Pessoal</h3><p>Pacote: ${res.pkg||'—'}</p>${res.adics?`<p>Adicionais: ${fmtNum(res.adics)}</p>`:''}<p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('g-obs')}</p>`
   } else if(tipo==='impulso'){
     conteudo=`<h3>${r.nome||'—'} | Nivel: ${res.pkg||'—'}</h3><hr><h3>Proposta Programa Impulso</h3><p>Modalidade: ${r.modalidade||'—'} | Formato: ${r.formato||'—'}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('i-obs')}</p>`
+  } else if(tipo==='diagorg'){
+    conteudo=`<h3>Empresa: ${empresa} | Escopo: ${res.pkg||'—'}</h3><hr><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('do-obs')}</p>`
+  } else if(tipo==='lideres'){
+    conteudo=`<h3>${empresa} | ${res.lideres||'—'} lideres | Ciclo: ${res.ciclo||'—'} meses</h3><hr><p>Formato: x${res.fmt||1}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('l-obs')}</p>`
   } else {
     conteudo=`<h3>Servicos: ${r.servicos_interesse||'—'}</h3><hr><p>Valor: ${fmtNum(v('c-valor'))}</p><p>${vstr('c-obs')}</p>`
   }
@@ -1166,6 +1437,12 @@ async function salvarProposta(){
   } else if(tipo==='impulso'){
     tabela='impulso_proposals'
     dados={protocolo:protProp,request_id:r.id,nome:r.nome,nivel_programa:res.pkg,modalidade:r.modalidade,formato:r.formato,desconto_pct:v('i-desc'),desconto_valor:res.descVal,total_final:res.total,parcelas:v('i-parc'),obs:vstr('i-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='diagorg'){
+    tabela='diagorg_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.empresa,responsavel:r.responsavel,escopo:res.pkg,desconto_pct:v('do-desc'),desconto_valor:res.descVal,total_final:res.total,obs:vstr('do-obs'),status:'enviada',emitido_por:emitido}
+  } else if(tipo==='lideres'){
+    tabela='lideres_proposals'
+    dados={protocolo:protProp,request_id:r.id,empresa:r.empresa,responsavel:r.responsavel,num_lideres:v('l-lideres'),ciclo_meses:v('l-ciclo'),valor_por_lider:v('l-valor-lider'),desconto_pct:v('l-desc'),desconto_valor:res.descVal,total_final:res.total,obs:vstr('l-obs'),status:'enviada',emitido_por:emitido}
   }
   if(!tabela){toast('Career Plan: salvar manualmente');return}
   const {error}=await sb.from(tabela).insert(dados)

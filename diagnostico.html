@@ -190,7 +190,18 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <label>Segmento</label>
             <select id="segmento" onchange="markFilled(1)">
               <option value="">Selecionar</option>
-              <option>Indústria</option><option>Comércio / Varejo</option><option>Serviços</option><option>Saúde / Clínicas</option><option>Educação</option><option>Tecnologia / Startup</option><option>Logística / Transporte</option><option>Construção Civil</option><option>Agronegócio</option><option>Financeiro</option><option>Alimentação / Restaurantes</option><option>Outro</option>
+              <option>Indústria</option>
+              <option>Comércio / Varejo</option>
+              <option>Serviços</option>
+              <option>Saúde / Clínicas</option>
+              <option>Educação</option>
+              <option>Tecnologia / Startup</option>
+              <option>Logística / Transporte</option>
+              <option>Construção Civil</option>
+              <option>Agronegócio</option>
+              <option>Financeiro</option>
+              <option>Alimentação / Restaurantes</option>
+              <option>Outro</option>
             </select>
           </div>
         </div>
@@ -261,7 +272,11 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <label>Senioridade do RH atual</label>
             <select id="rh_senioridade" onchange="markFilled(2)">
               <option value="">Selecionar</option>
-              <option>Assistente / Auxiliar</option><option>Analista</option><option>Coordenador</option><option>Gerente</option><option>Diretor</option>
+              <option>Assistente / Auxiliar</option>
+              <option>Analista</option>
+              <option>Coordenador</option>
+              <option>Gerente</option>
+              <option>Diretor</option>
             </select>
           </div>
           <div class="field">
@@ -276,13 +291,17 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             </select>
           </div>
           <div class="field">
-            <label>Abertura para parceria com a Azumi</label>
-            <select id="abertura_parceria" onchange="markFilled(2)">
-              <option value="">Selecionar</option>
-              <option>Alta — já decidido pelo gestor</option>
-              <option>Média — avaliando possibilidades</option>
-              <option>Em construção — precisa de alinhamento interno</option>
-            </select>
+            <label>Abertura para parceria com a Azumi (1 a 5)</label>
+            <div class="scale-question" style="margin-bottom:0">
+              <div class="scale-row" id="sr-parceria">
+                <button class="scale-btn" type="button" onclick="selScale('parceria',1,this,2)">1</button>
+                <button class="scale-btn" type="button" onclick="selScale('parceria',2,this,2)">2</button>
+                <button class="scale-btn" type="button" onclick="selScale('parceria',3,this,2)">3</button>
+                <button class="scale-btn" type="button" onclick="selScale('parceria',4,this,2)">4</button>
+                <button class="scale-btn" type="button" onclick="selScale('parceria',5,this,2)">5</button>
+              </div>
+              <div class="scale-labels"><span>Baixa abertura</span><span>Alta abertura</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -297,9 +316,9 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
       </div>
       <div class="acc-body" id="body3">
         <div class="acc-divider"></div>
-        <p style="font-size:13px;color:var(--ts);margin-bottom:16px">Avalie de 1 (muito fraco) a 5 (muito forte) cada aspecto da liderança hoje.</p>
+        <p style="font-size:13px;color:var(--ts);margin-bottom:16px">Avalie de 1 (Muito baixa) a 5 (Muito alta) cada aspecto da liderança hoje.</p>
         <div class="scale-question">
-          <div class="scale-q-label">Clareza de papéis e responsabilidades nas lideranças</div>
+          <div class="scale-q-label">Clareza de papéis e responsabilidades das lideranças</div>
           <div class="scale-row" id="sr-lid1">
             <button class="scale-btn" type="button" onclick="selScale('lid1',1,this,3)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('lid1',2,this,3)">2</button>
@@ -307,10 +326,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('lid1',4,this,3)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('lid1',5,this,3)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito fraco</span><span>Muito forte</span></div>
+          <div class="scale-labels"><span>Muito baixa</span><span>Muito alta</span></div>
         </div>
         <div class="scale-question">
-          <div class="scale-q-label">Qualidade do feedback dado pelos líderes</div>
+          <div class="scale-q-label">Qualidade e frequência do feedback dado pelos líderes</div>
           <div class="scale-row" id="sr-lid2">
             <button class="scale-btn" type="button" onclick="selScale('lid2',1,this,3)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('lid2',2,this,3)">2</button>
@@ -318,10 +337,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('lid2',4,this,3)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('lid2',5,this,3)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito fraco</span><span>Muito forte</span></div>
+          <div class="scale-labels"><span>Muito baixa</span><span>Muito alta</span></div>
         </div>
         <div class="scale-question">
-          <div class="scale-q-label">Tomada de decisão baseada em dados e critérios claros</div>
+          <div class="scale-q-label">Capacidade de tomada de decisão autônoma</div>
           <div class="scale-row" id="sr-lid3">
             <button class="scale-btn" type="button" onclick="selScale('lid3',1,this,3)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('lid3',2,this,3)">2</button>
@@ -329,10 +348,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('lid3',4,this,3)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('lid3',5,this,3)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito fraco</span><span>Muito forte</span></div>
+          <div class="scale-labels"><span>Muito baixa</span><span>Muito alta</span></div>
         </div>
         <div class="scale-question" style="margin-bottom:0">
-          <div class="scale-q-label">Cultura de desenvolvimento das equipes pelos líderes</div>
+          <div class="scale-q-label">Cultura de desenvolvimento contínuo da equipe</div>
           <div class="scale-row" id="sr-lid4">
             <button class="scale-btn" type="button" onclick="selScale('lid4',1,this,3)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('lid4',2,this,3)">2</button>
@@ -340,7 +359,7 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('lid4',4,this,3)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('lid4',5,this,3)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito fraco</span><span>Muito forte</span></div>
+          <div class="scale-labels"><span>Muito baixa</span><span>Muito alta</span></div>
         </div>
       </div>
     </div>
@@ -354,9 +373,9 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
       </div>
       <div class="acc-body" id="body4">
         <div class="acc-divider"></div>
-        <p style="font-size:13px;color:var(--ts);margin-bottom:16px">Avalie de 1 (muito ruim) a 5 (excelente).</p>
+        <p style="font-size:13px;color:var(--ts);margin-bottom:16px">Avalie de 1 a 5 cada aspecto do clima organizacional.</p>
         <div class="scale-question">
-          <div class="scale-q-label">Qualidade da comunicação interna hoje</div>
+          <div class="scale-q-label">Qualidade da comunicação interna atual</div>
           <div class="scale-row" id="sr-cli1">
             <button class="scale-btn" type="button" onclick="selScale('cli1',1,this,4)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('cli1',2,this,4)">2</button>
@@ -364,10 +383,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('cli1',4,this,4)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('cli1',5,this,4)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito ruim</span><span>Excelente</span></div>
+          <div class="scale-labels"><span>Muito baixa</span><span>Muito alta</span></div>
         </div>
         <div class="scale-question">
-          <div class="scale-q-label">Rotatividade percebida (1=muito alta, 5=muito baixa)</div>
+          <div class="scale-q-label">Percepção de rotatividade voluntária</div>
           <div class="scale-row" id="sr-cli2">
             <button class="scale-btn" type="button" onclick="selScale('cli2',1,this,4)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('cli2',2,this,4)">2</button>
@@ -375,10 +394,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('cli2',4,this,4)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('cli2',5,this,4)">5</button>
           </div>
-          <div class="scale-labels"><span>Alta rotatividade</span><span>Muito baixa</span></div>
+          <div class="scale-labels"><span>1 = Muito alta</span><span>5 = Muito baixa</span></div>
         </div>
         <div class="scale-question" style="margin-bottom:0">
-          <div class="scale-q-label">Senso de pertencimento e engajamento do time</div>
+          <div class="scale-q-label">Senso de pertencimento e identificação com a empresa</div>
           <div class="scale-row" id="sr-cli3">
             <button class="scale-btn" type="button" onclick="selScale('cli3',1,this,4)">1</button>
             <button class="scale-btn" type="button" onclick="selScale('cli3',2,this,4)">2</button>
@@ -386,7 +405,7 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
             <button class="scale-btn" type="button" onclick="selScale('cli3',4,this,4)">4</button>
             <button class="scale-btn" type="button" onclick="selScale('cli3',5,this,4)">5</button>
           </div>
-          <div class="scale-labels"><span>Muito fraco</span><span>Muito forte</span></div>
+          <div class="scale-labels"><span>Muito baixo</span><span>Muito alto</span></div>
         </div>
       </div>
     </div>
@@ -394,7 +413,7 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
     <!-- 05 PROCESSOS DE RH -->
     <div class="acc-section" id="sec5">
       <div class="acc-header" onclick="toggleAcc(5)">
-        <div class="acc-hd-left"><div class="acc-num">05</div><div class="acc-title">Processos de RH</div></div>
+        <div class="acc-hd-left"><div class="acc-num">05</div><div class="acc-title">Processos de RH Existentes</div></div>
         <div class="acc-check" id="check5"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:none" id="checksvg5"><path d="M2 6l3 3 5-5" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="acc-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
       </div>
@@ -407,9 +426,10 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
           <div class="check-item" onclick="togCheck(this,5)" data-v="Avaliação de desempenho"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Avaliação de desempenho</div></div>
           <div class="check-item" onclick="togCheck(this,5)" data-v="Canal de comunicação interna"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Canal de comunicação interna</div></div>
           <div class="check-item" onclick="togCheck(this,5)" data-v="Política salarial"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Política salarial</div></div>
-          <div class="check-item" onclick="togCheck(this,5)" data-v="PDI (Plano de Desenvolvimento Individual)"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">PDI</div></div>
+          <div class="check-item" onclick="togCheck(this,5)" data-v="PDI (Plano de Desenvolvimento Individual)"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">PDI (Plano de Desenvolvimento)</div></div>
           <div class="check-item" onclick="togCheck(this,5)" data-v="Pesquisa de clima"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Pesquisa de clima</div></div>
-          <div class="check-item" onclick="togCheck(this,5)" data-v="Nenhum documentado"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Nenhum documentado</div></div>
+          <div class="check-item" onclick="togCheck(this,5)" data-v="Código de conduta"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Código de conduta</div></div>
+          <div class="check-item" onclick="togCheck(this,5)" data-v="Controles trabalhistas"><div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-lbl">Controles trabalhistas</div></div>
         </div>
       </div>
     </div>
@@ -439,7 +459,7 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
         <div class="acc-divider"></div>
         <div class="toggle-row" id="tog-visita" onclick="togToggle('visita',7)">
           <div class="toggle-row-txt">
-            <strong>Gostaria de uma visita presencial da Azumi?</strong>
+            <strong>Gostaria de uma visita presencial?</strong>
             <span>Diagnóstico aprofundado feito in loco na sua empresa</span>
           </div>
           <div class="toggle-sw"></div>
@@ -447,24 +467,21 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
         <div class="cond-block" id="cond-visita">
           <div class="field">
             <label>Tipo de consultora</label>
-            <select id="visita_tipo" onchange="markFilled(7)">
+            <select id="tipo_consultora" onchange="markFilled(7)">
               <option value="">Selecionar</option>
               <option>Consultora Azumi</option>
-              <option>Patrícia Lima (fundadora)</option>
+              <option>Patrícia Lima</option>
             </select>
           </div>
           <div class="field">
-            <label>Cidade / Região</label>
-            <select id="visita_cidade" onchange="markFilled(7)">
+            <label>Região</label>
+            <select id="regiao_visita" onchange="markFilled(7)">
               <option value="">Selecionar</option>
-              <option>Curitiba e Região Metropolitana</option>
-              <option>Interior do Paraná</option>
-              <option>São Paulo Capital</option>
-              <option>Interior de SP</option>
+              <option>Grande Curitiba</option>
+              <option>Interior PR</option>
+              <option>São Paulo</option>
               <option>Rio de Janeiro</option>
-              <option>Minas Gerais</option>
-              <option>Sul do Brasil (SC / RS)</option>
-              <option>Outra região</option>
+              <option>Outra — custeada pela empresa</option>
             </select>
           </div>
         </div>
@@ -481,34 +498,33 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
       <div class="acc-body" id="body8">
         <div class="acc-divider"></div>
         <div class="field">
-          <label>Principal desafio hoje</label>
-          <textarea id="desafio_principal" placeholder="Qual é o maior problema de RH que a empresa enfrenta agora?" oninput="markFilled(8)"></textarea>
+          <label>Qual é o principal desafio que a empresa enfrenta hoje em relação às pessoas?</label>
+          <textarea id="principal_desafio" placeholder="Descreva o maior problema de RH que a empresa enfrenta agora..." oninput="markFilled(8)"></textarea>
         </div>
         <div class="field">
-          <label>O que você espera da Azumi?</label>
-          <textarea id="expectativas" placeholder="Qual seria o resultado ideal desta parceria para vocês?" oninput="markFilled(8)"></textarea>
+          <label>O que você espera que a Azumi RH faça pela empresa?</label>
+          <textarea id="expectativa_azumi" placeholder="Qual seria o resultado ideal desta parceria para vocês?" oninput="markFilled(8)"></textarea>
         </div>
         <div class="row2">
           <div class="field">
             <label>Prazo ideal para início</label>
             <select id="prazo_inicio" onchange="markFilled(8)">
               <option value="">Selecionar</option>
-              <option>Imediato — esta semana</option>
-              <option>Próximo mês</option>
-              <option>Em 2 a 3 meses</option>
-              <option>No próximo trimestre</option>
-              <option>Sem urgência</option>
+              <option>Imediato</option>
+              <option>Em até 30 dias</option>
+              <option>Em até 60 dias</option>
+              <option>Sem urgência definida</option>
             </select>
           </div>
           <div class="field">
             <label>Budget estimado mensal</label>
-            <select id="budget_mensal" onchange="markFilled(8)">
+            <select id="budget_estimado" onchange="markFilled(8)">
               <option value="">Selecionar</option>
-              <option>Até R$3.000/mês</option>
-              <option>R$3.000 a R$6.000/mês</option>
-              <option>R$6.000 a R$10.000/mês</option>
-              <option>Acima de R$10.000/mês</option>
-              <option>A definir</option>
+              <option>Até R$ 3.000/mês</option>
+              <option>Entre R$ 3.000 e R$ 6.000/mês</option>
+              <option>Entre R$ 6.000 e R$ 10.000/mês</option>
+              <option>Acima de R$ 10.000/mês</option>
+              <option>Prefiro definir após proposta</option>
             </select>
           </div>
         </div>
@@ -534,7 +550,7 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
   <div class="success" id="success">
     <div class="s-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
     <h2>Diagnóstico enviado!</h2>
-    <p>Recebemos o diagnóstico HRaaS da sua empresa. Nossa equipe preparará uma proposta personalizada e entrará em contato em até 24h.</p>
+    <p>Recebemos o diagnóstico HRaaS da sua empresa. Em breve nossa equipe entrará em contato com uma proposta personalizada.</p>
     <div class="prot-badge" id="s-prot"></div>
     <br>
     <a href="/" class="btn-home">Voltar ao início</a>
@@ -654,7 +670,10 @@ function checkVals(containerId){
 function gerarProtocolo(){
   const d=new Date()
   const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
-  return 'AZ-DIAG-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789'
+  let rand=''
+  for(let i=0;i<5;i++)rand+=chars[Math.floor(Math.random()*chars.length)]
+  return 'AZ-DIAG-'+ym+'-'+rand
 }
 
 function validar(){
@@ -683,10 +702,13 @@ async function enviar(){
   const processos=checkVals('checks-processos')
   const frentesArr=Array.from(frentesSel)
 
+  const empresa=g('empresa').value.trim()
+  const decisor=g('decisor').value.trim()
+
   const dados={
     protocolo,
-    nome_empresa:g('empresa').value.trim(),
-    nome_decisor:g('decisor').value.trim(),
+    nome_empresa:empresa,
+    nome_decisor:decisor,
     cargo_decisor:g('cargo').value.trim(),
     email:g('email').value.trim(),
     whatsapp:g('whatsapp').value.trim(),
@@ -699,18 +721,18 @@ async function enviar(){
     tem_rh_interno:!!toggleVals['hr'],
     rh_senioridade:g('rh_senioridade').value,
     como_azumi_atuaria:g('como_azumi_atuaria').value,
-    abertura_parceria:g('abertura_parceria').value,
+    abertura_parceria:scaleVals.parceria||null,
     lideranca_scores:liderancaScores,
     clima_scores:climaScores,
     processos_rh:processos,
     frentes:frentesArr.join(' | '),
     visita_presencial:!!toggleVals['visita'],
-    visita_tipo:g('visita_tipo').value,
-    visita_cidade:g('visita_cidade').value,
-    desafio_principal:g('desafio_principal').value.trim(),
-    expectativas:g('expectativas').value.trim(),
+    tipo_consultora:g('tipo_consultora').value,
+    regiao_visita:g('regiao_visita').value,
+    principal_desafio:g('principal_desafio').value.trim(),
+    expectativa_azumi:g('expectativa_azumi').value.trim(),
     prazo_inicio:g('prazo_inicio').value,
-    budget_mensal:g('budget_mensal').value,
+    budget_estimado:g('budget_estimado').value,
     status:'novo'
   }
 
@@ -726,8 +748,31 @@ async function enviar(){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
-        subject:'['+protocolo+'] Diagnóstico HRaaS — '+dados.nome_empresa,
-        html:'<h2>Novo Diagnóstico HRaaS</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Decisor:</b> '+dados.nome_decisor+' — '+dados.email+'</p><p><b>Colaboradores:</b> '+dados.num_colaboradores+'</p><p><b>Segmento:</b> '+dados.segmento+' | '+dados.cidade+'/'+dados.estado+'</p><p><b>Frentes:</b> '+dados.frentes+'</p><p><b>Budget:</b> '+dados.budget_mensal+'</p>'
+        subject:'[AZ-DIAG] '+empresa+' — '+decisor,
+        html:'<h2 style="color:#1e40af">Novo Diagnóstico HRaaS</h2>'
+          +'<p><b>Protocolo:</b> '+protocolo+'</p>'
+          +'<p><b>Empresa:</b> '+empresa+'</p>'
+          +'<p><b>Decisor:</b> '+decisor+' ('+dados.cargo_decisor+')</p>'
+          +'<p><b>E-mail:</b> '+dados.email+'</p>'
+          +(dados.whatsapp?'<p><b>WhatsApp:</b> '+dados.whatsapp+'</p>':'')
+          +'<p><b>Segmento:</b> '+dados.segmento+'</p>'
+          +'<p><b>Localização:</b> '+dados.cidade+'/'+dados.estado+'</p>'
+          +'<hr>'
+          +'<p><b>Colaboradores:</b> '+dados.num_colaboradores+'</p>'
+          +'<p><b>Unidades:</b> '+dados.num_unidades+'</p>'
+          +'<p><b>Vagas/mês:</b> '+dados.num_vagas_mes+'</p>'
+          +'<p><b>RH interno:</b> '+(dados.tem_rh_interno?'Sim':'Não')+'</p>'
+          +(dados.tem_rh_interno?'<p><b>Senioridade RH:</b> '+dados.rh_senioridade+'</p>'+'<p><b>Atuação Azumi:</b> '+dados.como_azumi_atuaria+'</p>':'')
+          +'<hr>'
+          +'<p><b>Frentes de interesse:</b> '+dados.frentes+'</p>'
+          +'<p><b>Processos existentes:</b> '+(processos.length?processos.join(', '):'Nenhum selecionado')+'</p>'
+          +'<hr>'
+          +(dados.visita_presencial?'<p><b>Visita presencial:</b> Sim — '+dados.tipo_consultora+' / '+dados.regiao_visita+'</p>':'<p><b>Visita presencial:</b> Não</p>')
+          +'<hr>'
+          +(dados.principal_desafio?'<p><b>Principal desafio:</b> '+dados.principal_desafio+'</p>':'')
+          +(dados.expectativa_azumi?'<p><b>Expectativa:</b> '+dados.expectativa_azumi+'</p>':'')
+          +'<p><b>Prazo:</b> '+dados.prazo_inicio+'</p>'
+          +'<p><b>Budget:</b> '+dados.budget_estimado+'</p>'
       })
     })
   }catch(e){console.warn('Email não enviado',e)}
