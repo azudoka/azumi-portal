@@ -156,6 +156,41 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sobre-contatos{display:flex;gap:14px;flex-wrap:wrap}
 .sobre-contato{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);display:flex;align-items:center;gap:5px}
 .sobre-contato a{color:#93C5FD;text-decoration:none}
+
+/* ANALYTICS */
+.an-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:700px){.an-cards{grid-template-columns:repeat(2,1fr)}}
+.an-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.an-card-val{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px}
+.an-card-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.08em}
+.an-card.blue .an-card-val{color:#3B82F6}
+.an-card.green .an-card-val{color:#10b981}
+.an-card.orange .an-card-val{color:#f59e0b}
+.an-card.purple .an-card-val{color:#8B5CF6}
+.an-filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.an-filter select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;cursor:pointer}
+.an-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;margin-bottom:24px}
+.an-table{width:100%;border-collapse:collapse;font-size:12px}
+.an-table th{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--ts);padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);text-align:left;white-space:nowrap}
+.an-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.an-table tr:last-child td{border-bottom:none}
+.an-table tr:hover td{background:rgba(255,255,255,.02)}
+.an-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em}
+.an-badge.iniciou{background:rgba(59,130,246,.15);color:#93C5FD;border:1px solid rgba(59,130,246,.25)}
+.an-badge.abandonou{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.an-badge.concluiu{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.an-slug{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:6px;background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.2)}
+.an-prog-bar{width:80px;height:6px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;display:inline-block;vertical-align:middle}
+.an-prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#3B82F6,#8B5CF6);transition:width .3s}
+.an-sec-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;color:var(--tp)}
+.an-map-row{margin-bottom:18px}
+.an-map-form{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.an-map-bars{display:flex;gap:6px;align-items:flex-end;height:60px}
+.an-map-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:36px}
+.an-map-bar{width:30px;background:linear-gradient(to top,#3B82F6,#8B5CF6);border-radius:4px 4px 0 0;transition:height .3s}
+.an-map-bar-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ts)}
+.an-map-bar-val{font-family:'Sora',sans-serif;font-size:9px;font-weight:700;color:var(--tp)}
+.an-empty{color:var(--ts);font-size:13px;padding:40px;text-align:center}
 </style>
 </head>
 <body>
@@ -234,6 +269,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="nav-tab" onclick="abaAtiva('diagorg',this)">Diag. Org.</button>
     <button class="nav-tab" onclick="abaAtiva('lideres',this)">Prog. Lideres</button>
     <button class="nav-tab" onclick="abaAtiva('relatorios',this)">Relatorios</button>
+    <button class="nav-tab" onclick="abaAtiva('analytics',this)">Analytics</button>
   </div>
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
@@ -294,6 +330,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         <div id="rel-result" style="margin-top:16px;max-width:560px"></div>
       </div>
     </div>
+    <div id="tab-analytics" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Analytics de Sessao</div><div class="tab-count" id="count-analytics">0</div></div>
+      <div id="analytics-content"><div class="loading">Carregando...</div></div>
+    </div>
   </div>
 </div>
 
@@ -349,6 +389,7 @@ function abaAtiva(aba,btn){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'))
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
   document.getElementById('tab-'+aba).classList.add('active');btn.classList.add('active')
+  if(aba==='analytics')carregarAnalytics()
 }
 function toggleSobre(){
   const t=document.getElementById('sobre-toggle')
@@ -1461,6 +1502,141 @@ window.addEventListener('load',()=>{
     carregarTudo()
   }
 })
+
+// ── ANALYTICS ───────────────────────────────────────────
+let anSessoes=[]
+let anFiltroSlug='todos', anFiltroStatus='todos', anFiltroPeriodo='tudo'
+
+const AN_SLUG_CORES={
+  'career':'#3B82F6','vaga':'#8B5CF6','nr1':'#ef4444','treinamento':'#f59e0b',
+  'diagnostico-hraas':'#0ea5e9','diagnostico-org':'#14b8a6','lideres':'#a855f7',
+  'cultura':'#ec4899','impulso':'#f97316','gtm':'#22c55e','raiox':'#10b981'
+}
+
+async function carregarAnalytics(){
+  document.getElementById('analytics-content').innerHTML='<div class="loading">Carregando sessoes...</div>'
+  const {data,error}=await sb.from('form_sessions').select('*').order('created_at',{ascending:false})
+  if(error||!data){document.getElementById('analytics-content').innerHTML='<div class="an-empty">Erro ao carregar. Verifique se a tabela form_sessions existe.</div>';return}
+  anSessoes=data
+  document.getElementById('count-analytics').textContent=data.length
+  renderAnalytics()
+}
+
+function anFiltrar(){
+  const hoje=new Date();hoje.setHours(0,0,0,0)
+  const d7=new Date(hoje);d7.setDate(d7.getDate()-7)
+  const d30=new Date(hoje);d30.setDate(d30.getDate()-30)
+  return anSessoes.filter(s=>{
+    if(anFiltroSlug!=='todos'&&s.form_slug!==anFiltroSlug)return false
+    if(anFiltroStatus!=='todos'&&s.status!==anFiltroStatus)return false
+    if(anFiltroPeriodo==='hoje'){const d=new Date(s.created_at);d.setHours(0,0,0,0);if(d.getTime()!==hoje.getTime())return false}
+    else if(anFiltroPeriodo==='7d'&&new Date(s.created_at)<d7)return false
+    else if(anFiltroPeriodo==='30d'&&new Date(s.created_at)<d30)return false
+    return true
+  })
+}
+
+function anFmtTempo(s){
+  if(!s)return '—'
+  const m=Math.floor(s/60),r=s%60
+  return m>0?m+'min '+r+'s':r+'s'
+}
+
+function anFmtData(iso){
+  if(!iso)return '—'
+  const d=new Date(iso)
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+}
+
+function renderAnalytics(){
+  const filtrado=anFiltrar()
+  const total=filtrado.length
+  const concluidas=filtrado.filter(s=>s.status==='concluiu').length
+  const abandonadas=filtrado.filter(s=>s.status==='abandonou').length
+  const taxa=total>0?Math.round(concluidas/total*100):0
+
+  const slugs=[...new Set(anSessoes.map(s=>s.form_slug).filter(Boolean))].sort()
+
+  const html=`
+    <div class="an-cards">
+      <div class="an-card blue"><div class="an-card-val">${total}</div><div class="an-card-lbl">Total de sessoes</div></div>
+      <div class="an-card green"><div class="an-card-val">${concluidas}</div><div class="an-card-lbl">Concluidas</div></div>
+      <div class="an-card orange"><div class="an-card-val">${abandonadas}</div><div class="an-card-lbl">Abandonadas</div></div>
+      <div class="an-card purple"><div class="an-card-val">${taxa}%</div><div class="an-card-lbl">Taxa de conclusao</div></div>
+    </div>
+    <div class="an-filters">
+      <div class="an-filter">
+        <select onchange="anFiltroSlug=this.value;renderAnalytics()">
+          <option value="todos">Todos os formularios</option>
+          ${slugs.map(s=>`<option value="${s}"${anFiltroSlug===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="an-filter">
+        <select onchange="anFiltroStatus=this.value;renderAnalytics()">
+          <option value="todos">Todos os status</option>
+          <option value="iniciou"${anFiltroStatus==='iniciou'?' selected':''}>Iniciou</option>
+          <option value="abandonou"${anFiltroStatus==='abandonou'?' selected':''}>Abandonou</option>
+          <option value="concluiu"${anFiltroStatus==='concluiu'?' selected':''}>Concluiu</option>
+        </select>
+      </div>
+      <div class="an-filter">
+        <select onchange="anFiltroPeriodo=this.value;renderAnalytics()">
+          <option value="tudo">Todo o periodo</option>
+          <option value="hoje"${anFiltroPeriodo==='hoje'?' selected':''}>Hoje</option>
+          <option value="7d"${anFiltroPeriodo==='7d'?' selected':''}>Ultimos 7 dias</option>
+          <option value="30d"${anFiltroPeriodo==='30d'?' selected':''}>Ultimos 30 dias</option>
+        </select>
+      </div>
+    </div>
+    <div class="an-table-wrap">
+      <table class="an-table">
+        <thead><tr>
+          <th>Formulario</th><th>Localizacao</th><th>Dispositivo</th><th>Navegador</th>
+          <th>Status</th><th>Progresso</th><th>Tempo</th><th>Data/Hora</th>
+        </tr></thead>
+        <tbody>
+          ${filtrado.length===0?`<tr><td colspan="8" style="text-align:center;color:var(--ts);padding:32px">Nenhuma sessao encontrada.</td></tr>`:filtrado.map(s=>{
+            const loc=[s.ip_city,s.ip_region,s.ip_country].filter(Boolean).join(' · ')||'—'
+            const pct=s.percentual_completo||0
+            return `<tr>
+              <td><span class="an-slug" style="background:${AN_SLUG_CORES[s.form_slug]||'#6b7280'}22;color:${AN_SLUG_CORES[s.form_slug]||'#9ca3af'};border-color:${AN_SLUG_CORES[s.form_slug]||'#6b7280'}44">${s.form_slug||'—'}</span></td>
+              <td style="font-size:11px;color:var(--ts)">${loc}</td>
+              <td style="font-size:11px;color:var(--ts)">${s.device_type||'—'}</td>
+              <td style="font-size:11px;color:var(--ts)">${s.browser||'—'}</td>
+              <td><span class="an-badge ${s.status||'iniciou'}">${s.status||'—'}</span></td>
+              <td><span class="an-prog-bar"><span class="an-prog-fill" style="width:${pct}%"></span></span><span style="font-size:10px;color:var(--ts);margin-left:6px">${pct}%</span></td>
+              <td style="font-size:11px;color:var(--ts)">${anFmtTempo(s.tempo_total_segundos)}</td>
+              <td style="font-size:11px;color:var(--ts)">${anFmtData(s.created_at)}</td>
+            </tr>`
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${renderMapaAbandono(slugs)}
+  `
+  document.getElementById('analytics-content').innerHTML=html
+}
+
+function renderMapaAbandono(slugs){
+  const abandonadas=anSessoes.filter(s=>s.status==='abandonou')
+  if(!abandonadas.length)return ''
+  let html='<div class="an-sec-title">Onde as pessoas abandonam</div>'
+  slugs.forEach(slug=>{
+    const sess=abandonadas.filter(s=>s.form_slug===slug)
+    if(!sess.length)return
+    const maxSec=Math.max(...sess.map(s=>s.secao_maxima||1))
+    const contagem={}
+    for(let i=1;i<=maxSec;i++)contagem[i]=0
+    sess.forEach(s=>{const n=s.secao_maxima||1;contagem[n]=(contagem[n]||0)+1})
+    const maxVal=Math.max(...Object.values(contagem),1)
+    const bars=Object.entries(contagem).map(([n,v])=>{
+      const h=Math.round((v/maxVal)*48)
+      return `<div class="an-map-bar-wrap"><div class="an-map-bar-val">${v}</div><div class="an-map-bar" style="height:${Math.max(h,4)}px"></div><div class="an-map-bar-lbl">Sec ${n}</div></div>`
+    }).join('')
+    html+=`<div class="an-map-row"><div class="an-map-form">${slug} — ${sess.length} abandono${sess.length>1?'s':''}</div><div class="an-map-bars">${bars}</div></div>`
+  })
+  return html
+}
 </script>
 </body>
 </html>

@@ -186,8 +186,10 @@ main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:co
 .btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
 footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
 </style>
+<script src="/azumi-analytics.js"></script>
+<script src="/cookie-banner.js"></script>
 </head>
-<body>
+<body data-form-slug="vaga" data-form-secs="5">
 <header>
   <a href="/" class="logo-wrap">
     <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
@@ -756,6 +758,7 @@ function go(n){
   document.getElementById('s'+cur).classList.add('active')
   atualizarProg()
   window.scrollTo({top:0,behavior:'smooth'})
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.avancarSecao(n)
 }
 
 function atualizarProg(){
@@ -916,6 +919,7 @@ async function enviar(){
     document.getElementById('s-msg').textContent='Recebemos a solicitacao de vaga para '+dados.nome_vaga+'. Nossa equipe entrara em contato em ate 24h para alinhar os proximos passos.'
   }
   document.getElementById('s-prot').textContent=protocolo
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})
 }
 

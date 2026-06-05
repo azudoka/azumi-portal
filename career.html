@@ -98,8 +98,10 @@ main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:co
 .prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
 .btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
 </style>
+<script src="/azumi-analytics.js"></script>
+<script src="/cookie-banner.js"></script>
 </head>
-<body>
+<body data-form-slug="career" data-form-secs="4">
 <header>
   <a href="/" class="logo">azumi<span>RH</span></a>
   <a href="/" class="back">Voltar</a>
@@ -445,6 +447,7 @@ function go(n){
   document.getElementById('s'+cur).classList.add('active')
   atualizarProg()
   window.scrollTo({top:0,behavior:'smooth'})
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.avancarSecao(n)
 }
 
 function atualizarProg(){
@@ -554,6 +557,7 @@ async function enviar(){
   document.querySelector('.prog-wrap').style.display='none'
   document.getElementById('success').classList.add('active')
   document.getElementById('s-prot').textContent=protocolo
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
 }
 
 document.getElementById('whatsapp').addEventListener('input',function(){
