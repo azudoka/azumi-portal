@@ -876,7 +876,7 @@ async function enviar(){
     prazo_hunting:g('prazo_hunting').value,
     empresas_referencia:g('empresas_referencia').value.trim(),
     remuneracao_variavel:g('remuneracao_variavel').value.trim(),
-    confidencialidade:chip1('chips-conf'),
+    confidencialidade:document.getElementById('chips-conf')?chip1('chips-conf'):null,
     observacoes:g('observacoes').value.trim(),
     status:'novo'
   }
@@ -901,7 +901,7 @@ async function enviar(){
         html:'<h2>Nova Solicitacao de Vaga</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Vaga:</b> '+dados.nome_vaga+'</p><p><b>Tipo:</b> '+tipoSolic+' / '+dados.tipo_recrutamento+'</p><p><b>Solicitante:</b> '+dados.nome_responsavel+' — '+dados.email+'</p>'
       })
     })
-  }catch(e){console.warn('Email nao enviado',e)}
+  }catch(e){console.error('Erro ao enviar email:',e)}
 
   // Success screen
   document.getElementById('formWrap').style.display='none'
@@ -912,6 +912,7 @@ async function enviar(){
   const el=document.getElementById('success')
   el.style.display='block'
   el.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   if(tipoSolic==='orcamento'){
     document.getElementById('s-title').textContent='Orcamento solicitado!'
     document.getElementById('s-msg').textContent='Recebemos sua solicitacao de orcamento para a vaga de '+dados.nome_vaga+'. Enviaremos uma proposta comercial ao seu e-mail em ate 2 dias uteis.'

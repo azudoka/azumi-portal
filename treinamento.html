@@ -677,13 +677,14 @@ async function enviar(){
         html:'<h2>Nova Solicitacao de Treinamento</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Tema:</b> '+dados.tema_principal+'</p><p><b>Pacote:</b> '+dados.pacote+'</p><p><b>Participantes:</b> '+dados.num_participantes+'</p><p><b>Responsavel:</b> '+dados.nome_responsavel+' — '+dados.email+'</p>'
       })
     })
-  }catch(e){console.warn('Email nao enviado',e)}
+  }catch(e){console.error('Erro ao enviar email:',e)}
 
   g('accWrap').style.display='none'
   g('submitWrap').style.display='none'
   const sEl=g('success')
   sEl.style.display='block'
   sEl.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   g('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})

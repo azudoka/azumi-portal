@@ -409,11 +409,15 @@ async function carregarCareer(){
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=data.map(r=>careerCard(r)).join('')
 }
+function parseJsonSafe(v){try{return JSON.parse(v)||{}}catch{return{}}}
+function jsonAvg(v){const o=parseJsonSafe(v);const vals=Object.values(o).filter(n=>typeof n==='number');return vals.length?Math.round(vals.reduce((a,n)=>a+n,0)/vals.length*10)/10:null}
+
 function careerCard(r){
   const srvs=r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[]
   const SRV_CX={'Atualizacao de curriculo':'C1','Curriculo do zero':'C1','Curriculo internacional':'C1','Otimizacao do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transicao':'C2','Repositorio de projetos':'C2','Preparacao para entrevista':'C2','Simulacao de entrevista':'C2','Entrevista internacional':'C2','Negociacao salarial':'C2','Networking e candidatura':'C2','Diagnostico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
   const cxStyle={C1:'background:rgba(34,197,94,.12);color:#16a34a;border:1px solid rgba(34,197,94,.25)',C2:'background:rgba(234,179,8,.12);color:#a16207;border:1px solid rgba(234,179,8,.25)',C3:'background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.25)'}
   const rid=r.id||''
+  const local=[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -423,9 +427,10 @@ function careerCard(r){
             <div class="req-meta">${r.protocolo||''}</div>
             <div class="req-meta">${dt(r.created_at)}</div>
           </div>
-          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.cargo_atual||''}${r.area_atuacao?' · '+r.area_atuacao:''}</div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.cargo_atual||''}${r.area_atuacao?' · '+r.area_atuacao:''}${local?' · '+local:''}</div>
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
             ${r.senioridade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.senioridade}</span>`:''}
+            ${r.tempo_experiencia?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tempo_experiencia}</span>`:''}
             ${r.prazo_desejado?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo_desejado}</span>`:''}
           </div>
         </div>
@@ -436,8 +441,7 @@ function careerCard(r){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:10px">
         ${r.email?`<div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email}</div></div>`:''}
         ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
-        ${r.cidade?`<div class="req-item"><div class="req-item-lbl">Cidade</div><div class="req-item-val">${[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')}</div></div>`:''}
-        ${r.tempo_experiencia?`<div class="req-item"><div class="req-item-lbl">Experiencia</div><div class="req-item-val">${r.tempo_experiencia}</div></div>`:''}
+        ${r.objetivo?`<div class="req-item" style="grid-column:span 2"><div class="req-item-lbl">Objetivo</div><div class="req-item-val">${r.objetivo}</div></div>`:''}
       </div>
       ${srvs.length?`<div class="req-servicos"><div class="req-servicos-lbl">Servicos (${srvs.length})</div>${srvs.map(s=>{const cx=SRV_CX[s]||'';const badge=cx?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:1px 6px;border-radius:100px;flex-shrink:0;${cxStyle[cx]||''}">${cx}</span>`:'';return`<div class="srv-item">${badge}<span>${s}</span></div>`}).join('')}</div>`:''}
       ${r.situacao_atual?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.situacao_atual}"</div>`:''}
@@ -464,6 +468,7 @@ async function carregarVaga(){
 }
 function vagaCard(r){
   const rid=r.id||''
+  const local=[r.cidade,r.estado].filter(Boolean).join('/')
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -473,9 +478,10 @@ function vagaCard(r){
             <div class="req-meta">${r.protocolo||''}</div>
             <div class="req-meta">${dt(r.created_at)}</div>
           </div>
-          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_vaga||''}${r.nivel_vaga?' · '+r.nivel_vaga:''}</div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_vaga||''}${r.nivel_vaga?' · '+r.nivel_vaga:''}${local?' · '+local:''}</div>
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
             ${r.tipo_recrutamento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atracao de Talentos'}</span>`:''}
+            ${r.modelo_trabalho?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.modelo_trabalho}</span>`:''}
             ${r.urgencia?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.urgencia}</span>`:''}
           </div>
         </div>
@@ -486,11 +492,14 @@ function vagaCard(r){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
         <div class="req-item"><div class="req-item-lbl">Responsavel</div><div class="req-item-val">${r.nome_responsavel||'—'}</div></div>
         <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
         ${r.senioridade?`<div class="req-item"><div class="req-item-lbl">Senioridade</div><div class="req-item-val">${r.senioridade}</div></div>`:''}
         ${r.salario?`<div class="req-item"><div class="req-item-lbl">Salario</div><div class="req-item-val">R$ ${r.salario}</div></div>`:''}
         ${r.num_vagas?`<div class="req-item"><div class="req-item-lbl">Qtd vagas</div><div class="req-item-val">${r.num_vagas}</div></div>`:''}
         ${r.contrato?`<div class="req-item"><div class="req-item-lbl">Contrato</div><div class="req-item-val">${r.contrato}</div></div>`:''}
+        ${r.prazo_retorno?`<div class="req-item"><div class="req-item-lbl">Prazo resposta</div><div class="req-item-val">${r.prazo_retorno}</div></div>`:''}
       </div>
+      ${r.perfil_candidato?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6">${r.perfil_candidato.substring(0,200)}${r.perfil_candidato.length>200?'...':''}</div>`:''}
     </div>
     <div class="req-card-footer">
       ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
@@ -611,22 +620,25 @@ async function carregarDiagnostico(){
 }
 function diagnosticoCard(r){
   const rid=r.id||''
-  const colab=r.num_colaboradores
+  const colab=r.num_colaboradores||0
   const pkg=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
+  const avgLid=jsonAvg(r.maturidade_lideranca)
+  const avgClima=jsonAvg(r.clima_equipe)
+  const local=[r.cidade,r.estado].filter(Boolean).join('/')
   return `<div class="req-card">
     <div class="req-card-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
         <div>
           <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:3px">
-            <div class="req-nome">${r.nome_empresa||'—'}</div>
+            <div class="req-nome">${r.empresa_nome||'—'}</div>
             <div class="req-meta">${r.protocolo||''}</div>
             <div class="req-meta">${dt(r.created_at)}</div>
           </div>
-          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.nome_decisor||'—'}${r.segmento?' · '+r.segmento:''}</div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7)">${r.decisor_nome||'—'}${local?' · '+local:''}</div>
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
             <span style="font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 9px">${pkg}</span>
             ${r.num_colaboradores?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.num_colaboradores} colab</span>`:''}
-            ${r.regiao?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.regiao}</span>`:''}
+            ${r.tipo_consultora?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.tipo_consultora}</span>`:''}
           </div>
         </div>
         <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status}</span>
@@ -636,17 +648,22 @@ function diagnosticoCard(r){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
         <div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email||'—'}</div></div>
         ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
-        ${r.maturidade_lideranca?`<div class="req-item"><div class="req-item-lbl">Maturidade lideranca</div><div class="req-item-val">${r.maturidade_lideranca}/5</div></div>`:''}
-        ${r.clima_score?`<div class="req-item"><div class="req-item-lbl">Clima</div><div class="req-item-val">${r.clima_score}/5</div></div>`:''}
+        ${r.num_unidades?`<div class="req-item"><div class="req-item-lbl">Unidades</div><div class="req-item-val">${r.num_unidades}</div></div>`:''}
+        ${r.vagas_mes?`<div class="req-item"><div class="req-item-lbl">Vagas/mes</div><div class="req-item-val">${r.vagas_mes}</div></div>`:''}
+        ${avgLid!==null?`<div class="req-item"><div class="req-item-lbl">Maturidade lideranca</div><div class="req-item-val">${avgLid}/5</div></div>`:''}
+        ${avgClima!==null?`<div class="req-item"><div class="req-item-lbl">Clima equipe</div><div class="req-item-val">${avgClima}/5</div></div>`:''}
+        ${r.rh_abertura!==null&&r.rh_abertura!==undefined?`<div class="req-item"><div class="req-item-lbl">Abertura parceria</div><div class="req-item-val">${r.rh_abertura}/5</div></div>`:''}
+        ${r.inicio?`<div class="req-item"><div class="req-item-lbl">Inicio desejado</div><div class="req-item-val">${r.inicio}</div></div>`:''}
       </div>
       ${r.frentes?`<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.3);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6">${r.frentes}</div>`:''}
+      ${r.observacoes?`<div style="margin-top:6px;padding:7px 10px;background:rgba(255,255,255,.02);border-left:2px solid rgba(255,255,255,.1);border-radius:0 6px 6px 0;font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;font-style:italic">"${r.observacoes.substring(0,200)}${r.observacoes.length>200?'...':''}"</div>`:''}
     </div>
     <div class="req-card-footer">
       ${r.whatsapp?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\\D/g,'')))">WhatsApp</button>`:''}
       <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
       <button class="btn-sm btn-prop" onclick="abrirProposta('diagnostico',${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
       <select class="status-sel" onchange="atualizarStatus('diagnostico_requests','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
-      <button class="btn-sm btn-del" onclick="excluir('diagnostico_requests','${rid}','${(r.nome_empresa||'').replace(/'/g,'')}',carregarDiagnostico)">Excluir</button>
+      <button class="btn-sm btn-del" onclick="excluir('diagnostico_requests','${rid}','${(r.empresa_nome||'').replace(/'/g,'')}',carregarDiagnostico)">Excluir</button>
     </div>
   </div>`
 }
@@ -1039,21 +1056,32 @@ function drawerTreinamento(r){
 
 function drawerDiagnostico(r){
   const colab=r.num_colaboradores||30
-  const pkg=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
-  const baseMap={START:1800,ONGOING:2800,GROWTH:4200}
-  const base=baseMap[pkg]
-  const regiaoMap={'Grande Sao Paulo':0,'Interior SP':-0.05,'Rio de Janeiro':0.05,'Atuacao nacional':0.15}
-  const regiaoAdj=regiaoMap[r.regiao]||0
-  return infoBlock(r,[['nome_empresa','Empresa'],['nome_decisor','Decisor'],['num_colaboradores','Colaboradores'],['segmento','Segmento'],['regiao','Regiao']])+`
+  const PKG=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
+  const PKG_BASE={START:1800,ONGOING:2800,GROWTH:4200}
+  const REGIOES=[
+    ['1.00','Grande SP / ABCD (base)'],
+    ['0.95','Interior SP (-5%)'],
+    ['1.05','Rio de Janeiro (+5%)'],
+    ['1.10','MG / Sul (+10%)'],
+    ['1.05','Nordeste / Norte (+5%)'],
+    ['1.15','Atuacao nacional (+15%)']
+  ]
+  const frentesArr=r.frentes?r.frentes.split(',').map(s=>s.trim()).filter(Boolean):[]
+  const frentesExtra=Math.max(0,frentesArr.length-3)
+  const local=[r.cidade,r.estado].filter(Boolean).join(' / ')||'—'
+  return infoBlock(r,[['empresa_nome','Empresa'],['decisor_nome','Decisor'],['email','E-mail'],['num_colaboradores','Colaboradores'],['tipo_consultora','Tipo consultoria']])+`
+  <div style="font-size:11px;color:rgba(147,197,253,.6);margin:-4px 0 12px;padding:6px 10px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.12);border-radius:8px">
+    ${local}${r.vagas_mes?' · '+r.vagas_mes+' vagas/mes':''}${r.rh_atual!==null&&r.rh_atual!==undefined?' · RH atual: '+(r.rh_atual?'Sim':'Nao'):''}${r.frentes?'<br>Frentes: '+r.frentes:''}
+  </div>
   <div class="calc-section">
     <div class="calc-section-title">Calculadora HRaaS</div>
-    ${calcSelect('d-pkg','Pacote sugerido',[['START','START — ate 30 colab (R$1.800/mes)'],['ONGOING','ONGOING — 31-80 colab (R$2.800/mes)'],['GROWTH','GROWTH — 81+ colab (R$4.200/mes)']],pkg)}
+    ${calcSelect('d-pkg','Pacote',[['START','START — ate 30 colab (base R$1.800/mes)'],['ONGOING','ONGOING — 31-80 colab (base R$2.800/mes)'],['GROWTH','GROWTH — 81+ colab (base R$4.200/mes)']],PKG)}
     <div class="calc-row">
-      ${calcField('d-colab','Nº colaboradores',colab)}
-      ${calcSelect('d-regiao','Regiao',[['0','Grande SP (base)'],['0.05','Rio de Janeiro (+5%)'],['0.15','Nacional (+15%)'],['0.1','MG / Sul (+10%)'],['0','-5%: Interior'],['0.1','Nordeste / Norte']],regiaoAdj)}
+      ${calcField('d-colab','Colaboradores',colab)}
+      ${calcSelect('d-regiao','Multiplicador regiao',REGIOES,'1.00')}
     </div>
     <div class="calc-row">
-      ${calcField('d-frentes','Frentes adicionais (alem de 3)',0)}
+      ${calcField('d-frentes','Frentes ativas (total)',Math.max(3,frentesArr.length))}
       ${calcField('d-prazo','Prazo contrato (meses)',12)}
     </div>
     <div class="calc-row">
@@ -1063,9 +1091,11 @@ function drawerDiagnostico(r){
     <div class="calc-section-title" style="margin-top:14px">Adicionais mensais</div>
     <div class="adicionais-list">
       <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="400"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Azumi Connect (app bem-estar)</div><div class="adicional-val">+ R$ 400/mes</div></div>
-      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="300"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Recrutamento express (ate 2 vagas)</div><div class="adicional-val">+ R$ 300/mes</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="300"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Recrutamento express (ate 2 vagas/mes)</div><div class="adicional-val">+ R$ 300/mes</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="500"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Treinamentos mensais (turma dedicada)</div><div class="adicional-val">+ R$ 500/mes</div></div>
+      <div class="adicional-item" onclick="this.classList.toggle('on');calcular()" data-val="250"><div class="ck"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="adicional-nome">Pesquisa de clima mensal</div><div class="adicional-val">+ R$ 250/mes</div></div>
     </div>
-    <div class="calc-field" style="margin-top:12px"><label>Observacoes</label><textarea id="d-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+    <div class="calc-field" style="margin-top:12px"><label>Observacoes / condicionais</label><textarea id="d-obs" placeholder="Escopo, validade, condicoes especificas..."></textarea></div>
   </div>
   ${resultBox('result-diagnostico')}`
 }
@@ -1242,25 +1272,39 @@ function calcTreinamento(){
 function fmtNum(n){return'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
 
 function calcDiagnostico(){
-  const pkgBase={START:1800,ONGOING:2800,GROWTH:4200}
-  const pkg=vstr('d-pkg'),regiao=v('d-regiao'),frentes=v('d-frentes'),prazo=v('d-prazo')||12,implPct=v('d-impl-pct'),desc=v('d-desc')
-  const base=pkgBase[pkg]||1800
-  const frAjuste=frentes>0?frentes*200:0
+  const PKG_BASE={START:1800,ONGOING:2800,GROWTH:4200}
+  const pkg=vstr('d-pkg')
+  const mR=parseFloat(vstr('d-regiao'))||1.0
+  const frentesTotal=v('d-frentes')||3
+  const prazo=v('d-prazo')||12
+  const implPct=v('d-impl-pct')
+  const desc=v('d-desc')
   const adicsRecorr=adicionaisTotal()
-  const mensal=(base*(1+regiao)+frAjuste+adicsRecorr)
-  const implVal=mensal*(implPct/100)
-  const totalContratoBruto=mensal*prazo+implVal
-  const descVal=totalContratoBruto*(desc/100)
-  const totalFinal=totalContratoBruto-descVal
-  proposalCtx.resultado={pkg,mensal,implVal,prazo,descVal,totalFinal}
+  const base=PKG_BASE[pkg]||1800
+  const frentesExtra=Math.max(0,frentesTotal-3)
+  const mF=1+(frentesExtra*0.12)
+  const mensalBase=round50(base*mR*mF)
+  const mensalTotal=mensalBase+adicsRecorr
+  const implVal=round50(mensalTotal*(implPct/100))
+  const contratoBruto=mensalTotal*prazo+implVal
+  const descVal=contratoBruto*(desc/100)
+  const totalFinal=round50(contratoBruto-descVal)
+  proposalCtx.resultado={pkg,mR,mF,frentesExtra,mensalBase,mensalTotal,implVal,prazo,descVal,totalFinal}
   const box=document.getElementById('result-diagnostico')
   box.style.display='block'
   box.innerHTML=`
-    <div class="result-row"><div class="result-lbl">Mensalidade (${pkg})</div><div class="result-val">${fmtNum(mensal)}</div></div>
+    <div class="result-row"><div class="result-lbl">Base ${pkg}</div><div class="result-val">${fmtNum(base)}</div></div>
+    <div class="result-row"><div class="result-lbl">Apos regiao (x${mR})${frentesExtra>0?' + frentes adicionais (x'+mF.toFixed(2)+')':''}</div><div class="result-val">${fmtNum(mensalBase)}</div></div>
+    ${adicsRecorr?`<div class="result-row"><div class="result-lbl">Adicionais mensais</div><div class="result-val">+ ${fmtNum(adicsRecorr)}</div></div>`:''}
+    <div class="result-row" style="font-weight:600"><div class="result-lbl">Mensalidade</div><div class="result-val">${fmtNum(mensalTotal)}</div></div>
     <div class="result-row"><div class="result-lbl">Implantacao (${implPct}%)</div><div class="result-val">${fmtNum(implVal)}</div></div>
-    <div class="result-row"><div class="result-lbl">Prazo</div><div class="result-val">${prazo} meses</div></div>
+    <div class="result-row"><div class="result-lbl">Contrato ${prazo} meses</div><div class="result-val">${fmtNum(mensalTotal*prazo+implVal)}</div></div>
     ${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}
-    <div class="result-total"><div class="result-total-lbl">Total contrato</div><div class="result-total-val">${fmtNum(totalFinal)}</div></div>`
+    <div class="result-total"><div class="result-total-lbl">Total contrato</div><div class="result-total-val">${fmtNum(totalFinal)}</div></div>
+    <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Mensalidade</div><div class="result-val">${fmtNum(mensalTotal)}/mes</div></div>
+      <div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Implantacao (1x)</div><div class="result-val">${fmtNum(implVal)}</div></div>
+    </div>`
 }
 
 function calcCareer(){
@@ -1409,43 +1453,105 @@ function calcRelatorio(){
   box.innerHTML=`<div class="result-box"><div class="result-row"><div class="result-lbl">Honorarios (salario anual × ${pct}%)</div><div class="result-val">${fmtNum(honor)}</div></div><div class="result-row"><div class="result-lbl">Candidatos (${cand} × ${fmtNum(cval)})</div><div class="result-val">${fmtNum(candVal)}</div></div>${descVal?`<div class="result-row"><div class="result-lbl">Desconto (${desc}%)</div><div class="result-val" style="color:#f87171">- ${fmtNum(descVal)}</div></div>`:''}<div class="result-total"><div class="result-total-lbl">Total</div><div class="result-total-val">${fmtNum(total)}</div></div><div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Entrada (${ent}%)</div><div class="result-val">${fmtNum(entrada)}</div></div><div class="result-row" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px"><div class="result-lbl">Sucesso (${100-ent}%)</div><div class="result-val">${fmtNum(sucesso)}</div></div></div></div>`
 }
 
-// ── PDF ──────────────────────────────────────────────
+// ── PDF VISUAL AZUMI ──────────────────────────────────────────────
 function gerarPDF(){
   calcular()
   const tipo=proposalCtx.tipo,r=proposalCtx.dados,res=proposalCtx.resultado||{}
-  const empresa=r.nome_empresa||r.nome||'—'
+  const empresa=r.empresa_nome||r.nome_empresa||r.empresa||r.nome||'—'
   const data=new Date().toLocaleDateString('pt-BR')
   const prot=r.protocolo||''
-  let conteudo=''
+  const emitente=sessao?sessao.nome:'Azumi RH'
+
+  const tipoLabel={vaga:'Recrutamento & Selecao',nr1:'Gestao de Riscos NR-1',treinamento:'Treinamentos Corporativos',diagnostico:'HRaaS — RH como Servico',cultura:'Cultura & Endomarketing',gtm:'GTM Pessoal',impulso:'Programa Impulso',diagorg:'Diagnostico Organizacional',lideres:'Programa de Lideres',career:'Career Plan'}
+  const servico=tipoLabel[tipo]||tipo
+
+  let linhas=[]
   if(tipo==='vaga'){
-    conteudo=`<h3>Vaga: ${r.nome_vaga||'—'}</h3><p><b>Tipo:</b> ${r.tipo_recrutamento==='hunting'?'Head Hunting':'Atracao de Talentos'}</p><p><b>Senioridade:</b> ${r.senioridade||'—'}</p><hr><h3>Honorarios</h3><p>Salario anual x ${v('v-pct')}%: ${fmtNum(res.honor||0)}</p><p>Candidatos: ${fmtNum(res.candVal||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p>Entrada: ${fmtNum(res.entrada||0)} | Sucesso: ${fmtNum(res.sucesso||0)}</p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('v-obs')}</p>`
+    linhas=[['Vaga',r.nome_vaga||'—'],['Tipo',r.tipo_recrutamento==='hunting'?'Head Hunting':'Atracao de Talentos'],['Senioridade',r.senioridade||'—'],['Honorarios (salario anual x '+v('v-pct')+'%)',fmtNum(res.honor||0)],['Candidatos',fmtNum(res.candVal||0)],res.adics?['Adicionais',fmtNum(res.adics||0)]:null,res.descVal?['Desconto ('+v('v-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total'],['Entrada ('+v('v-entrada')+'%)',fmtNum(res.entrada||0)],['Honorario de sucesso',fmtNum(res.sucesso||0)]]
   } else if(tipo==='nr1'){
-    conteudo=`<h3>Colaboradores: ${r.num_colaboradores||'—'} | Segmento: ${r.segmento||'—'}</h3><hr><h3>Proposta NR-1</h3><p>Mensalidade: ${fmtNum(v('n-mensal'))}</p><p>Implantacao: ${fmtNum(v('n-impl'))}</p><p>Prazo: ${v('n-prazo')} meses</p><p><b>Total contrato: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('n-escopo')}<br>${vstr('n-obs')}</p>`
+    linhas=[['Colaboradores',r.num_colaboradores||'—'],['Mensalidade',fmtNum(v('n-mensal'))],['Implantacao',fmtNum(v('n-impl'))],['Prazo',v('n-prazo')+' meses'],res.descVal?['Desconto ('+v('n-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL CONTRATO',fmtNum(res.total||0),'total']]
   } else if(tipo==='treinamento'){
-    conteudo=`<h3>Tema: ${r.tema_principal||'—'} | Pacote: ${vstr('t-pkg')}</h3><p><b>Participantes:</b> ${r.num_participantes||'—'} | <b>Turmas:</b> ${v('t-turmas')}</p><hr><p>Valor por turma: ${fmtNum(res.porTurma||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('t-obs')}</p>`
+    linhas=[['Tema',r.tema_principal||'—'],['Pacote',vstr('t-pkg')],['Participantes',r.num_participantes||'—'],['Turmas',v('t-turmas')],['Valor por turma',fmtNum(res.porTurma||0)],res.adics?['Adicionais',fmtNum(res.adics)]:null,res.descVal?['Desconto ('+v('t-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total']]
   } else if(tipo==='diagnostico'){
-    conteudo=`<h3>Pacote: ${res.pkg||'—'} | Colaboradores: ${r.num_colaboradores||'—'}</h3><hr><p>Mensalidade: ${fmtNum(res.mensal||0)}</p><p>Implantacao: ${fmtNum(res.implVal||0)}</p><p>Prazo: ${v('d-prazo')} meses</p><p><b>Total contrato: ${fmtNum(res.totalFinal||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('d-obs')}</p>`
+    linhas=[['Pacote HRaaS',res.pkg||'—'],['Colaboradores',r.num_colaboradores||'—'],['Mensalidade',fmtNum(res.mensalTotal||0)],['Implantacao ('+v('d-impl-pct')+'%)',fmtNum(res.implVal||0)],['Prazo',v('d-prazo')+' meses'],res.descVal?['Desconto ('+v('d-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL CONTRATO',fmtNum(res.totalFinal||0),'total']]
   } else if(tipo==='cultura'){
-    conteudo=`<h3>Empresa: ${empresa} | Equipe: ${r.tamanho_equipe||'—'}</h3><hr><h3>Proposta Cultura e Endomarketing</h3><p>Pacote: ${res.pkg||'—'}</p><p>Adicionais (${v('cu-prazo')} meses): ${fmtNum(res.adicsTotal||0)}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('cu-obs')}</p>`
+    linhas=[['Equipe',r.tamanho_equipe||'—'],['Pacote',res.pkg||'—'],['Duracao',v('cu-prazo')+' meses'],res.adicsTotal?['Adicionais',fmtNum(res.adicsTotal)]:null,res.descVal?['Desconto ('+v('cu-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total']]
   } else if(tipo==='gtm'){
-    conteudo=`<h3>${r.nome||'—'} | ${r.area_atuacao||'—'}</h3><hr><h3>Proposta GTM Pessoal</h3><p>Pacote: ${res.pkg||'—'}</p>${res.adics?`<p>Adicionais: ${fmtNum(res.adics)}</p>`:''}<p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('g-obs')}</p>`
+    linhas=[['Pacote',res.pkg||'—'],res.adics?['Adicionais',fmtNum(res.adics)]:null,res.descVal?['Desconto ('+v('g-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total'],res.parc>1?[v('g-parc')+'x de',fmtNum(res.pv||0)]:null]
   } else if(tipo==='impulso'){
-    conteudo=`<h3>${r.nome||'—'} | Nivel: ${res.pkg||'—'}</h3><hr><h3>Proposta Programa Impulso</h3><p>Modalidade: ${r.modalidade||'—'} | Formato: ${r.formato||'—'}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p>${res.parc>1?`<p>${res.parc}x de ${fmtNum(res.pv||0)}</p>`:''}<p style="margin-top:12px;font-size:11px;color:#666">${vstr('i-obs')}</p>`
+    linhas=[['Nivel',res.pkg||'—'],['Modalidade',r.modalidade||'—'],['Formato',r.formato||'—'],res.descVal?['Desconto ('+v('i-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total'],res.parc>1?[v('i-parc')+'x de',fmtNum(res.pv||0)]:null]
   } else if(tipo==='diagorg'){
-    conteudo=`<h3>Empresa: ${empresa} | Escopo: ${res.pkg||'—'}</h3><hr><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('do-obs')}</p>`
+    linhas=[['Escopo',res.pkg||'—'],res.descVal?['Desconto ('+v('do-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total']]
   } else if(tipo==='lideres'){
-    conteudo=`<h3>${empresa} | ${res.lideres||'—'} lideres | Ciclo: ${res.ciclo||'—'} meses</h3><hr><p>Formato: x${res.fmt||1}</p><p><b>Total: ${fmtNum(res.total||0)}</b></p><p style="margin-top:12px;font-size:11px;color:#666">${vstr('l-obs')}</p>`
+    linhas=[['Lideres',res.lideres||'—'],['Ciclo',res.ciclo+' meses'],['Valor/lider/ciclo',fmtNum(v('l-valor-lider'))],['Formato','x'+res.fmt],res.descVal?['Desconto ('+v('l-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL PROGRAMA',fmtNum(res.total||0),'total']]
   } else {
-    conteudo=`<h3>Servicos: ${r.servicos_interesse||'—'}</h3><hr><p>Valor: ${fmtNum(v('c-valor'))}</p><p>${vstr('c-obs')}</p>`
+    linhas=[['Servicos',r.servicos_interesse||'—'],['Valor',fmtNum(v('c-valor'))],v('c-parcelas')>1?[v('c-parcelas')+'x de',fmtNum((v('c-valor')-v('c-valor')*v('c-desc')/100)/v('c-parcelas'))]:null]
   }
+
+  const obsId={vaga:'v-obs',nr1:'n-obs',treinamento:'t-obs',diagnostico:'d-obs',cultura:'cu-obs',gtm:'g-obs',impulso:'i-obs',diagorg:'do-obs',lideres:'l-obs',career:'c-obs'}
+  const obs=vstr(obsId[tipo]||'')
+
+  const rows=linhas.filter(Boolean).map(([lbl,val,cls])=>
+    cls==='total'
+      ?`<tr style="background:rgba(59,130,246,.06)"><td style="padding:10px 14px;font-weight:700;color:#1e3a5f;border-top:2px solid #2563eb">${lbl}</td><td style="padding:10px 14px;font-weight:800;color:#1d4ed8;text-align:right;font-size:15px;border-top:2px solid #2563eb">${val}</td></tr>`
+      :`<tr><td style="padding:8px 14px;color:#374151">${lbl}</td><td style="padding:8px 14px;text-align:right;color:#111827;font-weight:600">${val}</td></tr>`
+  ).join('')
+
   const win=window.open('','_blank')
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Proposta ${prot}</title><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;color:#111;font-size:13px}h1{font-size:22px;margin-bottom:4px}h2{font-size:15px;color:#034C8B;margin:20px 0 8px}h3{font-size:13px;margin:12px 0 6px}p{margin:4px 0;line-height:1.6}hr{border:none;border-top:1px solid #ddd;margin:16px 0}.header{border-bottom:2px solid #034C8B;padding-bottom:16px;margin-bottom:24px}.footer{margin-top:40px;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:12px}@media print{body{margin:20px}}</style></head><body>
-    <div class="header"><h1>Proposta Comercial</h1><p><b>Empresa:</b> ${empresa} &nbsp;|&nbsp; <b>Data:</b> ${data} &nbsp;|&nbsp; <b>Protocolo:</b> ${prot}</p><p><b>Emitida por:</b> ${sessao?sessao.nome:'Azumi RH'}</p></div>
-    <h2>Azumi RH — ${tipo.charAt(0).toUpperCase()+tipo.slice(1)}</h2>
-    ${conteudo}
-    <div class="footer"><p>Azumi RH · contato@azumirh.com.br · azumirh.com.br · Proposta valida por 15 dias</p></div>
-    <script>window.onload=function(){setTimeout(()=>window.print(),400)}<\/script>
-    </body></html>`)
+  win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Proposta ${prot} — Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',Arial,sans-serif;background:#f8fafc;color:#1e293b;font-size:13px;line-height:1.6}
+.page{max-width:720px;margin:0 auto;padding:40px 32px 60px;background:#fff;min-height:100vh}
+.header{background:linear-gradient(135deg,#031D38 0%,#034C8B 55%,#1d4ed8 100%);border-radius:12px;padding:28px 28px 24px;margin-bottom:28px;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:rgba(59,130,246,.15);border-radius:50%}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.logo-text{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#fff}
+.logo-text span{font-style:italic;font-weight:400;color:#93C5FD}
+.header-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.header-sub{font-size:12px;color:rgba(147,197,253,.85);display:flex;gap:16px;flex-wrap:wrap}
+.header-sub b{color:#fff}
+.servico-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:3px 12px;font-family:'Space Grotesk',sans-serif;font-size:11px;color:#e0f2fe;margin-bottom:10px}
+.section-title{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#1e3a5f;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}
+table{width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+tr:nth-child(even){background:#f8fafc}
+.obs-box{margin-top:16px;padding:12px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:12px;color:#0369a1;line-height:1.7}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#94a3b8}
+.validity{background:#fef9c3;border:1px solid #fde68a;border-radius:100px;padding:2px 10px;font-size:10px;color:#92400e;font-weight:600}
+@media print{body{background:#fff}.page{padding:20px;min-height:auto}@page{margin:12mm}}
+</style>
+</head><body>
+<div class="page">
+  <div class="header">
+    <div class="logo-row">
+      <svg width="28" height="22" viewBox="0 0 120 96" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#034C8B"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs><circle cx="44" cy="48" r="34" fill="url(#lg)" opacity=".9"/><circle cx="76" cy="48" r="34" fill="url(#lg)" opacity=".7"/></svg>
+      <div class="logo-text">azumi<span>RH</span></div>
+    </div>
+    <div class="servico-badge">${servico}</div>
+    <div class="header-title">Proposta Comercial</div>
+    <div class="header-sub">
+      <span><b>Empresa:</b> ${empresa}</span>
+      <span><b>Data:</b> ${data}</span>
+      <span><b>Protocolo:</b> ${prot}</span>
+      <span><b>Emitida por:</b> ${emitente}</span>
+    </div>
+  </div>
+
+  <div class="section-title">Detalhes da proposta</div>
+  <table>
+    ${rows}
+  </table>
+
+  ${obs?`<div class="obs-box"><b>Observacoes:</b> ${obs}</div>`:''}
+
+  <div class="footer">
+    <div>Azumi RH Consultoria · contato@azumirh.com.br · azumirh.com.br</div>
+    <div class="validity">Valida por 15 dias</div>
+  </div>
+</div>
+<script>window.onload=function(){setTimeout(()=>window.print(),600)}<\/script>
+</body></html>`)
   win.document.close()
 }
 
@@ -1467,7 +1573,7 @@ async function salvarProposta(){
     dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,responsavel:r.nome_responsavel,tema:r.tema_principal,pacote:vstr('t-pkg'),num_participantes:r.num_participantes,num_turmas:v('t-turmas'),total_final:res.total,desconto_pct:v('t-desc'),obs:vstr('t-obs'),status:'enviada',emitido_por:emitido}
   } else if(tipo==='diagnostico'){
     tabela='diagnostico_proposals'
-    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,decisor:r.nome_decisor,pacote:res.pkg,colab:r.num_colaboradores,valor_mensal:res.mensal,implantacao:res.implVal,meses:v('d-prazo'),desconto_pct:v('d-desc'),desconto_valor:res.descVal,valor_final:res.totalFinal,obs:vstr('d-obs'),status:'enviada',emitido_por:emitido}
+    dados={protocolo:protProp,request_id:r.id,empresa:r.empresa_nome,decisor:r.decisor_nome,pacote:res.pkg,colab:r.num_colaboradores,valor_mensal:res.mensalTotal,implantacao:res.implVal,meses:v('d-prazo'),desconto_pct:v('d-desc'),desconto_valor:res.descVal,valor_final:res.totalFinal,obs:vstr('d-obs'),status:'enviada',emitido_por:emitido}
   }
   else if(tipo==='cultura'){
     tabela='cultura_proposals'

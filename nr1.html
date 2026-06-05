@@ -723,7 +723,7 @@ async function enviar(){
         html:'<h2>Novo Diagnostico NR-1</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Responsavel:</b> '+responsavelNome+' — '+dados.email+'</p><p><b>Colaboradores CLT:</b> '+dados.num_colaboradores+'</p><p><b>Urgencia:</b> '+(dados.urgencia_implementacao||'nao informado')+'</p>'
       })
     })
-  }catch(e){console.warn('Email nao enviado',e)}
+  }catch(e){console.error('Erro ao enviar email:',e)}
 
   // Success
   g('accWrap').style.display='none'
@@ -731,6 +731,7 @@ async function enviar(){
   const sEl=g('success')
   sEl.style.display='block'
   sEl.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   g('s-responsavel').textContent=responsavelNome?responsavelNome+', aguarde — ':'';
   g('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)

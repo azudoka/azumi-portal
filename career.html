@@ -556,6 +556,7 @@ async function enviar(){
   document.querySelector('.form-wrap').style.display='none'
   document.querySelector('.prog-wrap').style.display='none'
   document.getElementById('success').classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   document.getElementById('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
 }

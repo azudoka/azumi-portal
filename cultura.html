@@ -576,6 +576,7 @@ async function enviar(){
   document.querySelector('.prog-wrap').style.display='none';
   document.querySelector('.submit-wrap').style.display='none';
   document.getElementById('success').classList.add('active');
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none';
   document.getElementById('prot-badge').textContent=protocolo;
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo);
   document.querySelector('.hero').scrollIntoView({behavior:'smooth'});

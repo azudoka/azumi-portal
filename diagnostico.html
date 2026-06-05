@@ -791,12 +791,13 @@ async function enviar(){
           +'<p><b>Início:</b> '+(dados.inicio||'—')+'</p>'
       })
     })
-  }catch(e){console.warn('Email não enviado',e)}
+  }catch(e){console.error('Erro ao enviar email:',e)}
 
   g('accWrap').style.display='none'
   g('submitWrap').style.display='none'
   const sEl=g('success')
   sEl.style.display='block';sEl.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   g('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})

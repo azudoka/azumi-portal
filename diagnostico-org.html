@@ -601,9 +601,10 @@ async function enviar(){
       body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'['+protocolo+'] Diagnóstico Organizacional — '+dados.empresa,
         html:'<h2>Novo Diagnóstico Organizacional</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.empresa+'</p><p><b>Responsável:</b> '+dados.responsavel+' — '+dados.email+'</p><p><b>Colaboradores:</b> '+dados.num_colaboradores+'</p><p><b>Momento:</b> '+dados.momento_empresa+'</p><p><b>Budget:</b> '+dados.budget+'</p>'})
     })
-  }catch(e){console.warn('Email não enviado',e)}
+  }catch(e){console.error('Erro ao enviar email:',e)}
   g('accWrap').style.display='none';g('submitWrap').style.display='none'
   const sEl=g('success');sEl.style.display='block';sEl.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   g('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})
