@@ -848,15 +848,75 @@ function modalVaga(r){
 }
 
 function modalNr1(r){
-  const empresa=r.nome_empresa||r.empresa_nome||'—'
-  const resp=r.nome_responsavel||r.decisor_nome||'—'
-  return`<div class="modal-section-title">Empresa</div>
+  const PROG_LABELS={'Sim, programa estruturado':'Sim — programa formal em vigor','Sim, acoes pontuais':'Sim — ações pontuais (informal)','Nao possui':'Não possui'}
+  const AFAS_LABELS={'Sim':'Sim','Nao':'Não','Nao sabemos':'Não sabemos'}
+  const MAPA_LABELS={'Sim, recentemente':'Sim — recentemente','Sim, ha mais de 2 anos':'Sim — desatualizado (>2 anos)','Nunca foi feito':'Nunca foi feito'}
+  const PLANO_LABELS={'Sim, formalizado':'Sim — formalizado','Em construcao':'Em construção','Nao possui':'Não possui'}
+  const URG_LABELS={'Imediata — empresa em risco de autuacao':'Imediata — risco de autuação MTE','Curto prazo — ate 60 dias':'Curto prazo — até 60 dias','Medio prazo — ate 6 meses':'Médio prazo — até 6 meses'}
+
+  const empresa=r.nome_empresa||r.empresa_nome||r.empresa||'—'
+  const decisor=r.nome_responsavel||r.decisor_nome||r.responsavel||'—'
+  const cargo=r.cargo_responsavel||r.cargo||''
+  const colab=r.num_colaboradores||''
+  const unidades=r.num_unidades||''
+  const seg=r.segmento||''
+  const cnpj=r.cnpj||''
+  const email=r.email||''
+  const wa=r.whatsapp||''
+
+  const temProg=PROG_LABELS[r.tem_programa]||r.tem_programa||''
+  const afas=AFAS_LABELS[r.afastamento_saude_mental]||r.afastamento_saude_mental||''
+  const mapeam=MAPA_LABELS[r.mapeamento_anterior]||r.mapeamento_anterior||''
+  const sitAtual=r.situacao_atual||''
+
+  const modalidade=r.modalidade||''
+  const turnos=r.turnos||''
+  const setores=r.setores||''
+  const desafios=r.desafios_clima||''
+
+  const lidScore=r.nivel_consciencia_lideranca!=null?r.nivel_consciencia_lideranca+'/5':''
+  const planoAcao=PLANO_LABELS[r.plano_acao_lideranca]||r.plano_acao_lideranca||''
+  const compScore=r.comprometimento_lideranca!=null?r.comprometimento_lideranca+'/5':''
+  const obsLid=r.obs_lideranca||''
+
+  const urgencia=URG_LABELS[r.urgencia_implementacao]||r.urgencia_implementacao||''
+  const frentes=r.frentes_prioritarias||''
+  const dataLim=r.data_limite||''
+  const comoConh=r.como_conheceu||''
+  const obs=r.observacoes||''
+
+  return`
+    <div class="modal-section-title">Identificação da Empresa</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',empresa)}${campo('Responsavel',resp)}
-      ${campo('E-mail',r.email)}${campo('WhatsApp',r.whatsapp)}
-      ${campo('Segmento',r.segmento)}${campo('Colaboradores',r.num_colaboradores)}
-      ${campo('Urgencia de implementacao',r.urgencia_implementacao)}${campo('Programa atual',r.tem_programa)}
-      ${r.frentes_prioritarias?campo('Frentes prioritarias',r.frentes_prioritarias,true):''}
+      ${campo('Empresa',empresa)}${campo('CNPJ',cnpj)}
+      ${campo('Responsável',decisor)}${campo('Cargo',cargo)}
+      ${campo('E-mail',email)}${campo('WhatsApp',wa)}
+      ${campo('Colaboradores CLT',colab)}${campo('Nº Unidades / Filiais',unidades)}
+      ${campo('Segmento',seg)}
+    </div>
+    <div class="modal-section-title">Situação Atual — NR-1</div>
+    <div class="modal-fields-grid">
+      ${campo('Programa de saúde mental',temProg)}
+      ${campo('Afastamento por saúde mental (12m)',afas)}
+      ${campo('Mapeamento de riscos psicossociais',mapeam)}
+      ${campo('Contexto atual da empresa',sitAtual,true)}
+    </div>
+    <div class="modal-section-title">Ambiente e Pessoas</div>
+    <div class="modal-fields-grid">
+      ${campo('Modalidade de trabalho',modalidade)}${campo('Turnos existentes',turnos)}
+      ${campo('Setores / Áreas',setores)}${campo('Desafios de clima relatados',desafios,true)}
+    </div>
+    <div class="modal-section-title">Liderança e Gestão</div>
+    <div class="modal-fields-grid">
+      ${campo('Consciência liderança — saúde mental',lidScore)}${campo('Plano de ação bem-estar',planoAcao)}
+      ${campo('Comprometimento esperado liderança',compScore)}${campo('Observações sobre liderança',obsLid,true)}
+    </div>
+    <div class="modal-section-title">Prioridades e Contexto</div>
+    <div class="modal-fields-grid">
+      ${campo('Urgência de implementação',urgencia)}${campo('Como conheceu a Azumi',comoConh)}
+      ${campo('Frentes prioritárias',frentes,true)}
+      ${campo('Data limite desejada',dataLim)}
+      ${campo('Observações finais',obs,true)}
     </div>`
 }
 
