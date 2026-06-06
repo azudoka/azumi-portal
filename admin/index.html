@@ -206,6 +206,44 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .modal-field-full{grid-column:span 2}
 .modal-note{margin-top:10px;padding:9px 12px;background:rgba(255,255,255,.03);border-left:2px solid rgba(59,130,246,.35);border-radius:0 8px 8px 0;font-size:11px;color:var(--ts);line-height:1.65;font-style:italic;word-break:break-word}
 
+/* NR-1 PROPOSTA */
+.prop-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:20px 28px}
+@media(max-width:900px){.prop-layout{grid-template-columns:1fr}}
+.prop-left,.prop-right{display:flex;flex-direction:column;gap:14px}
+.prop-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.prop-card-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ts);margin-bottom:14px}
+.prop-action-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.btn-prop-action{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;transition:opacity .15s}
+.btn-prop-action:hover{opacity:.85}
+.btn-back{background:rgba(255,255,255,.08);color:var(--tp)}
+.btn-save{background:#3B82F6;color:#fff}
+.btn-print{background:#10b981;color:#fff}
+.btn-approve{background:#8B5CF6;color:#fff}
+.status-pill{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;font-weight:600}
+.pill-rascunho{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
+.pill-aprovada{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.25)}
+.pill-enviada{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.25)}
+.cfg-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ts);margin-bottom:4px;margin-top:10px;display:block}
+.cfg-lbl:first-child{margin-top:0}
+.cfg-inp{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none}
+.cfg-inp:focus{border-color:rgba(59,130,246,.5)}
+textarea.cfg-inp{resize:vertical}
+.result-inner{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.result-inner:last-child{border-bottom:none}
+.result-label{font-size:12px;color:var(--tp)}
+.result-orig{font-family:'JetBrains Mono',monospace;font-size:11px;color:#3B82F6}
+.result-note{font-size:11px;color:var(--ts);margin-top:6px;text-align:right}
+.aviso{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:8px 12px;font-size:11px;color:#fbbf24;margin-bottom:10px}
+.nr1-modulo-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.nr1-modulo-row:last-child{border-bottom:none}
+.nr1-modulo-check{width:15px;height:15px;accent-color:#3B82F6;cursor:pointer;flex-shrink:0}
+.nr1-modulo-nome{flex:1;font-size:12px;color:var(--tp);cursor:pointer}
+.nr1-modulo-val{width:80px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:#3B82F6;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;outline:none}
+.nr1-alerta-cipa{background:rgba(239,68,68,.1);border-left:3px solid #ef4444;border-radius:0 8px 8px 0;padding:9px 12px;font-size:11px;color:#fca5a5;margin-bottom:8px;line-height:1.5}
+.nr1-sst-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.nr1-sst-row:last-child{border-bottom:none}
+.nr1-sst-val{width:80px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:#8B5CF6;font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;outline:none}
+
 /* ANALYTICS */
 .an-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 @media(max-width:700px){.an-cards{grid-template-columns:repeat(2,1fr)}}
@@ -448,6 +486,63 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- NR-1 PROPOSTA VIEW -->
+<div id="prop-nr1-view" style="display:none">
+  <div class="prop-action-bar">
+    <button class="btn-prop-action btn-back" onclick="voltarNr1()">&#8592; Voltar</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="status-pill pill-rascunho" id="nr1-status-pill">Rascunho</span>
+      <button class="btn-prop-action btn-save" onclick="salvarNr1Proposta()">Salvar</button>
+      <button class="btn-prop-action btn-approve" onclick="aprovarNr1Proposta()">Aprovar</button>
+      <button class="btn-prop-action btn-print" onclick="imprimirNr1Prop()">Imprimir PDF</button>
+    </div>
+  </div>
+  <div class="prop-layout">
+    <div class="prop-left">
+      <div class="prop-card">
+        <div class="prop-card-title">Empresa</div>
+        <label class="cfg-lbl">Empresa</label>
+        <input class="cfg-inp" id="nr1-empresa" type="text" placeholder="Nome da empresa">
+        <label class="cfg-lbl">Responsável</label>
+        <input class="cfg-inp" id="nr1-responsavel" type="text" placeholder="Nome do responsável">
+        <label class="cfg-lbl">Segmento</label>
+        <input class="cfg-inp" id="nr1-segmento" type="text" placeholder="Ex: Tecnologia, Construção..." oninput="recalcNr1()">
+        <label class="cfg-lbl">Nº de Colaboradores</label>
+        <input class="cfg-inp" id="nr1-colaboradores" type="number" min="1" value="1" oninput="recalcNr1()">
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Grau de Risco</div>
+        <div id="nr1-grau-detectado" class="aviso" style="display:none"></div>
+        <select class="cfg-inp" id="nr1-grau" onchange="recalcNr1()">
+          <option value="I">Grau I</option>
+          <option value="II">Grau II</option>
+          <option value="III">Grau III</option>
+          <option value="IV">Grau IV</option>
+        </select>
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Módulos Azumi</div>
+        <div id="nr1-modulos-azumi-list"></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Parceiro SST (Opcional)</div>
+        <div id="nr1-modulos-sst-list"></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Observações</div>
+        <textarea class="cfg-inp" id="nr1-obs" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="prop-right">
+      <div class="prop-card">
+        <div class="prop-card-title">Resumo da Proposta</div>
+        <div id="nr1-resumo">—</div>
+      </div>
+      <div id="nr1-alertas-wrap"></div>
+    </div>
   </div>
 </div>
 
@@ -698,7 +793,7 @@ function renderModalFooter(tipo,r){
   const wa=(r.whatsapp||'').toString().replace(/\D/g,'')
   return`${wa?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55${wa}')">WhatsApp</button>`:''}
     <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-    <button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta('${tipo}',modalCtx.dados)">Gerar Proposta</button>
+    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
     <select class="status-sel" onchange="atualizarStatusModal('${tabela}','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
     ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
     <button class="btn-sm btn-del" style="margin-left:auto" onclick="excluirModal('${tabela}','${rid}','${nome}','${tipo}')">Excluir</button>`
@@ -1553,6 +1648,340 @@ window.addEventListener('load',()=>{
     carregarTudo()
   }
 })
+
+// ── NR-1 PROPOSTA ────────────────────────────────────────
+
+function brl(n){return fmtNum(n)}
+
+const NR1_GRAUS={
+  I:{label:'Grau I',cor:'#22c55e'},
+  II:{label:'Grau II',cor:'#f59e0b'},
+  III:{label:'Grau III',cor:'#ef4444'},
+  IV:{label:'Grau IV',cor:'#8B5CF6'}
+}
+
+const NR1_SEG_GRAU={
+  'tecnologia':'I','ti':'I','software':'I','consultoria':'I','escritório':'I','escritorio':'I',
+  'comercio':'I','varejo':'I','educação':'II','educacao':'II','saúde':'II','saude':'II',
+  'logística':'III','logistica':'III','transporte':'III','construção':'III','construcao':'III',
+  'manufatura':'III','indústria':'III','industria':'III',
+  'mineração':'IV','mineracao':'IV','petróleo':'IV','petroleo':'IV','quimica':'IV',
+  'química':'IV','metalurgia':'IV','siderurgia':'IV'
+}
+
+const NR1_MODULOS_AZUMI=[
+  {id:'gpt',   nome:'Gestão e PGR Técnico',      base:1200, obrig:true },
+  {id:'lt',    nome:'Laudo Técnico (LTCAT/PPRA)', base:800,  obrig:false},
+  {id:'mapa',  nome:'Mapa de Riscos',             base:400,  obrig:false},
+  {id:'cipa',  nome:'Apoio CIPA / CIPAMIN',       base:600,  obrig:false},
+  {id:'trein', nome:'Treinamento NR-1',           base:300,  obrig:false},
+  {id:'dds',   nome:'DDS Mensal (12 meses)',      base:900,  obrig:false},
+  {id:'aet',   nome:'AET — Análise Ergonômica',   base:1500, obrig:false},
+  {id:'sos',   nome:'SOS — Suporte On Site',      base:500,  obrig:false},
+]
+
+const NR1_MODULOS_SST=[
+  {id:'sst_pcmso',nome:'PCMSO',           base:700},
+  {id:'sst_aso',  nome:'ASO / Atestados', base:400},
+  {id:'sst_ppp',  nome:'PPP / eSocial',   base:350},
+  {id:'sst_epi',  nome:'Gestão de EPIs',  base:300},
+]
+
+let nr1State={
+  requestId:null,proposalId:null,status:'rascunho',
+  empresa:'',responsavel:'',segmento:'',colaboradores:1,grau:'I',
+  modulos:{},sst:{},obs:''
+}
+
+function detectarGrauNr1(seg){
+  if(!seg)return null
+  const s=seg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+  for(const[k,g]of Object.entries(NR1_SEG_GRAU)){
+    const kn=k.normalize('NFD').replace(/[̀-ͯ]/g,'')
+    if(s.includes(kn))return g
+  }
+  return null
+}
+
+function renderNr1ModulosAzumi(){
+  const el=document.getElementById('nr1-modulos-azumi-list')
+  if(!el)return
+  el.innerHTML=NR1_MODULOS_AZUMI.map(m=>{
+    const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base}
+    return`<div class="nr1-modulo-row">
+      <input type="checkbox" class="nr1-modulo-check" id="chk_${m.id}" ${st.ativo?'checked':''} ${m.obrig?'disabled':''} onchange="nr1ToggleMod('${m.id}',this.checked,'azumi')">
+      <label class="nr1-modulo-nome" for="chk_${m.id}">${m.nome}${m.obrig?' <span style="font-size:9px;color:#f59e0b">&#9679;</span>':''}</label>
+      <input type="number" class="nr1-modulo-val" value="${st.valor}" min="0" oninput="nr1SetVal('${m.id}',this.value,'azumi')">
+    </div>`
+  }).join('')
+}
+
+function renderNr1ModulosSST(){
+  const el=document.getElementById('nr1-modulos-sst-list')
+  if(!el)return
+  el.innerHTML=NR1_MODULOS_SST.map(m=>{
+    const st=nr1State.sst[m.id]||{ativo:false,valor:m.base}
+    return`<div class="nr1-sst-row">
+      <input type="checkbox" class="nr1-modulo-check" id="chk_${m.id}" ${st.ativo?'checked':''} onchange="nr1ToggleMod('${m.id}',this.checked,'sst')">
+      <label class="nr1-modulo-nome" for="chk_${m.id}">${m.nome}</label>
+      <input type="number" class="nr1-sst-val" value="${st.valor}" min="0" oninput="nr1SetVal('${m.id}',this.value,'sst')">
+    </div>`
+  }).join('')
+}
+
+function nr1ToggleMod(id,ativo,grupo){
+  if(grupo==='azumi'){
+    if(!nr1State.modulos[id])nr1State.modulos[id]={ativo,valor:NR1_MODULOS_AZUMI.find(m=>m.id===id).base}
+    else nr1State.modulos[id].ativo=ativo
+  }else{
+    if(!nr1State.sst[id])nr1State.sst[id]={ativo,valor:NR1_MODULOS_SST.find(m=>m.id===id).base}
+    else nr1State.sst[id].ativo=ativo
+  }
+  recalcNr1()
+}
+
+function nr1SetVal(id,val,grupo){
+  const v=parseFloat(val)||0
+  if(grupo==='azumi'){
+    if(!nr1State.modulos[id])nr1State.modulos[id]={ativo:false,valor:v}
+    else nr1State.modulos[id].valor=v
+  }else{
+    if(!nr1State.sst[id])nr1State.sst[id]={ativo:false,valor:v}
+    else nr1State.sst[id].valor=v
+  }
+  recalcNr1()
+}
+
+function recalcNr1(){
+  nr1State.empresa=document.getElementById('nr1-empresa')?.value||''
+  nr1State.responsavel=document.getElementById('nr1-responsavel')?.value||''
+  nr1State.segmento=document.getElementById('nr1-segmento')?.value||''
+  nr1State.colaboradores=parseInt(document.getElementById('nr1-colaboradores')?.value)||1
+  nr1State.grau=document.getElementById('nr1-grau')?.value||'I'
+  nr1State.obs=document.getElementById('nr1-obs')?.value||''
+
+  const grauDet=detectarGrauNr1(nr1State.segmento)
+  const alertaEl=document.getElementById('nr1-grau-detectado')
+  if(grauDet&&alertaEl){
+    alertaEl.style.display='block'
+    alertaEl.textContent=`Detectado: Grau ${grauDet} para "${nr1State.segmento}"`
+    document.getElementById('nr1-grau').value=grauDet
+    nr1State.grau=grauDet
+  }else if(alertaEl){alertaEl.style.display='none'}
+
+  let totalAzumi=0
+  NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo)totalAzumi+=st.valor})
+  let totalSST=0
+  NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo)totalSST+=st.valor})
+  const total=totalAzumi+totalSST
+  const colabs=nr1State.colaboradores
+
+  const resumoEl=document.getElementById('nr1-resumo')
+  if(resumoEl){
+    const linhasAz=NR1_MODULOS_AZUMI
+      .filter(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig};return st.ativo})
+      .map(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};return`<div class="result-inner"><span class="result-label">${m.nome}</span><span class="result-orig">${brl(st.valor)}</span></div>`})
+      .join('')
+    const linhasSst=NR1_MODULOS_SST
+      .filter(m=>{const st=nr1State.sst[m.id]||{ativo:false};return st.ativo})
+      .map(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return`<div class="result-inner"><span class="result-label">${m.nome}</span><span class="result-orig">${brl(st.valor)}</span></div>`})
+      .join('')
+    resumoEl.innerHTML=`${linhasAz}${linhasSst?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)">${linhasSst}</div>`:''}
+      <div style="margin-top:12px;padding-top:10px;border-top:2px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);text-transform:uppercase">Total / mês</span>
+        <span style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#3B82F6">${brl(total)}</span>
+      </div>
+      <div class="result-note">Grau de Risco ${nr1State.grau} &middot; ${colabs} colaborador${colabs!==1?'es':''}</div>`
+  }
+
+  renderAlertasNr1(colabs,nr1State.grau)
+}
+
+function renderAlertasNr1(colabs,grau){
+  const wrap=document.getElementById('nr1-alertas-wrap')
+  if(!wrap)return
+  const gn={I:1,II:2,III:3,IV:4}[grau]||1
+  const alertas=[]
+  const limites={1:200,2:100,3:51,4:51}
+  const lim=limites[gn]
+  if(colabs>=lim){
+    alertas.push(`<div class="nr1-alerta-cipa">&#9888; CIPA obrigatória — ${colabs} colaboradores no Grau ${grau} exige CIPA (mín. ${lim} func.).</div>`)
+  }
+  if(gn>=3){
+    alertas.push(`<div class="nr1-alerta-cipa" style="border-left-color:#8B5CF6">&#9888; AET recomendada — Grau ${grau} exige Análise Ergonômica do Trabalho (NR-17).</div>`)
+  }
+  wrap.innerHTML=alertas.join('')
+}
+
+function abrirNr1Proposta(req){
+  if(!req)return
+  nr1State={
+    requestId:req.id||null,proposalId:null,status:'rascunho',
+    empresa:req.empresa_nome||req.nome_empresa||req.empresa||'',
+    responsavel:req.decisor_nome||req.nome_responsavel||req.responsavel||'',
+    segmento:req.segmento||'',
+    colaboradores:parseInt(req.num_colaboradores)||1,
+    grau:'I',modulos:{},sst:{},obs:''
+  }
+  NR1_MODULOS_AZUMI.forEach(m=>{nr1State.modulos[m.id]={ativo:m.obrig,valor:m.base}})
+  NR1_MODULOS_SST.forEach(m=>{nr1State.sst[m.id]={ativo:false,valor:m.base}})
+
+  document.getElementById('admin-page').style.display='none'
+  document.getElementById('prop-nr1-view').style.display='block'
+  document.getElementById('nr1-empresa').value=nr1State.empresa
+  document.getElementById('nr1-responsavel').value=nr1State.responsavel
+  document.getElementById('nr1-segmento').value=nr1State.segmento
+  document.getElementById('nr1-colaboradores').value=nr1State.colaboradores
+  document.getElementById('nr1-obs').value=''
+  document.getElementById('nr1-status-pill').textContent='Rascunho'
+  document.getElementById('nr1-status-pill').className='status-pill pill-rascunho'
+
+  renderNr1ModulosAzumi()
+  renderNr1ModulosSST()
+  recalcNr1()
+  if(req.id)carregarNr1PropostaExistente(req.id)
+}
+
+async function carregarNr1PropostaExistente(requestId){
+  if(!requestId)return
+  const{data}=await sb.from('nr1_proposals').select('*').eq('request_id',requestId).order('created_at',{ascending:false}).limit(1)
+  if(!data||!data.length)return
+  const p=data[0]
+  nr1State.proposalId=p.id
+  nr1State.status=p.status||'rascunho'
+  if(p.modulos_azumi)try{const mv=JSON.parse(p.modulos_azumi);Object.assign(nr1State.modulos,mv)}catch(e){}
+  if(p.modulos_sst)try{const sv=JSON.parse(p.modulos_sst);Object.assign(nr1State.sst,sv)}catch(e){}
+  if(p.grau)nr1State.grau=p.grau
+  if(p.obs)nr1State.obs=p.obs
+  if(p.colaboradores)nr1State.colaboradores=p.colaboradores
+  document.getElementById('nr1-grau').value=nr1State.grau
+  document.getElementById('nr1-obs').value=nr1State.obs
+  document.getElementById('nr1-colaboradores').value=nr1State.colaboradores
+  const pillLbl={rascunho:'Rascunho',aprovada:'Aprovada',enviada:'Enviada'}
+  const pillCls={rascunho:'pill-rascunho',aprovada:'pill-aprovada',enviada:'pill-enviada'}
+  document.getElementById('nr1-status-pill').textContent=pillLbl[nr1State.status]||'Rascunho'
+  document.getElementById('nr1-status-pill').className='status-pill '+(pillCls[nr1State.status]||'pill-rascunho')
+  renderNr1ModulosAzumi()
+  renderNr1ModulosSST()
+  recalcNr1()
+}
+
+async function salvarNr1Proposta(){
+  nr1State.empresa=document.getElementById('nr1-empresa')?.value||nr1State.empresa
+  nr1State.responsavel=document.getElementById('nr1-responsavel')?.value||nr1State.responsavel
+  nr1State.colaboradores=parseInt(document.getElementById('nr1-colaboradores')?.value)||nr1State.colaboradores
+  nr1State.grau=document.getElementById('nr1-grau')?.value||nr1State.grau
+  nr1State.obs=document.getElementById('nr1-obs')?.value||''
+  let tAz=0,tSst=0
+  NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo)tAz+=st.valor})
+  NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo)tSst+=st.valor})
+  const payload={
+    request_id:nr1State.requestId,empresa_nome:nr1State.empresa,responsavel:nr1State.responsavel,
+    segmento:nr1State.segmento,colaboradores:nr1State.colaboradores,grau:nr1State.grau,
+    modulos_azumi:JSON.stringify(nr1State.modulos),modulos_sst:JSON.stringify(nr1State.sst),
+    total_azumi:tAz,total_sst:tSst,total:tAz+tSst,obs:nr1State.obs,status:nr1State.status,
+    emitido_por:sessao?sessao.nome:'Azumi RH'
+  }
+  let res
+  if(nr1State.proposalId){
+    res=await sb.from('nr1_proposals').update(payload).eq('id',nr1State.proposalId).select()
+  }else{
+    res=await sb.from('nr1_proposals').insert(payload).select()
+  }
+  if(res.error){toast('Erro ao salvar: '+res.error.message);return}
+  if(!nr1State.proposalId&&res.data?.length)nr1State.proposalId=res.data[0].id
+  toast('Proposta salva!')
+}
+
+async function aprovarNr1Proposta(){
+  await salvarNr1Proposta()
+  if(!nr1State.proposalId)return
+  await sb.from('nr1_proposals').update({status:'aprovada'}).eq('id',nr1State.proposalId)
+  nr1State.status='aprovada'
+  document.getElementById('nr1-status-pill').textContent='Aprovada'
+  document.getElementById('nr1-status-pill').className='status-pill pill-aprovada'
+  toast('Proposta aprovada!')
+}
+
+function voltarNr1(){
+  document.getElementById('prop-nr1-view').style.display='none'
+  document.getElementById('admin-page').style.display='block'
+}
+
+function imprimirNr1Prop(){
+  const tAz=NR1_MODULOS_AZUMI.reduce((a,m)=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};return a+(st.ativo?st.valor:0)},0)
+  const tSst=NR1_MODULOS_SST.reduce((a,m)=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return a+(st.ativo?st.valor:0)},0)
+  const total=tAz+tSst
+  const hoje=new Date().toLocaleDateString('pt-BR')
+  const empresa=nr1State.empresa||'—'
+  const responsavel=nr1State.responsavel||'—'
+  const segmento=nr1State.segmento||'—'
+  const colabs=nr1State.colaboradores
+  const grau=nr1State.grau
+  const obs=nr1State.obs||''
+  const emitidoPor=sessao?sessao.nome:'Azumi RH'
+  const linhasAz=NR1_MODULOS_AZUMI
+    .filter(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig};return st.ativo})
+    .map(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};return`<tr><td>${m.nome}</td><td style="text-align:right;font-weight:600">${brl(st.valor)}/mês</td></tr>`})
+    .join('')
+  const linhasSst=NR1_MODULOS_SST
+    .filter(m=>{const st=nr1State.sst[m.id]||{ativo:false};return st.ativo})
+    .map(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return`<tr><td>${m.nome} <span style="font-size:10px;color:#64748b">(Parceiro SST)</span></td><td style="text-align:right;font-weight:600">${brl(st.valor)}/mês</td></tr>`})
+    .join('')
+  const grauCores={I:'#22c55e',II:'#f59e0b',III:'#ef4444',IV:'#8B5CF6'}
+  const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Proposta NR-1 — ${empresa}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;background:#fff;padding:40px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1e40af;padding-bottom:20px;margin-bottom:28px}
+.logo{font-size:26px;font-weight:900;color:#1e40af;letter-spacing:-1px}.logo span{color:#3b82f6}
+.meta{text-align:right;font-size:11px;color:#64748b}.meta b{display:block;font-size:13px;color:#1e293b;margin-bottom:2px}
+h2{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #e2e8f0}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;margin-bottom:24px}
+.info-item{padding:8px 0;border-bottom:1px solid #f1f5f9}
+.info-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:2px}
+.info-val{font-size:13px;color:#1e293b;font-weight:500}
+.grau-badge{display:inline-block;padding:3px 12px;border-radius:100px;font-size:11px;font-weight:700;color:#fff;background:${grauCores[grau]||'#64748b'}}
+table{width:100%;border-collapse:collapse;margin-bottom:24px}
+table th{background:#f8fafc;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0}
+table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:13px}
+table tr:last-child td{border-bottom:none}
+.total-row td{background:#eff6ff;font-size:16px;font-weight:800;color:#1e40af;padding:14px 12px}
+.obs{background:#f8fafc;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#475569;margin-bottom:24px;line-height:1.6}
+.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8}
+@media print{body{padding:20px}}
+</style></head><body>
+<div class="header">
+  <div><div class="logo">Azumi<span>RH</span></div><div style="font-size:11px;color:#64748b;margin-top:4px">Gestão de Pessoas &amp; Compliance</div></div>
+  <div class="meta"><b>Proposta Comercial — NR-1</b>Data: ${hoje}<br>Emitido por: ${emitidoPor}</div>
+</div>
+<h2>Dados da Empresa</h2>
+<div class="info-grid">
+  <div class="info-item"><div class="info-lbl">Empresa</div><div class="info-val">${empresa}</div></div>
+  <div class="info-item"><div class="info-lbl">Responsável</div><div class="info-val">${responsavel}</div></div>
+  <div class="info-item"><div class="info-lbl">Segmento</div><div class="info-val">${segmento}</div></div>
+  <div class="info-item"><div class="info-lbl">Colaboradores</div><div class="info-val">${colabs}</div></div>
+  <div class="info-item"><div class="info-lbl">Grau de Risco</div><div class="info-val"><span class="grau-badge">Grau ${grau}</span></div></div>
+</div>
+<h2>Serviços Contratados</h2>
+<table>
+  <thead><tr><th>Serviço</th><th style="text-align:right">Valor Mensal</th></tr></thead>
+  <tbody>${linhasAz}${linhasSst}</tbody>
+  <tfoot><tr class="total-row"><td>Total Mensal</td><td style="text-align:right">${brl(total)}/mês</td></tr></tfoot>
+</table>
+${obs?`<div class="obs">${obs}</div>`:''}
+<div class="footer">
+  <span>Azumi RH · patricia@azumirh.com.br · (41) 98835-0743</span>
+  <span>Proposta válida por 30 dias</span>
+</div>
+</body></html>`
+  const w=window.open('','_blank','width=900,height=700')
+  w.document.write(html)
+  w.document.close()
+  w.focus()
+  setTimeout(()=>w.print(),500)
+}
 
 // ── ANALYTICS ───────────────────────────────────────────
 let anSessoes=[]
