@@ -829,18 +829,33 @@ function parseJsonSafe(v){try{return JSON.parse(v)||{}}catch{return{}}}
 function jsonAvg(v){const o=parseJsonSafe(v);const vals=Object.values(o).filter(n=>typeof n==='number');return vals.length?Math.round(vals.reduce((a,n)=>a+n,0)/vals.length*10)/10:null}
 
 function mkTable(data,tipo,nameFn,subFn,detailFn){
+  const thS='font-family:\'JetBrains Mono\',monospace;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;font-weight:500;white-space:nowrap'
+  const tdS='font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:#222;padding:10px 14px;vertical-align:middle'
+  function dtFmt(s){return s?new Date(s).toLocaleDateString('pt-BR'):'—'}
   const rows=data.map(r=>{
     const rj=JSON.stringify(r).replace(/"/g,'&quot;')
-    return`<tr onclick="abrirModal('${tipo}',${rj})">
-      <td><div class="req-table-nome">${nameFn(r)}</div><div class="req-table-sub">${subFn(r)}</div></td>
-      <td class="req-table-data">${detailFn(r)||'—'}</td>
-      <td class="req-table-proto">${r.protocolo||'—'}</td>
-      <td class="req-table-data">${dt(r.created_at)}</td>
-      <td><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span></td>
+    return`<tr onclick="abrirModal('${tipo}',${rj})" style="background:#fff;border-bottom:1px solid #EDEDED;cursor:pointer" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='#fff'">
+      <td style="${tdS};font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6">${r.protocolo||'—'}</td>
+      <td style="${tdS}">${dtFmt(r.created_at)}</td>
+      <td style="${tdS};font-weight:600">${r.nome||'—'}</td>
+      <td style="${tdS}">${r.cargo_atual||'—'}</td>
+      <td style="${tdS}">${r.area_atuacao||'—'}</td>
+      <td style="${tdS}">${r.email||'—'}</td>
+      <td style="${tdS}">${r.whatsapp||'—'}</td>
+      <td style="${tdS}"><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span></td>
     </tr>`
   }).join('')
-  return`<div class="req-table-wrap"><table class="req-table">
-    <thead><tr><th>Nome / Empresa</th><th>Contato</th><th>Protocolo</th><th>Data</th><th>Status</th></tr></thead>
+  return`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;table-layout:auto;background:#fff">
+    <thead><tr style="background:#031D38">
+      <th style="${thS}">Protocolo</th>
+      <th style="${thS}">Data</th>
+      <th style="${thS}">Nome</th>
+      <th style="${thS}">Empresa</th>
+      <th style="${thS}">Cargo</th>
+      <th style="${thS}">E-mail</th>
+      <th style="${thS}">WhatsApp</th>
+      <th style="${thS}">Status</th>
+    </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`
 }
@@ -1057,33 +1072,64 @@ async function excluirModal(tabela,id,nome,tipo){
 }
 
 function modalCareer(r){
-  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse.join(', '):(r.servicos_interesse||'—')
-  return`
-    <div class="modal-section-title">Seus dados</div>
-    <div class="modal-fields-grid">
-      ${campo('Nome',r.nome||'—')}${campo('E-mail',r.email||'—')}
-      ${campo('WhatsApp',r.whatsapp||'—')}${campo('LinkedIn',r.linkedin_url||'—')}
-      ${campo('Cidade',r.cidade||'—')}${campo('Estado',r.estado||'—')}
-      ${campo('País',r.pais||'—')}
+  const loc=[r.cidade,r.estado,r.pais].filter(Boolean).join(', ')||'—'
+  const srvList=Array.isArray(r.servicos_interesse)?r.servicos_interesse:(r.servicos_interesse?[r.servicos_interesse]:[])
+  const srvHtml=srvList.length?srvList.map(s=>`<li style="margin-bottom:2px">${s}</li>`).join(''):`<li>—</li>`
+  const labelS=`font-family:'JetBrains Mono',monospace;font-size:9px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px`
+  const valS=`font-size:13px;font-weight:600;color:#1a2533`
+  const secTitleS=`font-family:'JetBrains Mono',monospace;font-size:9px;color:#9EACB8;text-transform:uppercase;letter-spacing:.1em;padding-bottom:6px;border-bottom:1px solid #EDEDED;margin-bottom:12px;font-weight:500`
+  const gridS=`display:grid;grid-template-columns:1fr 1fr;gap:12px 16px`
+  const fld=(lbl,val)=>`<div><div style="${labelS}">${lbl}</div><div style="${valS}">${val||'—'}</div></div>`
+  const fldFull=(lbl,val)=>`<div style="grid-column:1/-1"><div style="${labelS}">${lbl}</div><div style="${valS}">${val||'—'}</div></div>`
+  return`<div style="background:#fff;margin:-20px -24px;padding:28px 32px;color:#222">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+      <div>
+        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#031D38;margin-bottom:4px">${r.nome||'—'}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3B82F6">${r.protocolo||'—'}</div>
+      </div>
+      <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span>
     </div>
-    <div class="modal-section-title">Momento atual</div>
-    <div class="modal-fields-grid">
-      ${campo('Cargo atual',r.cargo_atual||'—')}${campo('Área de atuação',r.area_atuacao||'—')}
-      ${campo('Senioridade',r.senioridade||'—')}${campo('Tempo de experiência',r.tempo_experiencia||'—')}
-      ${campo('Escolaridade',r.escolaridade||'—')}${campo('Idiomas',r.idiomas||'—')}
-      ${campo('Situação atual',r.situacao_atual||'—',true)}
+    <div style="margin-bottom:20px">
+      <div style="${secTitleS}">IDENTIFICAÇÃO</div>
+      <div style="${gridS}">
+        ${fld('Nome',r.nome)}
+        ${fld('E-mail',r.email)}
+        ${fld('WhatsApp',r.whatsapp)}
+        ${fld('LinkedIn',r.linkedin_url)}
+        ${fldFull('Localização',loc)}
+      </div>
     </div>
-    <div class="modal-section-title">Objetivos e serviços</div>
-    <div class="modal-fields-grid">
-      ${campo('Objetivo principal',r.objetivo_principal_chip||'—')}${campo('Prazo desejado',r.prazo_desejado||'—')}
-      ${campo('Modelo de atendimento',r.modelo_atendimento||'—')}${campo('Suporte desejado',r.suporte_desejado||'—')}
-      ${campo('Serviços de interesse',srvs,true)}
+    <div style="margin-bottom:20px">
+      <div style="${secTitleS}">MOMENTO ATUAL</div>
+      <div style="${gridS}">
+        ${fld('Cargo atual',r.cargo_atual)}
+        ${fld('Área de atuação',r.area_atuacao)}
+        ${fld('Senioridade',r.senioridade)}
+        ${fld('Tempo de experiência',r.tempo_experiencia)}
+        ${fld('Escolaridade',r.escolaridade)}
+        ${fld('Idiomas',r.idiomas)}
+        <div style="grid-column:1/-1"><div style="${labelS}">Situação atual</div><div style="${valS};font-style:italic">${r.situacao_atual||'—'}</div></div>
+      </div>
     </div>
-    <div class="modal-section-title">Contexto e envio</div>
-    <div class="modal-fields-grid">
-      ${campo('Objetivo detalhado',r.objetivo_principal||'—',true)}
-      ${campo('Como conheceu a Azumi',r.origem||'—')}
-    </div>`
+    <div style="margin-bottom:20px">
+      <div style="${secTitleS}">OBJETIVOS E SERVIÇOS</div>
+      <div style="${gridS}">
+        ${fldFull('Objetivo principal',r.objetivo_principal_chip)}
+        ${fld('Prazo desejado',r.prazo_desejado)}
+        ${fld('Modelo de atendimento',r.modelo_atendimento)}
+        ${fld('Suporte desejado',r.suporte_desejado)}
+        <div style="grid-column:1/-1"><div style="${labelS}">Serviços de interesse</div><ul style="margin:4px 0 0 16px;padding:0">${srvHtml}</ul></div>
+      </div>
+    </div>
+    <div style="margin-bottom:4px">
+      <div style="${secTitleS}">OBSERVAÇÕES</div>
+      <div style="${gridS}">
+        ${r.obs?fldFull('Obs',r.obs):''}
+        ${fldFull('Objetivo detalhado',r.objetivo_principal)}
+        ${fld('Como conheceu a Azumi',r.origem)}
+      </div>
+    </div>
+  </div>`
 }
 
 function modalVaga(r){
