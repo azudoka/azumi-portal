@@ -541,6 +541,29 @@ textarea.cfg-inp{resize:vertical}
         <div class="prop-card-title">Resumo da Proposta</div>
         <div id="nr1-resumo">—</div>
       </div>
+      <!-- Precificação — uso interno, nunca vai ao PDF -->
+      <div class="prop-card" style="border-color:rgba(139,92,246,.25)">
+        <div class="prop-card-title" style="color:#a78bfa">Precificação (Interno)</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:4px">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(139,92,246,.7);text-transform:uppercase;letter-spacing:.06em">Custo SST parceiro</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:1px">Não aparece no PDF</div>
+          </div>
+          <span style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#a78bfa" id="nr1-custo-sst">R$ 0,00</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em">Margem bruta estimada</div>
+          <span style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#10b981" id="nr1-margem-display">—</span>
+        </div>
+        <label class="cfg-lbl">Desconto (%)</label>
+        <input class="cfg-inp" id="nr1-desconto-pct" type="number" min="0" max="100" value="0" step="0.5" oninput="recalcNr1()">
+        <label class="cfg-lbl">Bônus / Condição especial</label>
+        <input class="cfg-inp" id="nr1-bonus" type="text" placeholder="Ex: 1 mês grátis, DDS incluso...">
+        <div style="margin-top:14px;padding-top:12px;border-top:2px solid rgba(59,130,246,.2);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);text-transform:uppercase">Valor final ao cliente</span>
+          <span style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#3B82F6" id="nr1-valor-final-display">—</span>
+        </div>
+      </div>
       <div id="nr1-alertas-wrap"></div>
     </div>
   </div>
@@ -1942,7 +1965,7 @@ const NR1_MODULOS_SST=[
 let nr1State={
   requestId:null,proposalId:null,status:'rascunho',
   empresa:'',responsavel:'',segmento:'',colaboradores:1,grau:'I',
-  modulos:{},sst:{},obs:''
+  modulos:{},sst:{},obs:'',descontoPct:0,bonus:''
 }
 
 function detectarGrauNr1(seg){
@@ -2025,8 +2048,20 @@ function recalcNr1(){
   NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo)totalAzumi+=st.valor})
   let totalSST=0
   NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo)totalSST+=st.valor})
-  const total=totalAzumi+totalSST
   const colabs=nr1State.colaboradores
+
+  // pricing calc — client pays only Azumi modules; SST is internal cost
+  const descontoPct=parseFloat(document.getElementById('nr1-desconto-pct')?.value)||0
+  const descontoValor=totalAzumi*(descontoPct/100)
+  const valorFinal=totalAzumi-descontoValor
+  const margem=totalAzumi>0?((totalAzumi-totalSST)/totalAzumi*100):0
+
+  const custSstEl=document.getElementById('nr1-custo-sst')
+  if(custSstEl)custSstEl.textContent=brl(totalSST)
+  const margemEl=document.getElementById('nr1-margem-display')
+  if(margemEl)margemEl.textContent=totalAzumi>0?margem.toFixed(1)+'%':'—'
+  const vfEl=document.getElementById('nr1-valor-final-display')
+  if(vfEl)vfEl.textContent=totalAzumi>0?brl(valorFinal)+'/mês':'—'
 
   const resumoEl=document.getElementById('nr1-resumo')
   if(resumoEl){
@@ -2036,12 +2071,14 @@ function recalcNr1(){
       .join('')
     const linhasSst=NR1_MODULOS_SST
       .filter(m=>{const st=nr1State.sst[m.id]||{ativo:false};return st.ativo})
-      .map(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return`<div class="result-inner"><span class="result-label">${m.nome}</span><span class="result-orig">${brl(st.valor)}</span></div>`})
+      .map(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return`<div class="result-inner"><span class="result-label">${m.nome} <span style="font-size:9px;color:rgba(139,92,246,.6)">(SST)</span></span><span class="result-orig" style="color:#a78bfa">${brl(st.valor)}</span></div>`})
       .join('')
+    const descontoRow=descontoPct>0?`<div class="result-inner" style="color:#f87171"><span class="result-label">Desconto (${descontoPct}%)</span><span class="result-orig" style="color:#f87171">− ${brl(descontoValor)}</span></div>`:''
     resumoEl.innerHTML=`${linhasAz}${linhasSst?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)">${linhasSst}</div>`:''}
+      ${descontoRow}
       <div style="margin-top:12px;padding-top:10px;border-top:2px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);text-transform:uppercase">Total / mês</span>
-        <span style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#3B82F6">${brl(total)}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);text-transform:uppercase">Valor ao cliente / mês</span>
+        <span style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#3B82F6">${brl(valorFinal)}</span>
       </div>
       <div class="result-note">Grau de Risco ${nr1State.grau} &middot; ${colabs} colaborador${colabs!==1?'es':''}</div>`
   }
@@ -2085,6 +2122,8 @@ function abrirNr1Proposta(req){
   document.getElementById('nr1-segmento').value=nr1State.segmento
   document.getElementById('nr1-colaboradores').value=nr1State.colaboradores
   document.getElementById('nr1-obs').value=''
+  document.getElementById('nr1-desconto-pct').value=0
+  document.getElementById('nr1-bonus').value=''
   document.getElementById('nr1-status-pill').textContent='Rascunho'
   document.getElementById('nr1-status-pill').className='status-pill pill-rascunho'
 
@@ -2120,6 +2159,8 @@ async function carregarNr1PropostaExistente(requestId){
   document.getElementById('nr1-colaboradores').value=nr1State.colaboradores
   if(p.empresa)document.getElementById('nr1-empresa').value=nr1State.empresa
   if(p.decisor)document.getElementById('nr1-responsavel').value=nr1State.responsavel
+  if(p.desconto_pct!=null){nr1State.descontoPct=p.desconto_pct;document.getElementById('nr1-desconto-pct').value=p.desconto_pct}
+  if(p.bonus){nr1State.bonus=p.bonus;document.getElementById('nr1-bonus').value=p.bonus}
   const pillLbl={rascunho:'Rascunho',aprovada:'Aprovada',enviada:'Enviada'}
   const pillCls={rascunho:'pill-rascunho',aprovada:'pill-aprovada',enviada:'pill-enviada'}
   document.getElementById('nr1-status-pill').textContent=pillLbl[nr1State.status]||'Rascunho'
@@ -2136,12 +2177,15 @@ async function salvarNr1Prop(forceStatus){
   nr1State.colaboradores=parseInt(document.getElementById('nr1-colaboradores')?.value)||nr1State.colaboradores
   nr1State.grau=document.getElementById('nr1-grau')?.value||nr1State.grau
   nr1State.obs=document.getElementById('nr1-obs')?.value||''
+  nr1State.descontoPct=parseFloat(document.getElementById('nr1-desconto-pct')?.value)||0
+  nr1State.bonus=document.getElementById('nr1-bonus')?.value||''
   let tAz=0,tSst=0
   const modAz={}
   NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo){tAz+=st.valor;modAz[m.id]=st.valor}})
   const modSst={}
   NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo){tSst+=st.valor;modSst[m.id]=st.valor}})
-  const total=tAz+tSst
+  const descVal=tAz*(nr1State.descontoPct/100)
+  const vFinal=tAz-descVal
   const proto=nr1State.proposalId?null
     :'AZ-NRP-'+new Date().getFullYear()+String(new Date().getMonth()+1).padStart(2,'0')+'-'+Math.floor(Math.random()*90000+10000)
   const payload={
@@ -2156,8 +2200,11 @@ async function salvarNr1Prop(forceStatus){
     modulos_sst:modSst,
     total_azumi:tAz,
     total_sst:tSst,
-    valor_mensal:total,
-    valor_final:total,
+    valor_mensal:tAz,
+    desconto_pct:nr1State.descontoPct,
+    desconto_valor:descVal,
+    valor_final:vFinal,
+    bonus:nr1State.bonus||null,
     obs:nr1State.obs,
     status,
     emitido_por:sessao?sessao.nome:'Azumi RH'
@@ -2185,8 +2232,6 @@ function voltarNr1(){
 
 function imprimirNr1Prop(){
   const tAz=NR1_MODULOS_AZUMI.reduce((a,m)=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};return a+(st.ativo?st.valor:0)},0)
-  const tSst=NR1_MODULOS_SST.reduce((a,m)=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return a+(st.ativo?st.valor:0)},0)
-  const total=tAz+tSst
   const hoje=new Date().toLocaleDateString('pt-BR')
   const empresa=nr1State.empresa||'—'
   const responsavel=nr1State.responsavel||'—'
@@ -2194,16 +2239,23 @@ function imprimirNr1Prop(){
   const colabs=nr1State.colaboradores
   const grau=nr1State.grau
   const obs=nr1State.obs||''
+  const bonus=nr1State.bonus||document.getElementById('nr1-bonus')?.value||''
+  const descontoPct=parseFloat(document.getElementById('nr1-desconto-pct')?.value)||0
+  const descontoValor=tAz*(descontoPct/100)
+  const valorFinal=tAz-descontoValor
   const emitidoPor=sessao?sessao.nome:'Azumi RH'
+  const grauCores={I:'#22c55e',II:'#f59e0b',III:'#ef4444',IV:'#8B5CF6'}
+  // PDF shows only Azumi modules — SST cost is internal
   const linhasAz=NR1_MODULOS_AZUMI
     .filter(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig};return st.ativo})
     .map(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};return`<tr><td>${m.nome}</td><td style="text-align:right;font-weight:600">${brl(st.valor)}/mês</td></tr>`})
     .join('')
-  const linhasSst=NR1_MODULOS_SST
-    .filter(m=>{const st=nr1State.sst[m.id]||{ativo:false};return st.ativo})
-    .map(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};return`<tr><td>${m.nome} <span style="font-size:10px;color:#64748b">(Parceiro SST)</span></td><td style="text-align:right;font-weight:600">${brl(st.valor)}/mês</td></tr>`})
-    .join('')
-  const grauCores={I:'#22c55e',II:'#f59e0b',III:'#ef4444',IV:'#8B5CF6'}
+  const descontoRow=descontoPct>0
+    ?`<tr class="desc-row"><td>Desconto (${descontoPct}%)</td><td style="text-align:right;color:#dc2626">− ${brl(descontoValor)}/mês</td></tr>`
+    :''
+  const bonusRow=bonus
+    ?`<tr><td colspan="2" style="font-size:11px;color:#475569;font-style:italic;padding:8px 12px">&#9733; ${bonus}</td></tr>`
+    :''
   const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
 <title>Proposta NR-1 — ${empresa}</title>
 <style>
@@ -2221,8 +2273,8 @@ h2{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:12px;padding-botto
 table{width:100%;border-collapse:collapse;margin-bottom:24px}
 table th{background:#f8fafc;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0}
 table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:13px}
-table tr:last-child td{border-bottom:none}
-.total-row td{background:#eff6ff;font-size:16px;font-weight:800;color:#1e40af;padding:14px 12px}
+.desc-row td{color:#dc2626;background:#fff5f5}
+.total-row td{background:#eff6ff;font-size:16px;font-weight:800;color:#1e40af;padding:14px 12px;border-top:2px solid #bfdbfe}
 .obs{background:#f8fafc;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#475569;margin-bottom:24px;line-height:1.6}
 .footer{margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8}
 @media print{body{padding:20px}}
@@ -2242,12 +2294,12 @@ table tr:last-child td{border-bottom:none}
 <h2>Serviços Contratados</h2>
 <table>
   <thead><tr><th>Serviço</th><th style="text-align:right">Valor Mensal</th></tr></thead>
-  <tbody>${linhasAz}${linhasSst}</tbody>
-  <tfoot><tr class="total-row"><td>Total Mensal</td><td style="text-align:right">${brl(total)}/mês</td></tr></tfoot>
+  <tbody>${linhasAz}${descontoRow}${bonusRow}</tbody>
+  <tfoot><tr class="total-row"><td>Valor Final / mês</td><td style="text-align:right">${brl(valorFinal)}/mês</td></tr></tfoot>
 </table>
 ${obs?`<div class="obs">${obs}</div>`:''}
 <div class="footer">
-  <span>Azumi RH · patricia@azumirh.com.br · (41) 98835-0743</span>
+  <span>Azumi RH &middot; patricia@azumirh.com.br &middot; (41) 98835-0743</span>
   <span>Proposta válida por 30 dias</span>
 </div>
 </body></html>`
