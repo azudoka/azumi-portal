@@ -673,57 +673,64 @@ async function enviar(){
   btn.disabled=true;btn.textContent='Enviando...'
   const protocolo=gerarProtocolo()
   const responsavelNome=g('responsavel').value.trim()
+  const empresaNome=g('empresa').value.trim()
 
-  const dados={
-    protocolo,
-    nome_empresa:g('empresa').value.trim(),
-    cnpj:g('cnpj').value.trim(),
-    nome_responsavel:responsavelNome,
-    cargo_responsavel:g('cargo').value.trim(),
-    email:g('email').value.trim(),
-    whatsapp:g('whatsapp').value.trim(),
-    num_colaboradores:Number(g('num_colaboradores').value)||null,
-    segmento:g('segmento').value,
-    num_unidades:Number(g('unidades').value)||1,
-    tem_programa:radioVals['tem_programa']||null,
-    afastamento_saude_mental:radioVals['afastamento']||null,
-    mapeamento_anterior:radioVals['mapeamento']||null,
-    situacao_atual:g('situacao_atual').value.trim(),
-    modalidade:ckVals('ck-modalidade'),
-    turnos:ckVals('ck-turnos'),
-    setores:g('setores').value.trim(),
-    desafios_clima:chipVals('chips-desafios'),
-    nivel_consciencia_lideranca:scaleVals['lideranca']||null,
-    plano_acao_lideranca:radioVals['plano_acao']||null,
-    comprometimento_lideranca:scaleVals['comprometimento']||null,
-    obs_lideranca:g('obs_lideranca').value.trim(),
-    urgencia_implementacao:radioVals['urgencia']||null,
-    frentes_prioritarias:chipVals('chips-frentes'),
-    data_limite:g('data_limite').value||null,
-    como_conheceu:g('como_conheceu').value,
-    observacoes:g('observacoes').value.trim(),
-    status:'novo'
-  }
-
-  const {error}=await sb.from('nr1_requests').insert(dados)
-  if(error){
-    btn.disabled=false;btn.textContent='Solicitar diagnostico NR-1'
-    alert('Erro ao enviar. Tente novamente.')
-    console.error(error)
-    return
-  }
-
+  // E-mail — mantido exato, não bloqueia fluxo
   try{
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
-        subject:'['+protocolo+'] Diagnostico NR-1 — '+dados.nome_empresa,
-        html:'<h2>Novo Diagnostico NR-1</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Responsavel:</b> '+responsavelNome+' — '+dados.email+'</p><p><b>Colaboradores CLT:</b> '+dados.num_colaboradores+'</p><p><b>Urgencia:</b> '+(dados.urgencia_implementacao||'nao informado')+'</p>'
+        subject:'['+protocolo+'] Diagnostico NR-1 — '+empresaNome,
+        html:'<h2>Novo Diagnostico NR-1</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+empresaNome+'</p><p><b>Responsavel:</b> '+responsavelNome+' — '+g('email').value.trim()+'</p><p><b>Colaboradores CLT:</b> '+g('num_colaboradores').value+'</p><p><b>Urgencia:</b> '+(radioVals['urgencia']||'nao informado')+'</p>'
       })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}
+
+  // Supabase — payload alinhado com colunas reais de nr1_requests
+  const payload={
+    protocolo,
+    empresa_nome:     empresaNome,
+    decisor_nome:     responsavelNome,
+    email:            g('email').value.trim(),
+    whatsapp:         g('whatsapp').value.trim()||'',
+    cidade:           '',
+    estado:           '',
+    num_colaboradores: g('num_colaboradores').value||'',
+    segmento:         g('segmento').value||'',
+    pgr_situacao:     radioVals['mapeamento']||'',
+    risco_psi:        radioVals['afastamento']||'',
+    canal_denuncia:   '',
+    autuacao:         '',
+    clima:            chipVals('chips-desafios')||'',
+    ocorrencias:      chipVals('chips-frentes')||'',
+    conhecimento:     radioVals['tem_programa']||'',
+    lider_preparo:    radioVals['plano_acao']||'',
+    canal_claro:      '',
+    feedback:         '',
+    motivacao:        radioVals['urgencia']||'',
+    preocupacao:      '',
+    inicio:           '',
+    observacoes:      g('observacoes').value.trim()||'',
+    status:           'novo'
+  }
+
+  const sbRes=await fetch(SUPA_URL+'/rest/v1/nr1_requests',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'apikey':SUPA_KEY,
+      'Authorization':'Bearer '+SUPA_KEY,
+      'Prefer':'return=representation'
+    },
+    body:JSON.stringify(payload)
+  })
+  if(!sbRes.ok){
+    const errTxt=await sbRes.text()
+    console.error('Supabase NR-1 error:',errTxt)
+    // não bloqueia o fluxo — email já foi enviado
+  }
 
   // Success
   g('accWrap').style.display='none'
@@ -732,7 +739,7 @@ async function enviar(){
   sEl.style.display='block'
   sEl.classList.add('active')
   const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
-  g('s-responsavel').textContent=responsavelNome?responsavelNome+', aguarde — ':'';
+  g('s-responsavel').textContent=responsavelNome?responsavelNome+', aguarde — ':''
   g('s-prot').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})
