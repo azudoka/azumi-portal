@@ -35,7 +35,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .nav-tab{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ts);padding:14px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;flex-shrink:0}
 .nav-tab.active{color:var(--tp);border-bottom-color:var(--blue)}
 .nav-tab:hover:not(.active){color:var(--tp)}
-.admin-body{padding:24px 28px;max-width:1100px}
+.admin-body{padding:24px 32px;max-width:100%}
 .tab-content{display:none}
 .tab-content.active{display:block}
 .tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -184,7 +184,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .req-table-data{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-box{background:#041e36;border:1px solid var(--border);border-radius:18px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.97);transition:transform .25s}
 .modal-overlay.open .modal-box{transform:scale(1)}
@@ -195,7 +195,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .modal-close{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--ts);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
 .modal-close:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
 .modal-body{flex:1;overflow-y:auto;padding:20px 24px}
-.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:rgba(3,29,56,.95);flex-wrap:wrap;align-items:center}
+.modal-footer{padding:16px 32px;border-top:1px solid #EDEDED;display:flex;gap:8px;flex-shrink:0;background:#f8f9fb;flex-wrap:wrap;align-items:center}
 .modal-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(147,197,253,.5);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .modal-section-title:first-child{margin-top:0}
 .modal-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
@@ -829,32 +829,31 @@ function parseJsonSafe(v){try{return JSON.parse(v)||{}}catch{return{}}}
 function jsonAvg(v){const o=parseJsonSafe(v);const vals=Object.values(o).filter(n=>typeof n==='number');return vals.length?Math.round(vals.reduce((a,n)=>a+n,0)/vals.length*10)/10:null}
 
 function mkTable(data,tipo,nameFn,subFn,detailFn){
-  const thS='font-family:\'JetBrains Mono\',monospace;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;font-weight:500;white-space:nowrap'
-  const tdS='font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:#222;padding:10px 14px;vertical-align:middle'
+  const thS=`font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7);text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;font-weight:500`
+  const tdBase=`padding:11px 14px;vertical-align:middle`
   function dtFmt(s){return s?new Date(s).toLocaleDateString('pt-BR'):'—'}
   const rows=data.map(r=>{
     const rj=JSON.stringify(r).replace(/"/g,'&quot;')
-    return`<tr onclick="abrirModal('${tipo}',${rj})" style="background:#fff;border-bottom:1px solid #EDEDED;cursor:pointer" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='#fff'">
-      <td style="${tdS};font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6">${r.protocolo||'—'}</td>
-      <td style="${tdS}">${dtFmt(r.created_at)}</td>
-      <td style="${tdS};font-weight:600">${r.nome||'—'}</td>
-      <td style="${tdS}">${r.cargo_atual||'—'}</td>
-      <td style="${tdS}">${r.area_atuacao||'—'}</td>
-      <td style="${tdS}">${r.email||'—'}</td>
-      <td style="${tdS}">${r.whatsapp||'—'}</td>
-      <td style="${tdS}"><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span></td>
+    const cargoArea=[r.cargo_atual,r.area_atuacao].filter(Boolean).join(' · ')||'—'
+    return`<tr onclick="abrirModal('${tipo}',${rj})" style="background:#fff;border-bottom:1px solid #EDEDED;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='#fff'">
+      <td style="${tdBase};font-family:'JetBrains Mono',monospace;font-size:10px;color:#3B82F6">${r.protocolo||'—'}</td>
+      <td style="${tdBase};font-size:12px;color:#555">${dtFmt(r.created_at)}</td>
+      <td style="${tdBase};font-size:13px;font-weight:600;color:#1a2533">${r.nome||'—'}</td>
+      <td style="${tdBase};font-size:12px;color:#444">${cargoArea}</td>
+      <td style="${tdBase};font-size:12px;color:#444">${r.email||'—'}</td>
+      <td style="${tdBase};font-size:12px;color:#444">${r.whatsapp||'—'}</td>
+      <td style="${tdBase}"><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span></td>
     </tr>`
   }).join('')
-  return`<div style="overflow-x:auto;width:100%"><table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:900px;background:#fff">
+  return`<div style="overflow-x:auto;width:100%"><table style="width:100%;table-layout:fixed;min-width:900px;border-collapse:collapse;background:#fff">
     <thead><tr style="background:#031D38">
-      <th style="${thS}">Protocolo</th>
-      <th style="${thS}">Data</th>
-      <th style="${thS}">Nome</th>
-      <th style="${thS}">Empresa</th>
-      <th style="${thS}">Cargo</th>
-      <th style="${thS}">E-mail</th>
-      <th style="${thS}">WhatsApp</th>
-      <th style="${thS}">Status</th>
+      <th style="${thS};width:140px">Protocolo</th>
+      <th style="${thS};width:90px">Data</th>
+      <th style="${thS};width:160px">Nome</th>
+      <th style="${thS};width:200px">Cargo / Área</th>
+      <th style="${thS};width:180px">E-mail</th>
+      <th style="${thS};width:120px">WhatsApp</th>
+      <th style="${thS};width:100px">Status</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`
@@ -1072,20 +1071,21 @@ async function excluirModal(tabela,id,nome,tipo){
 }
 
 function modalCareer(r){
-  const loc=[r.cidade,r.estado,r.pais].filter(Boolean).join(', ')||'—'
+  const loc=[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')||'—'
   const srvList=Array.isArray(r.servicos_interesse)?r.servicos_interesse:(r.servicos_interesse?[r.servicos_interesse]:[])
-  const srvHtml=srvList.length?srvList.map(s=>`<li style="margin-bottom:2px">${s}</li>`).join(''):`<li>—</li>`
-  const labelS=`font-family:'JetBrains Mono',monospace;font-size:9px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px`
-  const valS=`font-size:13px;font-weight:600;color:#1a2533`
-  const secTitleS=`font-family:'JetBrains Mono',monospace;font-size:9px;color:#9EACB8;text-transform:uppercase;letter-spacing:.1em;padding-bottom:6px;border-bottom:1px solid #EDEDED;margin-bottom:12px;font-weight:500`
-  const gridS=`display:grid;grid-template-columns:1fr 1fr;gap:12px 16px`
+  const srvHtml=srvList.length?srvList.map(s=>`<div style="padding:2px 0">• ${s}</div>`).join(''):`<div>—</div>`
+  const lnk=r.linkedin_url?`<a href="${r.linkedin_url}" target="_blank" style="color:#3B82F6;text-decoration:none;font-size:13px;font-weight:600">${r.linkedin_url}</a>`:'—'
+  const labelS=`font-family:'JetBrains Mono',monospace;font-size:9px;color:#9EACB8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px`
+  const valS=`font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#1a2533`
+  const secTitleS=`font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#778082;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #EDEDED;padding-bottom:6px;margin-bottom:10px`
+  const gridS=`display:grid;grid-template-columns:1fr 1fr;gap:8px`
   const fld=(lbl,val)=>`<div><div style="${labelS}">${lbl}</div><div style="${valS}">${val||'—'}</div></div>`
   const fldFull=(lbl,val)=>`<div style="grid-column:1/-1"><div style="${labelS}">${lbl}</div><div style="${valS}">${val||'—'}</div></div>`
   return`<div style="background:#fff;margin:-20px -24px;padding:28px 32px;color:#222">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
       <div>
-        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#031D38;margin-bottom:4px">${r.nome||'—'}</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3B82F6">${r.protocolo||'—'}</div>
+        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#031D38">${r.nome||'—'}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3B82F6;margin-top:3px">${r.protocolo||'—'}</div>
       </div>
       <span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span>
     </div>
@@ -1095,8 +1095,8 @@ function modalCareer(r){
         ${fld('Nome',r.nome)}
         ${fld('E-mail',r.email)}
         ${fld('WhatsApp',r.whatsapp)}
-        ${fld('LinkedIn',r.linkedin_url)}
-        ${fldFull('Localização',loc)}
+        <div style="grid-column:1/-1"><div style="${labelS}">LinkedIn</div><div>${lnk}</div></div>
+        ${fldFull('Cidade / Estado / País',loc)}
       </div>
     </div>
     <div style="margin-bottom:20px">
@@ -1116,17 +1116,16 @@ function modalCareer(r){
       <div style="${gridS}">
         ${fldFull('Objetivo principal',r.objetivo_principal_chip)}
         ${fld('Prazo desejado',r.prazo_desejado)}
-        ${fld('Modelo de atendimento',r.modelo_atendimento)}
+        ${fld('Formato de atendimento',r.modelo_atendimento)}
         ${fld('Suporte desejado',r.suporte_desejado)}
-        <div style="grid-column:1/-1"><div style="${labelS}">Serviços de interesse</div><ul style="margin:4px 0 0 16px;padding:0">${srvHtml}</ul></div>
+        <div style="grid-column:1/-1"><div style="${labelS}">Serviços de interesse</div><div style="margin-top:4px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:#1a2533">${srvHtml}</div></div>
       </div>
     </div>
     <div style="margin-bottom:4px">
-      <div style="${secTitleS}">OBSERVAÇÕES</div>
+      <div style="${secTitleS}">CONTEXTO E ENVIO</div>
       <div style="${gridS}">
-        ${r.obs?fldFull('Obs',r.obs):''}
-        ${fldFull('Objetivo detalhado',r.objetivo_principal)}
-        ${fld('Como conheceu a Azumi',r.origem)}
+        ${r.objetivo_principal?fldFull('Objetivo detalhado',r.objetivo_principal):''}
+        ${fld('Como nos conheceu',r.origem)}
       </div>
     </div>
   </div>`
