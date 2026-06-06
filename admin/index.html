@@ -839,401 +839,403 @@ async function excluirModal(tabela,id,nome,tipo){
 }
 
 function modalCareer(r){
-  const srvs=r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[]
-  const local=[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')
-  return`<div class="modal-section-title">Identificacao</div>
+  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse.join(', '):(r.servicos_interesse||'—')
+  return`
+    <div class="modal-section-title">Seus dados</div>
     <div class="modal-fields-grid">
-      ${campo('Nome',r.nome)}${campo('E-mail',r.email)}
-      ${campo('WhatsApp',r.whatsapp)}${campo('Cargo atual',r.cargo_atual)}
-      ${campo('Area de atuacao',r.area_atuacao)}${campo('Senioridade',r.senioridade)}
-      ${campo('Tempo de experiencia',r.tempo_experiencia)}${campo('Localizacao',local)}
-      ${campo('Prazo desejado',r.prazo_desejado)}
-      ${r.objetivo?campo('Objetivo',r.objetivo,true):''}
+      ${campo('Nome',r.nome||'—')}${campo('E-mail',r.email||'—')}
+      ${campo('WhatsApp',r.whatsapp||'—')}${campo('LinkedIn',r.linkedin_url||'—')}
+      ${campo('Cidade',r.cidade||'—')}${campo('Estado',r.estado||'—')}
+      ${campo('País',r.pais||'—')}
     </div>
-    ${r.situacao_atual?`<div class="modal-note">"${r.situacao_atual}"</div>`:''}
-    ${srvs.length?`<div class="modal-section-title">Servicos de interesse (${srvs.length})</div><div class="modal-fields-grid">${srvs.map(s=>`<div class="modal-field"><div class="modal-field-val">${s}</div></div>`).join('')}</div>`:''}`
+    <div class="modal-section-title">Momento atual</div>
+    <div class="modal-fields-grid">
+      ${campo('Cargo atual',r.cargo_atual||'—')}${campo('Área de atuação',r.area_atuacao||'—')}
+      ${campo('Senioridade',r.senioridade||'—')}${campo('Tempo de experiência',r.tempo_experiencia||'—')}
+      ${campo('Escolaridade',r.escolaridade||'—')}${campo('Idiomas',r.idiomas||'—')}
+      ${campo('Situação atual',r.situacao_atual||'—',true)}
+    </div>
+    <div class="modal-section-title">Objetivos e serviços</div>
+    <div class="modal-fields-grid">
+      ${campo('Objetivo principal',r.objetivo_principal_chip||'—')}${campo('Prazo desejado',r.prazo_desejado||'—')}
+      ${campo('Modelo de atendimento',r.modelo_atendimento||'—')}${campo('Suporte desejado',r.suporte_desejado||'—')}
+      ${campo('Serviços de interesse',srvs,true)}
+    </div>
+    <div class="modal-section-title">Contexto e envio</div>
+    <div class="modal-fields-grid">
+      ${campo('Objetivo detalhado',r.objetivo_principal||'—',true)}
+      ${campo('Como conheceu a Azumi',r.origem||'—')}
+    </div>`
 }
 
 function modalVaga(r){
   return`
-    <div class="modal-section-title">Empresa & Contato</div>
+    <div class="modal-section-title">Dados da empresa</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.nome_empresa)}${campo('Filial / Unidade',r.filial)}
-      ${campo('Responsável',r.nome_responsavel)}${campo('Cargo',r.cargo_responsavel)}
-      ${campo('E-mail',r.email)}${campo('WhatsApp',r.whatsapp)}
-      ${campo('Tipo de solicitação',r.tipo_solicitacao)}
+      ${campo('Empresa',r.nome_empresa||'—')}${campo('Filial / Unidade',r.filial||'—')}
+      ${campo('Responsável',r.nome_responsavel||'—')}${campo('Cargo',r.cargo_responsavel||'—')}
+      ${campo('E-mail',r.email||'—')}${campo('WhatsApp',r.whatsapp||'—')}
+      ${campo('Tipo de solicitação',r.tipo_solicitacao||'—')}${campo('Tipo de recrutamento',r.tipo_recrutamento||'—')}
     </div>
-    <div class="modal-section-title">A Vaga</div>
+    <div class="modal-section-title">Detalhes da vaga</div>
     <div class="modal-fields-grid">
-      ${campo('Vaga',r.nome_vaga)}${campo('Área / Departamento',r.area)}
-      ${campo('Nível hierárquico',r.nivel_vaga)}${campo('Senioridade',r.senioridade)}
-      ${campo('Nº de vagas',r.num_vagas)}${campo('Tipo de contrato',r.contrato)}
-      ${campo('Jornada',r.jornada)}${campo('Carga horária',r.carga_horaria)}
-      ${campo('Salário / Faixa',r.salario?'R$ '+r.salario:'')}${campo('Local de trabalho',r.local)}
-      ${campo('Tipo de recrutamento',r.tipo_recrutamento==='hunting'?'Head Hunting':'Atração de Talentos')}${campo('Urgência',r.urgencia)}
-      ${campo('Benefícios',r.beneficios,true)}${campo('Outros benefícios',r.beneficios_outros)}
+      ${campo('Vaga',r.nome_vaga||'—')}${campo('Área / Departamento',r.area||'—')}
+      ${campo('Nível hierárquico',r.nivel_vaga||'—')}${campo('Senioridade',r.senioridade||'—')}
+      ${campo('Nº de vagas',r.num_vagas||'—')}${campo('Tipo de contrato',r.contrato||'—')}
+      ${campo('Jornada',r.jornada||'—')}${campo('Carga horária',r.carga_horaria||'—')}
+      ${campo('Salário / Faixa',r.salario||'—')}${campo('Local de trabalho',r.local||'—')}
+      ${campo('Benefícios',r.beneficios||'—',true)}${campo('Outros benefícios',r.beneficios_outros||'—')}
+      ${campo('Urgência',r.urgencia||'—')}
     </div>
-    <div class="modal-section-title">Perfil & Processo</div>
+    <div class="modal-section-title">Perfil e processo</div>
     <div class="modal-fields-grid">
-      ${campo('Requisitos obrigatórios',r.requisitos,true)}
-      ${campo('Diversidade e inclusão',r.genero,true)}
-      ${campo('Etapas técnicas',r.etapa_tecnica,true)}
-      ${campo('Adicionais',r.adicionais,true)}
-      ${campo('Confidencialidade',r.confidencialidade)}
-    </div>
-    <div class="modal-section-title">Entrevistador & Agenda</div>
-    <div class="modal-fields-grid">
-      ${campo('Entrevistador',r.entrevistador_nome)}${campo('E-mail entrevistador',r.entrevistador_email)}
-      ${campo('WhatsApp entrevistador',r.entrevistador_whatsapp)}${campo('Disponibilidade de agenda',r.agenda)}
+      ${campo('Requisitos obrigatórios',r.requisitos||'—',true)}
+      ${campo('Diversidade e inclusão',r.genero||'—',true)}
+      ${campo('Etapas técnicas',r.etapa_tecnica||'—',true)}
+      ${campo('Adicionais',r.adicionais||'—',true)}
+      ${campo('Entrevistador',r.entrevistador_nome||'—')}${campo('E-mail entrevistador',r.entrevistador_email||'—')}
+      ${campo('WhatsApp entrevistador',r.entrevistador_whatsapp||'—')}${campo('Disponibilidade de agenda',r.agenda||'—')}
     </div>
     ${r.tipo_recrutamento==='hunting'?`
     <div class="modal-section-title">Head Hunting</div>
     <div class="modal-fields-grid">
-      ${campo('Segmento alvo',r.segmento_hunting)}${campo('Prazo para apresentação',r.prazo_hunting)}
-      ${campo('Empresas de referência',r.empresas_referencia)}${campo('Remuneração variável',r.remuneracao_variavel)}
+      ${campo('Segmento-alvo',r.segmento_hunting||'—')}${campo('Prazo para apresentação',r.prazo_hunting||'—')}
+      ${campo('Empresas de referência',r.empresas_referencia||'—')}${campo('Remuneração variável',r.remuneracao_variavel||'—')}
+      ${campo('Confidencialidade',r.confidencialidade||'—')}
     </div>`:''}
-    ${r.observacoes?`<div class="modal-section-title">Observações</div><div class="modal-note">"${r.observacoes}"</div>`:''}`
+    <div class="modal-section-title">Contexto e envio</div>
+    <div class="modal-fields-grid">
+      ${campo('Observações',r.observacoes||'—',true)}
+    </div>`
 }
 
 function modalNr1(r){
-  const PROG_LABELS={'Sim, programa estruturado':'Sim — programa formal em vigor','Sim, acoes pontuais':'Sim — ações pontuais (informal)','Nao possui':'Não possui'}
-  const AFAS_LABELS={'Sim':'Sim','Nao':'Não','Nao sabemos':'Não sabemos'}
-  const MAPA_LABELS={'Sim, recentemente':'Sim — recentemente','Sim, ha mais de 2 anos':'Sim — desatualizado (>2 anos)','Nunca foi feito':'Nunca foi feito'}
-  const PLANO_LABELS={'Sim, formalizado':'Sim — formalizado','Em construcao':'Em construção','Nao possui':'Não possui'}
-  const URG_LABELS={'Imediata — empresa em risco de autuacao':'Imediata — risco de autuação MTE','Curto prazo — ate 60 dias':'Curto prazo — até 60 dias','Medio prazo — ate 6 meses':'Médio prazo — até 6 meses'}
-
-  const empresa=r.nome_empresa||r.empresa_nome||r.empresa||'—'
-  const decisor=r.nome_responsavel||r.decisor_nome||r.responsavel||'—'
-  const cargo=r.cargo_responsavel||r.cargo||''
-  const colab=r.num_colaboradores||''
-  const unidades=r.num_unidades||''
-  const seg=r.segmento||''
-  const cnpj=r.cnpj||''
-  const email=r.email||''
-  const wa=r.whatsapp||''
-
-  const temProg=PROG_LABELS[r.tem_programa]||r.tem_programa||''
-  const afas=AFAS_LABELS[r.afastamento_saude_mental]||r.afastamento_saude_mental||''
-  const mapeam=MAPA_LABELS[r.mapeamento_anterior]||r.mapeamento_anterior||''
-  const sitAtual=r.situacao_atual||''
-
-  const modalidade=r.modalidade||''
-  const turnos=r.turnos||''
-  const setores=r.setores||''
-  const desafios=r.desafios_clima||''
-
-  const lidScore=r.nivel_consciencia_lideranca!=null?r.nivel_consciencia_lideranca+'/5':''
-  const planoAcao=PLANO_LABELS[r.plano_acao_lideranca]||r.plano_acao_lideranca||''
-  const compScore=r.comprometimento_lideranca!=null?r.comprometimento_lideranca+'/5':''
-  const obsLid=r.obs_lideranca||''
-
-  const urgencia=URG_LABELS[r.urgencia_implementacao]||r.urgencia_implementacao||''
-  const frentes=r.frentes_prioritarias||''
-  const dataLim=r.data_limite||''
-  const comoConh=r.como_conheceu||''
-  const obs=r.observacoes||''
-
   return`
     <div class="modal-section-title">Identificação da Empresa</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',empresa)}${campo('CNPJ',cnpj)}
-      ${campo('Responsável',decisor)}${campo('Cargo',cargo)}
-      ${campo('E-mail',email)}${campo('WhatsApp',wa)}
-      ${campo('Colaboradores CLT',colab)}${campo('Nº Unidades / Filiais',unidades)}
-      ${campo('Segmento',seg)}
+      ${campo('Empresa',r.empresa_nome||'—')}${campo('Responsável',r.decisor_nome||'—')}
+      ${campo('E-mail',r.email||'—')}${campo('WhatsApp',r.whatsapp||'—')}
+      ${campo('Colaboradores CLT',r.num_colaboradores||'—')}${campo('Segmento',r.segmento||'—')}
     </div>
     <div class="modal-section-title">Situação Atual — NR-1</div>
     <div class="modal-fields-grid">
-      ${campo('Programa de saúde mental',temProg)}
-      ${campo('Afastamento por saúde mental (12m)',afas)}
-      ${campo('Mapeamento de riscos psicossociais',mapeam)}
-      ${campo('Contexto atual da empresa',sitAtual,true)}
+      ${campo('Programa de saúde mental',r.conhecimento||'—')}
+      ${campo('Afastamentos por saúde mental (12m)',r.risco_psi||'—')}
+      ${campo('Mapeamento de riscos psicossociais',r.pgr_situacao||'—')}
     </div>
     <div class="modal-section-title">Ambiente e Pessoas</div>
     <div class="modal-fields-grid">
-      ${campo('Modalidade de trabalho',modalidade)}${campo('Turnos existentes',turnos)}
-      ${campo('Setores / Áreas',setores)}${campo('Desafios de clima relatados',desafios,true)}
+      ${campo('Principais desafios de clima',r.clima||'—',true)}
     </div>
     <div class="modal-section-title">Liderança e Gestão</div>
     <div class="modal-fields-grid">
-      ${campo('Consciência liderança — saúde mental',lidScore)}${campo('Plano de ação bem-estar',planoAcao)}
-      ${campo('Comprometimento esperado liderança',compScore)}${campo('Observações sobre liderança',obsLid,true)}
+      ${campo('Plano de ação bem-estar',r.lider_preparo||'—')}
     </div>
-    <div class="modal-section-title">Prioridades e Contexto</div>
+    <div class="modal-section-title">Prioridades e Envio</div>
     <div class="modal-fields-grid">
-      ${campo('Urgência de implementação',urgencia)}${campo('Como conheceu a Azumi',comoConh)}
-      ${campo('Frentes prioritárias',frentes,true)}
-      ${campo('Data limite desejada',dataLim)}
-      ${campo('Observações finais',obs,true)}
+      ${campo('Urgência de implementação',r.motivacao||'—')}
+      ${campo('Frentes prioritárias',r.ocorrencias||'—',true)}
+      ${campo('Observações finais',r.observacoes||'—',true)}
     </div>`
 }
 
 function modalTreinamento(r){
   return`
-    <div class="modal-section-title">Empresa & Contato</div>
+    <div class="modal-section-title">Empresa e Responsável</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.nome_empresa)}${campo('Filial / Unidade',r.filial)}
-      ${campo('Responsável',r.nome_responsavel)}${campo('Cargo',r.cargo_responsavel)}
-      ${campo('E-mail',r.email)}${campo('WhatsApp',r.whatsapp)}
+      ${campo('Empresa',r.nome_empresa||'—')}${campo('Filial / Unidade',r.filial||'—')}
+      ${campo('Responsável',r.nome_responsavel||'—')}${campo('Cargo',r.cargo_responsavel||'—')}
+      ${campo('E-mail',r.email||'—')}${campo('WhatsApp',r.whatsapp||'—')}
     </div>
-    <div class="modal-section-title">Tema & Público</div>
+    <div class="modal-section-title">Tema e Público-Alvo</div>
     <div class="modal-fields-grid">
-      ${campo('Tema principal',r.tema_principal)}${campo('Tema específico',r.tema_especifico)}
-      ${campo('Público-alvo',r.publico_alvo,true)}
-      ${campo('Objetivo principal',r.objetivo,true)}
+      ${campo('Tema principal',r.tema_principal||'—')}${campo('Tema específico',r.tema_especifico||'—')}
+      ${campo('Público-alvo',r.publico_alvo||'—',true)}
+      ${campo('Objetivo principal',r.objetivo||'—',true)}
     </div>
-    <div class="modal-section-title">Pacote & Participantes</div>
+    <div class="modal-section-title">Pacote e Participantes</div>
     <div class="modal-fields-grid">
-      ${campo('Pacote',r.pacote)}${campo('Nº de encontros',r.num_encontros)}
-      ${campo('Nº de participantes',r.num_participantes)}${campo('Nº de turmas',r.num_turmas)}
+      ${campo('Pacote',r.pacote||'—')}${campo('Nº de encontros',r.num_encontros||'—')}
+      ${campo('Nº de participantes',r.num_participantes||'—')}${campo('Nº de turmas',r.num_turmas||'—')}
     </div>
-    <div class="modal-section-title">Logística</div>
+    <div class="modal-section-title">Logística e Formato</div>
     <div class="modal-fields-grid">
-      ${campo('Formato',r.formato)}${campo('Espaço físico',r.espaco_fisico,true)}
-      ${campo('Equipamentos',r.equipamentos,true)}${campo('Cidade / Estado',r.cidade)}
-      ${campo('Data desejada',r.data_desejada)}${campo('Horário preferencial',r.horario)}
+      ${campo('Formato',r.formato||'—')}${campo('Espaço físico',r.espaco_fisico||'—',true)}
+      ${campo('Equipamentos',r.equipamentos||'—',true)}${campo('Cidade',r.cidade||'—')}
+      ${campo('Data desejada',r.data_desejada||'—')}${campo('Horário preferencial',r.horario||'—')}
     </div>
-    <div class="modal-section-title">Contexto & Orçamento</div>
+    <div class="modal-section-title">Contexto e Envio</div>
     <div class="modal-fields-grid">
-      ${campo('Contexto e expectativas',r.contexto,true)}
-      ${campo('Budget estimado',r.budget)}${campo('Como conheceu a Azumi',r.como_conheceu)}
-      ${campo('Observações',r.observacoes,true)}
+      ${campo('Contexto e expectativas',r.contexto||'—',true)}
+      ${campo('Budget estimado',r.budget||'—')}${campo('Como conheceu a Azumi',r.como_conheceu||'—')}
+      ${campo('Observações',r.observacoes||'—',true)}
     </div>`
 }
 
 function modalDiagnostico(r){
+  const lid=parseJsonSafe(r.maturidade_lideranca)
+  const cli=parseJsonSafe(r.clima_equipe)
   const avgLid=jsonAvg(r.maturidade_lideranca)
-  const avgClima=jsonAvg(r.clima_equipe)
+  const avgCli=jsonAvg(r.clima_equipe)
   const local=[r.cidade,r.estado].filter(Boolean).join(' / ')
   const colab=r.num_colaboradores||0
   const pkg=colab<=30?'START':colab<=80?'ONGOING':'GROWTH'
+  const bool=v=>v!=null?(v?'Sim':'Não'):'—'
   return`
     <div class="modal-section-title">Identificação</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.empresa_nome)}${campo('Decisor',r.decisor_nome)}
-      ${campo('E-mail',r.email)}${campo('WhatsApp',r.whatsapp)}
-      ${campo('Localização',local)}${campo('Segmento',r.segmento)}
+      ${campo('Empresa',r.empresa_nome||'—')}${campo('Decisor',r.decisor_nome||'—')}
+      ${campo('E-mail',r.email||'—')}${campo('WhatsApp',r.whatsapp||'—')}
+      ${campo('Localização',local||'—')}
     </div>
     <div class="modal-section-title">Estrutura Atual</div>
     <div class="modal-fields-grid">
-      ${campo('Colaboradores',colab?(colab+' — pacote sugerido: '+pkg):'—')}${campo('Unidades / Filiais',r.num_unidades)}
-      ${campo('Vagas/mês',r.vagas_mes)}${campo('RH interno',r.rh_atual!==undefined?(r.rh_atual?'Sim':'Não'):'')}
-      ${campo('Senioridade do RH',r.rh_senioridade)}${campo('Como Azumi atuaria',r.rh_cobre)}
-      ${campo('Abertura para parceria',r.rh_abertura!=null?r.rh_abertura+'/5':'')}
-      ${campo('Tipo de consultora',r.tipo_consultora)}${campo('Visitas/mês',r.visitas_mes)}
-      ${campo('Região da visita',r.localizacao_visita)}
+      ${campo('Colaboradores',colab?colab+' — pacote sugerido: '+pkg:'—')}${campo('Unidades / Filiais',r.num_unidades||'—')}
+      ${campo('Vagas abertas / mês',r.vagas_mes||'—')}${campo('RH interno',bool(r.rh_atual))}
+      ${campo('Senioridade do RH',r.rh_senioridade||'—')}${campo('Como a Azumi atuaria',r.rh_necessidade||'—')}
+      ${campo('Abertura para parceria',r.rh_abertura!=null?r.rh_abertura+'/5':'—')}
     </div>
-    <div class="modal-section-title">Maturidade & Clima</div>
+    <div class="modal-section-title">Maturidade de Liderança</div>
     <div class="modal-fields-grid">
-      ${avgLid!==null?campo('Maturidade de liderança (média)',avgLid+'/5'):''}
-      ${avgClima!==null?campo('Clima da equipe (média)',avgClima+'/5'):''}
-      ${campo('Documentação de RH',r.docs_rh,true)}
-      ${campo('Plataformas utilizadas',r.plataformas,true)}
+      ${campo('Clareza de papéis',lid.lid1!=null?lid.lid1+'/5':'—')}${campo('Qualidade do feedback',lid.lid2!=null?lid.lid2+'/5':'—')}
+      ${campo('Tomada de decisão',lid.lid3!=null?lid.lid3+'/5':'—')}${campo('Cultura de desenvolvimento',lid.lid4!=null?lid.lid4+'/5':'—')}
+      ${avgLid!==null?campo('Média geral',avgLid+'/5'):''}
     </div>
-    <div class="modal-section-title">Processos & Conformidade</div>
+    <div class="modal-section-title">Clima e Engajamento</div>
     <div class="modal-fields-grid">
-      ${campo('Processo seletivo',r.processo_seletivo)}${campo('Onboarding',r.onboarding)}
-      ${campo('Avaliação de desempenho',r.avaliacao_desempenho)}${campo('NRs aplicáveis',r.nrs)}
-      ${campo('Reclamações trabalhistas',r.reclamacao_trabalhista)}
-      ${campo('Registros assinados',r.registros_assinados)}
+      ${campo('Comunicação interna',cli.cli1!=null?cli.cli1+'/5':'—')}${campo('Rotatividade',cli.cli2!=null?cli.cli2+'/5':'—')}
+      ${campo('Pertencimento',cli.cli3!=null?cli.cli3+'/5':'—')}
+      ${avgCli!==null?campo('Média geral',avgCli+'/5'):''}
     </div>
-    <div class="modal-section-title">Prioridades</div>
+    <div class="modal-section-title">Processos de RH Existentes</div>
     <div class="modal-fields-grid">
-      ${campo('Frentes de interesse',r.frentes,true)}
-      ${campo('Prioridade 90 dias',r.prioridade_90dias,true)}
-      ${campo('Urgência',r.urgencia)}${campo('Início desejado',r.inicio)}
+      ${campo('Recrutamento estruturado',bool(r.processo_seletivo))}${campo('Onboarding documentado',bool(r.onboarding))}
+      ${campo('Avaliação de desempenho',bool(r.avaliacao_desempenho))}${campo('Canal de comunicação interna',bool(r.canal_escuta))}
+      ${campo('Controles trabalhistas',bool(r.registros_assinados))}${campo('Documentação de RH',r.docs_rh||'—')}
     </div>
-    ${r.observacoes?`<div class="modal-section-title">Observações</div><div class="modal-note">"${r.observacoes}"</div>`:''}`
+    <div class="modal-section-title">Frentes de Interesse</div>
+    <div class="modal-fields-grid">
+      ${campo('Frentes selecionadas',r.frentes||'—',true)}
+    </div>
+    <div class="modal-section-title">Visita Presencial</div>
+    <div class="modal-fields-grid">
+      ${campo('Visitas / mês',bool(r.visitas_mes))}${campo('Tipo de consultora',r.tipo_consultora||'—')}
+      ${campo('Região da visita',r.localizacao_visita||'—')}
+    </div>
+    <div class="modal-section-title">Contexto e Expectativas</div>
+    <div class="modal-fields-grid">
+      ${campo('Início desejado',r.inicio||'—')}
+      ${campo('Observações',r.observacoes||'—',true)}
+    </div>`
 }
 
 function modalCultura(r){
-  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse.join(', '):(r.servicos_interesse||'')
-  const problemas=Array.isArray(r.problemas_culturais)?r.problemas_culturais.join(', '):(r.problemas_culturais||'')
-  const scores=parseJsonSafe(r.cultura_scores)||{}
-  const scoreStr=Object.entries(scores).map(([k,v])=>k+': '+v+'/5').join(' · ')
+  const srvs=Array.isArray(r.servicos_interesse)?r.servicos_interesse.join(', '):(r.servicos_interesse||'—')
+  const problemas=Array.isArray(r.problemas_culturais)?r.problemas_culturais.join(', '):(r.problemas_culturais||'—')
+  const sc=parseJsonSafe(r.cultura_scores)
+  const bool=v=>v!=null?(v?'Sim':'Não'):'—'
   return`
-    <div class="modal-section-title">Identificação</div>
+    <div class="modal-section-title">Identificação da Empresa</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.empresa)}${campo('Setor',r.setor)}
-      ${campo('Responsável',r.nome)}${campo('Cargo',r.cargo)}
-      ${campo('E-mail',r.email)}${campo('WhatsApp',r.whatsapp)}
-      ${campo('Tamanho da equipe',r.tamanho_equipe)}${campo('Modelo de trabalho',r.modelo_trabalho)}
-      ${campo('Nível de colaboração',r.colaboracao_nivel!=null?r.colaboracao_nivel+'/10':'')}
-      ${campo('Identidade cultural definida',r.identidade_cultural_existente!=null?(r.identidade_cultural_existente?'Sim':'Não'):'')}
+      ${campo('Empresa',r.empresa||'—')}${campo('Setor',r.setor||'—')}
+      ${campo('Responsável',r.nome||'—')}${campo('Cargo',r.cargo||'—')}
+      ${campo('E-mail',r.email||'—')}${campo('WhatsApp',r.whatsapp||'—')}
+      ${campo('Tamanho da equipe',r.tamanho_equipe||'—')}${campo('Modelo de trabalho',r.modelo_trabalho||'—')}
+      ${campo('Nível de colaboração',r.colaboracao_nivel!=null?r.colaboracao_nivel+'/10':'—')}
+      ${campo('Identidade cultural definida',bool(r.identidade_cultural_existente))}
     </div>
     <div class="modal-section-title">Diagnóstico Cultural</div>
     <div class="modal-fields-grid">
-      ${scoreStr?campo('Scores culturais',scoreStr,true):''}
+      ${campo('Valores e princípios',sc.valores!=null?sc.valores+'/5':'—')}${campo('Alinhamento cultural',sc.alinhamento!=null?sc.alinhamento+'/5':'—')}
+      ${campo('Reconhecimento',sc.reconhecimento!=null?sc.reconhecimento+'/5':'—')}${campo('Propósito',sc.proposito!=null?sc.proposito+'/5':'—')}
+      ${campo('Pertencimento',sc.pertencimento!=null?sc.pertencimento+'/5':'—')}
       ${campo('Problemas culturais',problemas,true)}
-      ${campo('Palavra que define a cultura atual',r.palavra_cultura)}
-      ${campo('Principal desafio cultural',r.desafio_cultural,true)}
+      ${campo('Palavra que define a cultura atual',r.palavra_cultura||'—')}
+      ${campo('Principal desafio cultural',r.desafio_cultural||'—',true)}
     </div>
     <div class="modal-section-title">O Que Construir</div>
     <div class="modal-fields-grid">
       ${campo('Serviços de interesse',srvs,true)}
-      ${campo('Cultura ideal',r.cultura_ideal,true)}
-      ${campo('Interesse em marca empregadora',r.interesse_marca_empregadora!=null?(r.interesse_marca_empregadora?'Sim':'Não'):'')}
+      ${campo('Cultura ideal',r.cultura_ideal||'—',true)}
+      ${campo('Interesse em marca empregadora',bool(r.interesse_marca_empregadora))}
     </div>
-    <div class="modal-section-title">Formato & Orçamento</div>
+    <div class="modal-section-title">Formato e Contexto</div>
     <div class="modal-fields-grid">
-      ${campo('Formato de atuação',r.formato)}${campo('Prazo esperado',r.prazo)}
-      ${campo('Budget disponível',r.budget)}${campo('Formato das entregas',r.entregas_formato)}
-      ${campo('Como conheceu a Azumi',r.como_conheceu)}
+      ${campo('Formato de atuação',r.formato||'—')}${campo('Prazo esperado',r.prazo||'—')}
+      ${campo('Budget disponível',r.budget||'—')}${campo('Formato das entregas',r.entregas_formato||'—')}
     </div>
-    ${r.historia_empresa?`<div class="modal-section-title">História da Empresa</div><div class="modal-note">"${r.historia_empresa}"</div>`:''}`
+    <div class="modal-section-title">Fechamento</div>
+    <div class="modal-fields-grid">
+      ${campo('História da empresa',r.historia_empresa||'—',true)}
+      ${campo('Como conheceu a Azumi',r.como_conheceu||'—')}
+    </div>`
 }
 
 function modalGtm(r){
   const local=[r.cidade,r.estado].filter(Boolean).join(' / ')
-  const desafios=Array.isArray(r.desafios)?r.desafios.join(', '):(r.desafios||'')
-  const estruturar=Array.isArray(r.estruturar)?r.estruturar.join(', '):(r.estruturar||'')
-  const scores=parseJsonSafe(r.gtm_scores)||{}
-  const scoreStr=Object.entries(scores).map(([k,v])=>k+': '+v+'/5').join(' · ')
+  const desafios=Array.isArray(r.desafios)?r.desafios.join(', '):(r.desafios||'—')
+  const estruturar=Array.isArray(r.estruturar)?r.estruturar.join(', '):(r.estruturar||'—')
+  const sc=parseJsonSafe(r.gtm_scores)
   return`
-    <div class="modal-section-title">Perfil Profissional</div>
+    <div class="modal-section-title">Sobre Você</div>
     <div class="modal-fields-grid">
-      ${campo('Nome',r.nome)}${campo('E-mail',r.email)}
-      ${campo('WhatsApp',r.whatsapp)}${campo('Área de atuação',r.area_atuacao)}
-      ${campo('Formato jurídico',r.formato_juridico)}${campo('Tempo como autônomo',r.tempo_autonomo)}
-      ${campo('Localização',local)}
-      ${campo('LinkedIn',r.linkedin)}${campo('Instagram',r.instagram)}
-      ${campo('Site / Portfólio',r.site)}
+      ${campo('Nome',r.nome||'—')}${campo('E-mail',r.email||'—')}
+      ${campo('WhatsApp',r.whatsapp||'—')}${campo('Área de atuação',r.area_atuacao||'—')}
+      ${campo('Formato jurídico',r.formato_juridico||'—')}${campo('Tempo como autônomo',r.tempo_autonomo||'—')}
+      ${campo('Localização',local||'—')}
+      ${campo('LinkedIn',r.linkedin||'—')}${campo('Instagram',r.instagram||'—')}
+      ${campo('Site / Portfólio',r.site||'—')}
     </div>
     <div class="modal-section-title">Situação Atual</div>
     <div class="modal-fields-grid">
-      ${campo('Como consegue clientes',r.como_clientes)}
-      ${scoreStr?campo('Autoavaliação',scoreStr,true):''}
+      ${campo('Serviço oferecido',r.descricao_servico||'—',true)}
+      ${campo('Como consegue clientes',r.como_clientes||'—',true)}
+      ${campo('Posicionamento',sc.pos!=null?sc.pos+'/5':'—')}${campo('Comunicação digital',sc.dig!=null?sc.dig+'/5':'—')}
+      ${campo('Processo de vendas',sc.venda!=null?sc.venda+'/5':'—')}${campo('Satisfação com receita',sc.receita!=null?sc.receita+'/5':'—')}
       ${campo('Principais desafios',desafios,true)}
-      ${campo('O que mais te impede de crescer',r.impedimento,true)}
+      ${campo('O que mais impede de crescer',r.impedimento||'—',true)}
     </div>
     <div class="modal-section-title">O Que Construir</div>
     <div class="modal-fields-grid">
       ${campo('O que quer estruturar / melhorar',estruturar,true)}
-      ${campo('Visão em 1 ano',r.visao_1ano,true)}
-      ${campo('Budget disponível',r.budget)}${campo('Prazo para resultados',r.prazo)}
-      ${campo('Como conheceu a Azumi',r.como_conheceu)}
+      ${campo('Visão em 1 ano',r.visao_1ano||'—',true)}
+      ${campo('Budget disponível',r.budget||'—')}${campo('Prazo para resultados',r.prazo||'—')}
     </div>
-    ${r.descricao_servico?`<div class="modal-section-title">Serviço Oferecido</div><div class="modal-note">"${r.descricao_servico}"</div>`:''}
-    ${r.historia?`<div class="modal-section-title">História como Profissional</div><div class="modal-note">"${r.historia}"</div>`:''}`
+    <div class="modal-section-title">Fechamento</div>
+    <div class="modal-fields-grid">
+      ${campo('História como profissional',r.historia||'—',true)}
+      ${campo('Como conheceu a Azumi',r.como_conheceu||'—')}
+    </div>`
 }
 
 function modalImpulso(r){
   const local=[r.cidade,r.estado].filter(Boolean).join(' / ')
-  const comps=Array.isArray(r.competencias)?r.competencias.join(', '):(r.competencias||'')
+  const comps=Array.isArray(r.competencias)?r.competencias.join(', '):(r.competencias||'—')
+  const bool=v=>v!=null?(v?'Sim':'Não'):'—'
   return`
-    <div class="modal-section-title">Sobre o Profissional</div>
+    <div class="modal-section-title">Sobre Você</div>
     <div class="modal-fields-grid">
-      ${campo('Nome',r.nome)}${campo('E-mail',r.email)}
-      ${campo('WhatsApp',r.whatsapp)}${campo('LinkedIn',r.linkedin)}
-      ${campo('Localização',local)}
-      ${campo('Tempo em RH',r.tempo_rh)}${campo('Momento de carreira',r.momento_carreira)}
-      ${campo('Empresa atual',r.empresa_atual)}${campo('Cargo atual',r.cargo_atual)}
+      ${campo('Nome',r.nome||'—')}${campo('E-mail',r.email||'—')}
+      ${campo('WhatsApp',r.whatsapp||'—')}${campo('LinkedIn',r.linkedin||'—')}
+      ${campo('Localização',local||'—')}
+      ${campo('Tempo em RH',r.tempo_rh||'—')}${campo('Momento de carreira',r.momento_carreira||'—')}
+      ${campo('Empresa atual',r.empresa_atual||'—')}${campo('Cargo atual',r.cargo_atual||'—')}
     </div>
     <div class="modal-section-title">Momento Profissional</div>
     <div class="modal-fields-grid">
-      ${campo('Momento profissional atual',r.momento_desc)}
+      ${campo('Momento profissional atual',r.momento_desc||'—',true)}
       ${campo('Competências a desenvolver',comps,true)}
-      ${campo('Satisfação com trajetória',r.satisfacao_carreira!=null?r.satisfacao_carreira+'/5':'')}
-      ${campo('Principal desafio na carreira',r.desafio_carreira,true)}
+      ${campo('Satisfação com trajetória',r.satisfacao_carreira!=null?r.satisfacao_carreira+'/5':'—')}
+      ${campo('Principal desafio na carreira',r.desafio_carreira||'—',true)}
     </div>
     <div class="modal-section-title">O Programa</div>
     <div class="modal-fields-grid">
-      ${campo('Nível do programa',r.nivel_programa)}${campo('Modalidade',r.modalidade)}
-      ${campo('Formato das sessões',r.formato)}${campo('Frequência ideal',r.frequencia)}
-      ${campo('Duração esperada',r.duracao)}
-      ${campo('Patrocinado pela empresa',r.patrocinado!=null?(r.patrocinado?'Sim':'Não'):'')}
-      ${r.patrocinado?campo('Empresa patrocinadora',r.empresa_patroc):''}
-      ${r.patrocinado?campo('Contato empresa patrocinadora',r.contato_patroc):''}
-      ${campo('Como conheceu',r.como_conheceu)}
+      ${campo('Nível do programa',r.nivel_programa||'—')}${campo('Modalidade',r.modalidade||'—')}
+      ${campo('Formato das sessões',r.formato||'—')}${campo('Frequência ideal',r.frequencia||'—')}
+      ${campo('Duração esperada',r.duracao||'—')}
+      ${campo('Patrocinado pela empresa',bool(r.patrocinado))}
+      ${campo('Empresa patrocinadora',r.empresa_patroc||'—')}${campo('Contato da empresa',r.contato_patroc||'—')}
     </div>
-    ${r.porque_agora?`<div class="modal-section-title">Por Que Agora</div><div class="modal-note">"${r.porque_agora}"</div>`:''}
-    ${r.resultado_esperado?`<div class="modal-section-title">Resultado Esperado</div><div class="modal-note">"${r.resultado_esperado}"</div>`:''}`
+    <div class="modal-section-title">Fechamento</div>
+    <div class="modal-fields-grid">
+      ${campo('Por que agora',r.porque_agora||'—',true)}
+      ${campo('Resultado esperado',r.resultado_esperado||'—',true)}
+      ${campo('Como conheceu a Azumi',r.como_conheceu||'—')}
+    </div>`
 }
 
 function modalDiagOrg(r){
   const local=[r.cidade,r.estado].filter(Boolean).join(' / ')
-  const peopleScores=parseJsonSafe(r.people_scores)||{}
-  const psVals=Object.values(peopleScores)
+  const ps=parseJsonSafe(r.people_scores)
+  const psVals=Object.values(ps).filter(n=>typeof n==='number')
   const avgPeople=psVals.length?Math.round(psVals.reduce((a,b)=>a+b,0)/psVals.length*10)/10:null
-  const problemas=Array.isArray(r.people_problemas)?r.people_problemas.join(', '):(r.people_problemas||'')
-  const processos=Array.isArray(r.process_existente)?r.process_existente.join(', '):(r.process_existente||'')
-  const indicadores=Array.isArray(r.performance_indicadores)?r.performance_indicadores.join(', '):(r.performance_indicadores||'')
+  const problemas=Array.isArray(r.people_problemas)?r.people_problemas.join(', '):(r.people_problemas||'—')
+  const processos=Array.isArray(r.process_existente)?r.process_existente.join(', '):(r.process_existente||'—')
+  const indicadores=Array.isArray(r.performance_indicadores)?r.performance_indicadores.join(', '):(r.performance_indicadores||'—')
+  const bool=v=>v!=null?(v?'Sim':'Não'):'—'
   return`
     <div class="modal-section-title">Identificação</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.empresa)}${campo('Responsável',r.responsavel)}
-      ${campo('Cargo',r.cargo)}${campo('E-mail',r.email)}
-      ${campo('WhatsApp',r.whatsapp)}${campo('Segmento',r.segmento)}
-      ${campo('Localização',local)}
-      ${campo('Colaboradores',r.num_colaboradores)}${campo('Unidades / Filiais',r.num_unidades)}
-      ${campo('RH interno',r.tem_rh_interno!=null?(r.tem_rh_interno?'Sim':'Não'):'')}
-      ${campo('Pessoas no RH',r.rh_pessoas)}${campo('Senioridade do RH',r.rh_senioridade)}
+      ${campo('Empresa',r.empresa||'—')}${campo('Responsável',r.responsavel||'—')}
+      ${campo('Cargo',r.cargo||'—')}${campo('E-mail',r.email||'—')}
+      ${campo('WhatsApp',r.whatsapp||'—')}${campo('Segmento',r.segmento||'—')}
+      ${campo('Localização',local||'—')}
+      ${campo('Colaboradores',r.num_colaboradores||'—')}${campo('Unidades / Filiais',r.num_unidades||'—')}
+      ${campo('RH interno',bool(r.tem_rh_interno))}${campo('Pessoas no RH',r.rh_pessoas||'—')}
+      ${campo('Senioridade do RH',r.rh_senioridade||'—')}
     </div>
     <div class="modal-section-title">People — Pessoas</div>
     <div class="modal-fields-grid">
-      ${avgPeople!==null?campo('Maturidade de pessoas (média)',avgPeople+'/5'):''}
+      ${campo('Clareza de papéis',ps.p1!=null?ps.p1+'/5':'—')}${campo('Qualidade de feedback',ps.p2!=null?ps.p2+'/5':'—')}
+      ${campo('Alinhamento cultural',ps.p3!=null?ps.p3+'/5':'—')}${campo('Gestão de conflitos',ps.p4!=null?ps.p4+'/5':'—')}
+      ${avgPeople!==null?campo('Média geral',avgPeople+'/5'):''}
       ${campo('Problemas identificados',problemas,true)}
-      ${campo('Situação mais crítica',r.people_critico,true)}
+      ${campo('Situação mais crítica',r.people_critico||'—',true)}
     </div>
     <div class="modal-section-title">Process — Processos</div>
     <div class="modal-fields-grid">
       ${campo('Processos formalizados',processos,true)}
-      ${campo('Maturidade dos processos de RH',r.process_maturidade)}
-      ${campo('Processo que causa mais retrabalho',r.process_retrabalho,true)}
+      ${campo('Maturidade dos processos de RH',r.process_maturidade||'—')}
+      ${campo('Processo que causa mais retrabalho',r.process_retrabalho||'—',true)}
     </div>
     <div class="modal-section-title">Performance — Resultados</div>
     <div class="modal-fields-grid">
       ${campo('Indicadores acompanhados',indicadores,true)}
-      ${campo('Satisfação com resultados de pessoas',r.performance_satisfacao!=null?r.performance_satisfacao+'/5':'')}
-      ${campo('Processos trabalhistas em aberto',r.performance_trabalhistas)}
+      ${campo('Satisfação com resultados de pessoas',r.performance_satisfacao!=null?r.performance_satisfacao+'/5':'—')}
+      ${campo('Processos trabalhistas em aberto',r.performance_trabalhistas||'—')}
+      ${campo('O que quer transformar',r.performance_transformar||'—',true)}
     </div>
-    <div class="modal-section-title">Momento & Contexto</div>
+    <div class="modal-section-title">Momento e Contexto</div>
     <div class="modal-fields-grid">
-      ${campo('Momento da empresa',r.momento_empresa)}${campo('Motivação para buscar apoio',r.motivacao)}
-      ${campo('Prazo ideal para iniciar',r.prazo)}${campo('Budget estimado mensal',r.budget)}
-      ${campo('Abertura para visita presencial',r.visita_presencial!=null?(r.visita_presencial?'Sim':'Não'):'')}
+      ${campo('Momento da empresa',r.momento_empresa||'—')}${campo('Motivação para buscar apoio',r.motivacao||'—')}
+      ${campo('Prazo ideal para iniciar',r.prazo||'—')}${campo('Budget estimado mensal',r.budget||'—')}
+      ${campo('Abertura para visita presencial',bool(r.visita_presencial))}
     </div>
-    ${r.performance_transformar?`<div class="modal-section-title">O Que Transformar</div><div class="modal-note">"${r.performance_transformar}"</div>`:''}
-    ${r.melhor_parceiro?`<div class="modal-section-title">Como Ser o Melhor Parceiro</div><div class="modal-note">"${r.melhor_parceiro}"</div>`:''}
-    ${r.info_adicional?`<div class="modal-section-title">Informações Adicionais</div><div class="modal-note">"${r.info_adicional}"</div>`:''}`
+    <div class="modal-section-title">Fechamento</div>
+    <div class="modal-fields-grid">
+      ${campo('Como ser o melhor parceiro',r.melhor_parceiro||'—',true)}
+      ${campo('Informações adicionais',r.info_adicional||'—',true)}
+    </div>`
 }
 
 function modalLideres(r){
   const local=[r.cidade,r.estado].filter(Boolean).join(' / ')
-  const niveis=Array.isArray(r.niveis_lideranca)?r.niveis_lideranca.join(', '):(r.niveis_lideranca||'')
-  const comps=Array.isArray(r.comportamentos_desejados)?r.comportamentos_desejados.join(', '):(r.comportamentos_desejados||'')
-  const entregaveis=Array.isArray(r.entregaveis)?r.entregaveis.join(', '):(r.entregaveis||'')
+  const niveis=Array.isArray(r.niveis_lideranca)?r.niveis_lideranca.join(', '):(r.niveis_lideranca||'—')
+  const comps=Array.isArray(r.comportamentos_desejados)?r.comportamentos_desejados.join(', '):(r.comportamentos_desejados||'—')
+  const entregaveis=Array.isArray(r.entregaveis)?r.entregaveis.join(', '):(r.entregaveis||'—')
+  const bool=v=>v!=null?(v?'Sim':'Não'):'—'
   return`
-    <div class="modal-section-title">Empresa</div>
+    <div class="modal-section-title">Identificação da Empresa</div>
     <div class="modal-fields-grid">
-      ${campo('Empresa',r.empresa)}${campo('Responsável',r.responsavel)}
-      ${campo('Cargo',r.cargo)}${campo('E-mail',r.email)}
-      ${campo('WhatsApp',r.whatsapp)}${campo('Segmento',r.segmento)}
-      ${campo('Localização',local)}
-      ${campo('Colaboradores',r.num_colaboradores)}${campo('Líderes a desenvolver',r.num_lideres)}
+      ${campo('Empresa',r.empresa||'—')}${campo('Responsável',r.responsavel||'—')}
+      ${campo('Cargo',r.cargo||'—')}${campo('E-mail',r.email||'—')}
+      ${campo('WhatsApp',r.whatsapp||'—')}${campo('Segmento',r.segmento||'—')}
+      ${campo('Localização',local||'—')}
+      ${campo('Colaboradores',r.num_colaboradores||'—')}${campo('Líderes a desenvolver',r.num_lideres||'—')}
     </div>
     <div class="modal-section-title">Perfil dos Líderes</div>
     <div class="modal-fields-grid">
       ${campo('Níveis de liderança',niveis,true)}
-      ${campo('Maturidade média das lideranças',r.maturidade_lideres)}
+      ${campo('Maturidade média das lideranças',r.maturidade_lideres||'—')}
       ${campo('Comportamentos a desenvolver',comps,true)}
-      ${campo('Principal gap de liderança',r.gap_principal,true)}
+      ${campo('Principal gap de liderança',r.gap_principal||'—',true)}
     </div>
     <div class="modal-section-title">Formato do Programa</div>
     <div class="modal-fields-grid">
-      ${campo('Formato preferido',r.formato)}${campo('Frequência dos encontros',r.frequencia)}
-      ${campo('Duração desejada',r.duracao)}
-      ${campo('Avaliação 360°',r.avaliacao_360!=null?(r.avaliacao_360?'Sim':'Não'):'')}
-      ${campo('Avaliação DISC',r.avaliacao_disc!=null?(r.avaliacao_disc?'Sim':'Não'):'')}
+      ${campo('Formato preferido',r.formato||'—')}${campo('Frequência dos encontros',r.frequencia||'—')}
+      ${campo('Duração desejada',r.duracao||'—')}
+      ${campo('Avaliação 360°',bool(r.avaliacao_360))}${campo('Avaliação DISC',bool(r.avaliacao_disc))}
       ${campo('Entregáveis esperados',entregaveis,true)}
     </div>
-    <div class="modal-section-title">Contexto & Orçamento</div>
+    <div class="modal-section-title">Contexto e Urgência</div>
     <div class="modal-fields-grid">
-      ${campo('Motivação para buscar o programa',r.motivacao)}${campo('Prazo para iniciar',r.prazo)}
-      ${campo('Budget por ciclo',r.budget)}
-      ${campo('Resultado esperado',r.resultado_esperado,true)}
+      ${campo('Motivação para buscar o programa',r.motivacao||'—')}${campo('Prazo para iniciar',r.prazo||'—')}
+      ${campo('Budget por ciclo',r.budget||'—')}${campo('Resultado esperado',r.resultado_esperado||'—',true)}
     </div>
-    ${r.contexto?`<div class="modal-section-title">Contexto Atual da Liderança</div><div class="modal-note">"${r.contexto}"</div>`:''}`
+    <div class="modal-section-title">Fechamento</div>
+    <div class="modal-fields-grid">
+      ${campo('Contexto atual da liderança',r.contexto||'—',true)}
+    </div>`
 }
 
 // ── STATUS / DELETE ──────────────────────────────────────────────
