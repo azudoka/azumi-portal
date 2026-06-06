@@ -495,8 +495,8 @@ textarea.cfg-inp{resize:vertical}
     <button class="btn-prop-action btn-back" onclick="voltarNr1()">&#8592; Voltar</button>
     <div style="display:flex;align-items:center;gap:10px">
       <span class="status-pill pill-rascunho" id="nr1-status-pill">Rascunho</span>
-      <button class="btn-prop-action btn-save" onclick="salvarNr1Proposta()">Salvar</button>
-      <button class="btn-prop-action btn-approve" onclick="aprovarNr1Proposta()">Aprovar</button>
+      <button class="btn-prop-action btn-save" onclick="salvarNr1Prop()">Salvar</button>
+      <button class="btn-prop-action btn-approve" onclick="salvarNr1Prop('aprovada')">Aprovar</button>
       <button class="btn-prop-action btn-print" onclick="imprimirNr1Prop()">Imprimir PDF</button>
     </div>
   </div>
@@ -1849,14 +1849,25 @@ async function carregarNr1PropostaExistente(requestId){
   const p=data[0]
   nr1State.proposalId=p.id
   nr1State.status=p.status||'rascunho'
-  if(p.modulos_azumi)try{const mv=JSON.parse(p.modulos_azumi);Object.assign(nr1State.modulos,mv)}catch(e){}
-  if(p.modulos_sst)try{const sv=JSON.parse(p.modulos_sst);Object.assign(nr1State.sst,sv)}catch(e){}
+  // modulos_azumi/sst chegam como objeto jsonb {id: valor} — reconstruir {ativo, valor}
+  if(p.modulos_azumi){
+    const mv=typeof p.modulos_azumi==='string'?JSON.parse(p.modulos_azumi):p.modulos_azumi
+    Object.entries(mv).forEach(([id,val])=>{nr1State.modulos[id]={ativo:true,valor:parseFloat(val)||0}})
+  }
+  if(p.modulos_sst){
+    const sv=typeof p.modulos_sst==='string'?JSON.parse(p.modulos_sst):p.modulos_sst
+    Object.entries(sv).forEach(([id,val])=>{nr1State.sst[id]={ativo:true,valor:parseFloat(val)||0}})
+  }
   if(p.grau)nr1State.grau=p.grau
   if(p.obs)nr1State.obs=p.obs
-  if(p.colaboradores)nr1State.colaboradores=p.colaboradores
+  if(p.num_colaboradores)nr1State.colaboradores=p.num_colaboradores
+  if(p.empresa)nr1State.empresa=p.empresa
+  if(p.decisor)nr1State.responsavel=p.decisor
   document.getElementById('nr1-grau').value=nr1State.grau
   document.getElementById('nr1-obs').value=nr1State.obs
   document.getElementById('nr1-colaboradores').value=nr1State.colaboradores
+  if(p.empresa)document.getElementById('nr1-empresa').value=nr1State.empresa
+  if(p.decisor)document.getElementById('nr1-responsavel').value=nr1State.responsavel
   const pillLbl={rascunho:'Rascunho',aprovada:'Aprovada',enviada:'Enviada'}
   const pillCls={rascunho:'pill-rascunho',aprovada:'pill-aprovada',enviada:'pill-enviada'}
   document.getElementById('nr1-status-pill').textContent=pillLbl[nr1State.status]||'Rascunho'
@@ -1866,20 +1877,37 @@ async function carregarNr1PropostaExistente(requestId){
   recalcNr1()
 }
 
-async function salvarNr1Proposta(){
+async function salvarNr1Prop(forceStatus){
+  const status=forceStatus||nr1State.status
   nr1State.empresa=document.getElementById('nr1-empresa')?.value||nr1State.empresa
   nr1State.responsavel=document.getElementById('nr1-responsavel')?.value||nr1State.responsavel
   nr1State.colaboradores=parseInt(document.getElementById('nr1-colaboradores')?.value)||nr1State.colaboradores
   nr1State.grau=document.getElementById('nr1-grau')?.value||nr1State.grau
   nr1State.obs=document.getElementById('nr1-obs')?.value||''
   let tAz=0,tSst=0
-  NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo)tAz+=st.valor})
-  NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo)tSst+=st.valor})
+  const modAz={}
+  NR1_MODULOS_AZUMI.forEach(m=>{const st=nr1State.modulos[m.id]||{ativo:m.obrig,valor:m.base};if(st.ativo){tAz+=st.valor;modAz[m.id]=st.valor}})
+  const modSst={}
+  NR1_MODULOS_SST.forEach(m=>{const st=nr1State.sst[m.id]||{ativo:false,valor:m.base};if(st.ativo){tSst+=st.valor;modSst[m.id]=st.valor}})
+  const total=tAz+tSst
+  const proto=nr1State.proposalId?null
+    :'AZ-NRP-'+new Date().getFullYear()+String(new Date().getMonth()+1).padStart(2,'0')+'-'+Math.floor(Math.random()*90000+10000)
   const payload={
-    request_id:nr1State.requestId,empresa_nome:nr1State.empresa,responsavel:nr1State.responsavel,
-    segmento:nr1State.segmento,colaboradores:nr1State.colaboradores,grau:nr1State.grau,
-    modulos_azumi:JSON.stringify(nr1State.modulos),modulos_sst:JSON.stringify(nr1State.sst),
-    total_azumi:tAz,total_sst:tSst,total:tAz+tSst,obs:nr1State.obs,status:nr1State.status,
+    ...(proto?{protocolo:proto}:{}),
+    request_id:nr1State.requestId,
+    empresa:nr1State.empresa,
+    decisor:nr1State.responsavel,
+    num_colaboradores:nr1State.colaboradores,
+    segmento:nr1State.segmento,
+    grau:nr1State.grau,
+    modulos_azumi:modAz,
+    modulos_sst:modSst,
+    total_azumi:tAz,
+    total_sst:tSst,
+    valor_mensal:total,
+    valor_final:total,
+    obs:nr1State.obs,
+    status,
     emitido_por:sessao?sessao.nome:'Azumi RH'
   }
   let res
@@ -1890,17 +1918,12 @@ async function salvarNr1Proposta(){
   }
   if(res.error){toast('Erro ao salvar: '+res.error.message);return}
   if(!nr1State.proposalId&&res.data?.length)nr1State.proposalId=res.data[0].id
-  toast('Proposta salva!')
-}
-
-async function aprovarNr1Proposta(){
-  await salvarNr1Proposta()
-  if(!nr1State.proposalId)return
-  await sb.from('nr1_proposals').update({status:'aprovada'}).eq('id',nr1State.proposalId)
-  nr1State.status='aprovada'
-  document.getElementById('nr1-status-pill').textContent='Aprovada'
-  document.getElementById('nr1-status-pill').className='status-pill pill-aprovada'
-  toast('Proposta aprovada!')
+  nr1State.status=status
+  const pillLbl={rascunho:'Rascunho',aprovada:'Aprovada',enviada:'Enviada'}
+  const pillCls={rascunho:'pill-rascunho',aprovada:'pill-aprovada',enviada:'pill-enviada'}
+  document.getElementById('nr1-status-pill').textContent=pillLbl[status]||'Rascunho'
+  document.getElementById('nr1-status-pill').className='status-pill '+(pillCls[status]||'pill-rascunho')
+  toast(status==='aprovada'?'Proposta NR-1 aprovada!':'Rascunho NR-1 salvo')
 }
 
 function voltarNr1(){
