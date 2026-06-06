@@ -470,43 +470,43 @@ textarea.cfg-inp{resize:vertical}
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
       <div class="tab-header"><div class="tab-title">Career Plan</div><div class="tab-count" id="count-career">0</div></div>
-      <div id="cards-career"><div class="loading">Carregando...</div></div>
+      <div id="cards-career" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-vaga" class="tab-content">
       <div class="tab-header"><div class="tab-title">Solicitacao de Vaga</div><div class="tab-count" id="count-vaga">0</div></div>
-      <div id="cards-vaga"><div class="loading">Carregando...</div></div>
+      <div id="cards-vaga" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-nr1" class="tab-content">
       <div class="tab-header"><div class="tab-title">NR-1</div><div class="tab-count" id="count-nr1">0</div></div>
-      <div id="cards-nr1"><div class="loading">Carregando...</div></div>
+      <div id="cards-nr1" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-treinamento" class="tab-content">
       <div class="tab-header"><div class="tab-title">Treinamento In Company</div><div class="tab-count" id="count-treinamento">0</div></div>
-      <div id="cards-treinamento"><div class="loading">Carregando...</div></div>
+      <div id="cards-treinamento" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-diagnostico" class="tab-content">
       <div class="tab-header"><div class="tab-title">Diagnostico HRaaS</div><div class="tab-count" id="count-diagnostico">0</div></div>
-      <div id="cards-diagnostico"><div class="loading">Carregando...</div></div>
+      <div id="cards-diagnostico" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-cultura" class="tab-content">
       <div class="tab-header"><div class="tab-title">Cultura e Endomarketing</div><div class="tab-count" id="count-cultura">0</div></div>
-      <div id="cards-cultura"><div class="loading">Carregando...</div></div>
+      <div id="cards-cultura" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-gtm" class="tab-content">
       <div class="tab-header"><div class="tab-title">GTM Pessoal</div><div class="tab-count" id="count-gtm">0</div></div>
-      <div id="cards-gtm"><div class="loading">Carregando...</div></div>
+      <div id="cards-gtm" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-impulso" class="tab-content">
       <div class="tab-header"><div class="tab-title">Programa Impulso</div><div class="tab-count" id="count-impulso">0</div></div>
-      <div id="cards-impulso"><div class="loading">Carregando...</div></div>
+      <div id="cards-impulso" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-diagorg" class="tab-content">
       <div class="tab-header"><div class="tab-title">Diagnostico Organizacional</div><div class="tab-count" id="count-diagorg">0</div></div>
-      <div id="cards-diagorg"><div class="loading">Carregando...</div></div>
+      <div id="cards-diagorg" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-lideres" class="tab-content">
       <div class="tab-header"><div class="tab-title">Programa de Lideres</div><div class="tab-count" id="count-lideres">0</div></div>
-      <div id="cards-lideres"><div class="loading">Carregando...</div></div>
+      <div id="cards-lideres" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-relatorios" class="tab-content">
       <div class="tab-header"><div class="tab-title">Relatorios de Vagas</div></div>
@@ -845,7 +845,7 @@ function mkTable(data,tipo,nameFn,subFn,detailFn){
       <td style="${tdS}"><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||'Novo'}</span></td>
     </tr>`
   }).join('')
-  return`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;table-layout:auto;background:#fff">
+  return`<div style="overflow-x:auto;width:100%"><table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:900px;background:#fff">
     <thead><tr style="background:#031D38">
       <th style="${thS}">Protocolo</th>
       <th style="${thS}">Data</th>
