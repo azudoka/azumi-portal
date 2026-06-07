@@ -3724,34 +3724,38 @@ function gerarPDFVaga(){
   // Escopo conforme tipo
   const escopoAtracao = [
     'Alinhamento de perfil com o responsável pela área',
-    'Divulgação multicanal: LinkedIn, plataformas especializadas e base própria',
-    'Triagem de currículos com entrevistas por competências',
-    '1ª rodada: até 3 candidatos aderentes ao perfil',
-    '2ª rodada: até 3 candidatos adicionais após feedback formal da 1ª rodada',
+    'Divulgação multicanal: LinkedIn, plataformas especializadas e base própria Azumi RH',
+    'Triagem de currículos com entrevistas por competências e fit cultural',
+    '1ª rodada: encaminhamento de até 3 candidatos aderentes ao perfil',
+    '2ª rodada: até 3 candidatos adicionais após feedback formal da 1ª rodada (até 15 dias úteis após retorno)',
+    'Total máximo de 6 candidatos por vaga dentro do escopo contratado',
     'Análise comportamental (DISC) inclusa em todos os perfis encaminhados',
-    'Relatório individual de candidato com destaques técnicos e fit cultural',
+    'Relatório individual por candidato: destaques técnicos, fit cultural e impressão do recrutador',
     'Acompanhamento até a decisão final: contratação, pausa ou encerramento',
-    'Garantia de reposição em até 60 dias por questões de desempenho ou aderência'
+    'Garantia de reposição: 1 reposição sem custo adicional em até 60 dias corridos por questões de desempenho ou aderência, desde que as condições da vaga permaneçam iguais'
   ]
   const escopoHunting = [
-    'Mapeamento de mercado e identificação de perfis estratégicos',
-    'Busca ativa e abordagem direta via LinkedIn Recruiter, rede proprietária e indicações',
-    'Análise comportamental (DISC) aprofundada com entrevistas estruturadas',
+    'Mapeamento estratégico de mercado e identificação de perfis-alvo',
+    'Busca ativa e abordagem direta via LinkedIn Recruiter, rede proprietária e indicações qualificadas',
+    'Análise comportamental (DISC) aprofundada com entrevistas estruturadas por competências',
     'Apresentação de finalistas com relatório executivo completo por candidato',
     'Intermediação no processo de negociação: proposta, contraoferta e fechamento',
     'Acompanhamento até a decisão final e início do candidato contratado',
-    'Garantia de reposição em até 60 dias por questões de desempenho ou aderência'
+    'Garantia de reposição: 1 reposição sem custo adicional em até 60 dias corridos por questões de desempenho ou aderência, desde que as condições da vaga permaneçam iguais',
+    'Prazo estimado para apresentação de finalistas: 30 a 45 dias úteis após alinhamento e kickoff'
   ]
   const escopo = tipo === 'hunting' ? escopoHunting : escopoAtracao
 
   const naoIncluso = tipo === 'hunting' ? [
-    'Processos seletivos para vagas operacionais ou de volume',
-    'Garantia de reposição por reestruturação interna ou corte de custos',
-    'Recrutamento fora do perfil definido no alinhamento inicial sem novo contrato'
+    'Processos seletivos para vagas operacionais ou de volume (usar serviço de Atração de Talentos)',
+    'Garantia de reposição por reestruturação interna, corte de custos ou mudança de escopo após contratação',
+    'Recrutamento fora do perfil definido no kickoff sem novo alinhamento e contrato',
+    'Divulgação pública da vaga (processo confidencial por natureza)'
   ] : [
-    'Etapas de teste prático interno — responsabilidade do cliente',
-    'Garantia de reposição por reestruturação interna ou mudança de condições',
-    'Vagas adicionais além do limite do pacote sem aditivo contratual'
+    'Mais de 6 candidatos por vaga sem contratação de novo ciclo',
+    'Condução de testes práticos internos — responsabilidade do cliente',
+    'Garantia de reposição em caso de reestruturação interna, fechamento de unidade, corte de custos ou mudança de condições após a contratação',
+    'Vagas adicionais além do limite simultâneo sem aditivo contratual'
   ]
 
   const modoIntro = modo === 'orcamento'
@@ -3762,6 +3766,29 @@ function gerarPDFVaga(){
   if(g('vp-add-ent')?.checked) adicsLista.push('Entrevista comportamental aprofundada')
   if(g('vp-add-disc')?.checked) adicsLista.push('Teste de perfil DISC e aplicação')
   if(g('vp-add-tec')?.checked) adicsLista.push('Aplicação de teste técnico')
+
+  const htmlSlaAtracao = `<div class="p-st">Prazos de entrega (SLA)</div>
+<div style="background:#f8fafc;border:1px solid #EDEDED;border-radius:8px;overflow:hidden;margin-bottom:16px">
+  <table style="width:100%;border-collapse:collapse;font-size:11px">
+    <thead><tr style="background:#031D38"><th style="padding:8px 12px;text-align:left;color:rgba(147,197,253,.8);font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;font-weight:500">Perfil da vaga</th><th style="padding:8px 12px;text-align:right;color:rgba(147,197,253,.8);font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;font-weight:500">1ª Shortlist</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #EDEDED"><td style="padding:8px 12px;color:#222">Estágio / Menor Aprendiz</td><td style="padding:8px 12px;text-align:right;color:#034C8B;font-weight:600">15 dias úteis</td></tr>
+      <tr style="border-bottom:1px solid #EDEDED;background:#fafbfc"><td style="padding:8px 12px;color:#222">Assistente / Júnior</td><td style="padding:8px 12px;text-align:right;color:#034C8B;font-weight:600">20 dias úteis</td></tr>
+      <tr style="border-bottom:1px solid #EDEDED"><td style="padding:8px 12px;color:#222">Pleno / Analista</td><td style="padding:8px 12px;text-align:right;color:#034C8B;font-weight:600">25 dias úteis</td></tr>
+      <tr style="border-bottom:1px solid #EDEDED;background:#fafbfc"><td style="padding:8px 12px;color:#222">Coordenador / Gestor</td><td style="padding:8px 12px;text-align:right;color:#034C8B;font-weight:600">até 30 dias úteis</td></tr>
+      <tr><td style="padding:8px 12px;color:#222">Estratégico / Executivo</td><td style="padding:8px 12px;text-align:right;color:#034C8B;font-weight:600">até 45 dias úteis</td></tr>
+    </tbody>
+  </table>
+  <div style="padding:8px 12px;font-size:10px;color:#778082;border-top:1px solid #EDEDED">2ª rodada: até 15 dias úteis após feedback formal da 1ª. O cliente deve retornar avaliação em até 2 dias úteis e agendar entrevistas em até 5 dias úteis.</div>
+</div>`
+
+  const htmlSlaHunting = `<div class="p-st">Prazo estimado — Head Hunting</div>
+<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:12px 16px;margin-bottom:16px">
+  <div style="font-size:12px;color:#4c1d95;line-height:1.7">
+    <strong>30 a 45 dias úteis</strong> para apresentação dos primeiros finalistas, contados a partir do kickoff e alinhamento completo do perfil.<br>
+    <span style="color:#6d28d9;font-size:11px">O prazo pode variar conforme disponibilidade e abertura dos profissionais abordados, complexidade do perfil e senioridade da posição. Vagas com perfil indefinido ou condições instáveis impactam diretamente o prazo e a qualidade da entrega.</span>
+  </div>
+</div>`
 
   const huntingBlock = tipo === 'hunting' ? `
     <div class="p-st">Informações — Head Hunting</div>
@@ -3901,6 +3928,7 @@ body{font-family:'Space Grotesk',sans-serif;background:#f0f2f7;color:#222;font-s
       <div class="pgto-item"><div class="pgto-l">Entrada (${s._entPct||30}%)</div><div class="pgto-v">${brlF(s._entrada||0)}</div></div>
       <div class="pgto-item suc"><div class="pgto-l">Sucesso (${s._sucPct||70}%)</div><div class="pgto-v">${brlF(s._sucesso||0)}</div></div>
     </div>
+    ${tipo==='hunting' ? htmlSlaHunting : htmlSlaAtracao}
     <div class="p-st">Condições gerais</div>
     ${modo==='vaga'?`
     <div class="cond">Pagamento de entrada na assinatura do contrato. Sucesso no fechamento da vaga (aceite do candidato).</div>
