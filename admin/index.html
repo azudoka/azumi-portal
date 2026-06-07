@@ -750,6 +750,163 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 </div><!-- /prop-view -->
 
+<div id="prop-vaga-view" style="display:none">
+  <div style="background:#f0f2f7;min-height:100vh;padding:20px">
+
+    <!-- BARRA SUPERIOR -->
+    <div style="max-width:1100px;margin:0 auto 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn-prop-action btn-back" onclick="voltarVaga()">← Voltar</button>
+        <div>
+          <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#031D38" id="vaga-nome-titulo">Proposta de Vaga</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#778082" id="vaga-proto-titulo"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="vaga-tipo-badge" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;background:rgba(59,130,246,.15);color:#3B82F6;border:1px solid rgba(59,130,246,.3)">Atração</span>
+        <span id="vaga-modo-badge" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,.08);color:#778082;border:1px solid rgba(255,255,255,.12)">Solicitação</span>
+        <button class="btn-prop-action btn-print" onclick="gerarPDFVaga()">PDF</button>
+      </div>
+    </div>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start">
+
+      <!-- COLUNA ESQUERDA -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- DADOS DO CLIENTE -->
+        <div class="prop-card">
+          <div class="prop-card-title">Dados do cliente — preenchido pelo formulário</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Empresa</div><input class="cfg-inp" id="vp-empresa" placeholder="Nome da empresa"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Filial / Unidade</div><input class="cfg-inp" id="vp-filial" placeholder="Se houver"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Responsável</div><input class="cfg-inp" id="vp-responsavel" placeholder="Nome do solicitante"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Cargo do responsável</div><input class="cfg-inp" id="vp-cargo-resp" placeholder="Ex.: CEO, Gerente de RH"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">E-mail</div><input class="cfg-inp" id="vp-email" placeholder="email@empresa.com.br"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">WhatsApp</div><input class="cfg-inp" id="vp-whatsapp" placeholder="(41) 99999-0000"/></div>
+          </div>
+        </div>
+
+        <!-- DADOS DA VAGA -->
+        <div class="prop-card">
+          <div class="prop-card-title">Dados da vaga</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Cargo</div><input class="cfg-inp" id="vp-cargo" placeholder="Ex.: Assistente Administrativo"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Nível da vaga</div><input class="cfg-inp" id="vp-nivel" placeholder="Ex.: Operacional, Tática, Gestão"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Senioridade</div><input class="cfg-inp" id="vp-senioridade" placeholder="Ex.: Pleno, Sênior"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Nº de vagas</div><input class="cfg-inp" id="vp-num-vagas" type="number" min="1" value="1" oninput="calcVagaProp()"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Contrato</div><input class="cfg-inp" id="vp-contrato" placeholder="Ex.: CLT, PJ"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Jornada</div><input class="cfg-inp" id="vp-jornada" placeholder="Ex.: Presencial, Híbrido"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Carga horária</div><input class="cfg-inp" id="vp-carga" placeholder="Ex.: 44h semanais"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Local de trabalho</div><input class="cfg-inp" id="vp-local" placeholder="Cidade / UF"/></div>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Requisitos</div>
+            <textarea class="cfg-inp" id="vp-requisitos" style="min-height:60px;resize:vertical;font-size:12px" placeholder="Formação, experiências, habilidades..."></textarea>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Benefícios</div>
+            <input class="cfg-inp" id="vp-beneficios" placeholder="Ex.: VT, VR, Plano de Saúde"/>
+          </div>
+        </div>
+
+        <!-- HUNTING EXTRA (visível apenas para hunting) -->
+        <div class="prop-card" id="vp-hunting-block" style="display:none">
+          <div class="prop-card-title">Informações — Head Hunting</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Segmento-alvo</div><input class="cfg-inp" id="vp-segmento" placeholder="Ex.: Indústria alimentícia"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Prazo ideal</div><input class="cfg-inp" id="vp-prazo-hunting" placeholder="Ex.: 60 dias"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Remuneração variável</div><input class="cfg-inp" id="vp-rem-variavel" placeholder="Ex.: Bônus anual 3 salários"/></div>
+            <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Confidencialidade</div><input class="cfg-inp" id="vp-confidencial" placeholder="Ex.: Confidencial"/></div>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Empresas de referência</div>
+            <textarea class="cfg-inp" id="vp-empresas-ref" style="min-height:50px;resize:vertical;font-size:12px" placeholder="Empresas cujos profissionais teriam o perfil..."></textarea>
+          </div>
+        </div>
+
+        <!-- OBSERVAÇÕES -->
+        <div class="prop-card">
+          <div class="prop-card-title">Observações</div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Contexto — aparece na proposta para o cliente</div>
+            <textarea class="cfg-inp" id="vp-obs-prop" style="min-height:70px;resize:vertical" placeholder="Contexto, urgência, alinhamentos específicos..."></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Notas internas — não aparecem na proposta</div>
+            <textarea class="cfg-inp" id="vp-obs-int" style="min-height:50px;resize:vertical" placeholder="Observações internas..."></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUNA DIREITA -->
+      <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:12px">
+
+        <!-- BASE DE CÁLCULO -->
+        <div class="prop-card">
+          <div class="prop-card-title">Base de cálculo</div>
+          <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Salário mensal bruto (R$)</div><input class="cfg-inp" id="vp-salario" type="number" value="0" min="0" step="100" oninput="calcVagaProp()"/></div>
+          <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Comissão mensal estimada (R$)</div><input class="cfg-inp" id="vp-comissao" type="number" value="0" min="0" step="100" oninput="calcVagaProp()"/></div>
+          <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Percentual (%)</div><input class="cfg-inp" id="vp-perc" type="number" value="12" min="0" max="30" step="0.5" oninput="calcVagaProp()"/></div>
+          <div style="font-size:10px;color:var(--ts);padding:6px 8px;background:rgba(255,255,255,.04);border-radius:6px;line-height:1.5">Sugestão por senioridade:<br>Júnior 10% · Pleno 12% · Sênior 15% · Executivo 20%</div>
+        </div>
+
+        <!-- ADICIONAIS -->
+        <div class="prop-card">
+          <div class="prop-card-title">Adicionais contratados</div>
+          <div style="font-size:11px;color:var(--ts);margin-bottom:8px">R$ 110 por candidato por adicional</div>
+          <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ts);margin-bottom:4px">Nº de candidatos</div><input class="cfg-inp" id="vp-qtd-cand" type="number" value="3" min="0" oninput="calcVagaProp()"/></div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="vp-add-ent" onchange="calcVagaProp()" style="width:14px;height:14px;accent-color:#3B82F6"/> Entrevista comportamental</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="vp-add-disc" onchange="calcVagaProp()" style="width:14px;height:14px;accent-color:#3B82F6"/> Teste de perfil DISC</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="vp-add-tec" onchange="calcVagaProp()" style="width:14px;height:14px;accent-color:#3B82F6"/> Teste técnico</label>
+          </div>
+          <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ts);margin-bottom:4px">Urgência adicional (R$)</div><input class="cfg-inp" id="vp-urgencia-val" type="number" value="0" min="0" step="50" oninput="calcVagaProp()"/><div style="font-size:10px;color:var(--ts);margin-top:3px">R$ 450 quando urgente</div></div>
+          <div><div style="font-size:11px;color:var(--ts);margin-bottom:4px">Desconto (%)</div><input class="cfg-inp" id="vp-desc" type="number" value="0" min="0" max="50" step="1" oninput="calcVagaProp()"/></div>
+        </div>
+
+        <!-- CONDIÇÕES DE PAGAMENTO -->
+        <div class="prop-card">
+          <div class="prop-card-title">Condições de pagamento</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-size:11px;color:var(--ts);margin-bottom:4px">Entrada (%)</div><input class="cfg-inp" id="vp-entrada" type="number" value="30" min="0" max="100" oninput="calcVagaProp()"/></div>
+            <div><div style="font-size:11px;color:var(--ts);margin-bottom:4px">Sucesso (%)</div><input class="cfg-inp" id="vp-sucesso" type="number" value="70" min="0" max="100" oninput="calcVagaProp()"/></div>
+          </div>
+        </div>
+
+        <!-- RESULTADO -->
+        <div class="result-box">
+          <div class="result-inner">
+            <div class="result-label">Resumo financeiro</div>
+            <div id="vp-result-rows"></div>
+            <div class="result-total">
+              <div class="result-total-lbl">HONORÁRIOS TOTAIS</div>
+              <div>
+                <div class="result-orig" id="vp-res-orig" style="display:none"></div>
+                <div class="result-total-val" id="vp-res-final">R$ 0,00</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+              <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:8px 10px">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Entrada</div>
+                <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff" id="vp-res-entrada">R$ 0,00</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:8px 10px">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Sucesso</div>
+                <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff" id="vp-res-sucesso">R$ 0,00</div>
+              </div>
+            </div>
+            <div class="result-note" id="vp-res-note"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div><!-- /prop-vaga-view -->
+
 <!-- DRAWER -->
 <div class="drawer-overlay" id="overlay" onclick="fecharDrawer()"></div>
 <div class="drawer" id="drawer">
@@ -1277,7 +1434,7 @@ function renderModalFooter(tipo,r){
   const wa=(r.whatsapp||'').toString().replace(/\D/g,'')
   return`${wa?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55${wa}')">WhatsApp</button>`:''}
     <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
+    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
     <select class="status-sel" onchange="atualizarStatusModal('${tabela}','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
     ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
     <button class="btn-sm btn-del" style="margin-left:auto" onclick="excluirModal('${tabela}','${rid}','${nome}','${tipo}')">Excluir</button>`
@@ -3344,6 +3501,435 @@ function renderMapaAbandono(slugs){
     html+=`<div class="an-map-row"><div class="an-map-form">${slug} — ${sess.length} abandono${sess.length>1?'s':''}</div><div class="an-map-bars">${bars}</div></div>`
   })
   return html
+}
+
+// ── PROPOSTA DE VAGA ──────────────────────────────────────────────
+let vagaPropState = { tipo:'atracao', modo:'vaga' }
+
+function abrirPropostaVaga(r){
+  if(typeof r==='string') r=JSON.parse(r.replace(/&quot;/g,'"'))
+
+  const tipo = r.tipo_recrutamento || 'atracao'
+  const modo = r.tipo_solicitacao || 'vaga'
+  vagaPropState = { tipo, modo, dados: r }
+
+  // Preencher dados do cliente
+  g('vp-empresa').value = r.nome_empresa || ''
+  g('vp-filial').value = r.filial || ''
+  g('vp-responsavel').value = r.nome_responsavel || r.solicitante || ''
+  g('vp-cargo-resp').value = r.cargo_responsavel || r.cargo_solicitante || ''
+  g('vp-email').value = r.email || ''
+  g('vp-whatsapp').value = r.whatsapp || ''
+
+  // Preencher dados da vaga
+  g('vp-cargo').value = r.nome_vaga || ''
+  g('vp-nivel').value = r.nivel_vaga || ''
+  g('vp-senioridade').value = r.senioridade || ''
+  g('vp-num-vagas').value = r.num_vagas || 1
+  g('vp-contrato').value = r.contrato || ''
+  g('vp-jornada').value = r.jornada || ''
+  g('vp-carga').value = r.carga_horaria || ''
+  g('vp-local').value = r.local || ''
+  g('vp-requisitos').value = r.requisitos || ''
+
+  // Benefícios
+  const bens = Array.isArray(r.beneficios) ? r.beneficios.join(', ') : (r.beneficios || '')
+  g('vp-beneficios').value = [bens, r.beneficios_outros].filter(Boolean).join(', ')
+
+  // Salário → cálculo
+  g('vp-salario').value = r.salario || 0
+  g('vp-comissao').value = 0
+
+  // Senioridade → % sugerido
+  const percMap = {
+    'Estágio': 8, 'Menor Aprendiz': 8,
+    'Padrão / Operacional': 10, 'Júnior': 10,
+    'Pleno': 12, 'Analista': 12,
+    'Sênior': 15, 'Especialista': 15, 'Coordenador': 15,
+    'Liderança / Gestão': 18,
+    'Diretoria / Executivo': 20
+  }
+  g('vp-perc').value = percMap[r.senioridade] || 12
+
+  // Urgência
+  const urgVal = r.urgencia === 'urgente' ? 450 : 0
+  g('vp-urgencia-val').value = urgVal
+
+  // Adicionais pré-marcados
+  const adics = Array.isArray(r.adicionais) ? r.adicionais : (r.adicionais ? [r.adicionais] : [])
+  g('vp-add-ent').checked = adics.some(a => a.toLowerCase().includes('comportament'))
+  g('vp-add-disc').checked = adics.some(a => a.toLowerCase().includes('disc') || a.toLowerCase().includes('perfil'))
+  g('vp-add-tec').checked = adics.some(a => a.toLowerCase().includes('técni') || a.toLowerCase().includes('tecni'))
+
+  // Desconto zerado
+  g('vp-desc').value = 0
+  g('vp-entrada').value = 30
+  g('vp-sucesso').value = 70
+  g('vp-qtd-cand').value = 3
+  g('vp-obs-prop').value = r.observacoes || ''
+  g('vp-obs-int').value = ''
+
+  // Hunting extras
+  if(tipo === 'hunting'){
+    g('vp-segmento').value = r.segmento_hunting || ''
+    g('vp-prazo-hunting').value = r.prazo_hunting || ''
+    g('vp-rem-variavel').value = r.remuneracao_variavel || ''
+    g('vp-confidencial').value = r.confidencialidade || ''
+    g('vp-empresas-ref').value = r.empresas_referencia || ''
+    g('vp-hunting-block').style.display = 'block'
+  } else {
+    g('vp-hunting-block').style.display = 'none'
+  }
+
+  // Badges
+  const tipoBadge = g('vaga-tipo-badge')
+  if(tipo === 'hunting'){
+    tipoBadge.textContent = 'Head Hunting'
+    tipoBadge.style.background = 'rgba(139,92,246,.15)'
+    tipoBadge.style.color = '#c4b5fd'
+    tipoBadge.style.borderColor = 'rgba(139,92,246,.3)'
+  } else {
+    tipoBadge.textContent = 'Atração de Talentos'
+    tipoBadge.style.background = 'rgba(59,130,246,.15)'
+    tipoBadge.style.color = '#93C5FD'
+    tipoBadge.style.borderColor = 'rgba(59,130,246,.3)'
+  }
+  const modoBadge = g('vaga-modo-badge')
+  modoBadge.textContent = modo === 'orcamento' ? 'Orçamento' : 'Solicitação'
+  modoBadge.style.background = modo === 'orcamento' ? 'rgba(251,191,36,.1)' : 'rgba(16,185,129,.1)'
+  modoBadge.style.color = modo === 'orcamento' ? '#fbbf24' : '#6ee7b7'
+  modoBadge.style.borderColor = modo === 'orcamento' ? 'rgba(251,191,36,.25)' : 'rgba(16,185,129,.25)'
+
+  // Títulos
+  g('vaga-nome-titulo').textContent = r.nome_empresa || r.solicitante || 'Proposta de Vaga'
+  g('vaga-proto-titulo').textContent = r.protocolo ? 'Sol.: '+r.protocolo : ''
+
+  // Mostrar view
+  document.getElementById('admin-page').style.display = 'none'
+  document.getElementById('prop-vaga-view').style.display = 'block'
+  window.scrollTo(0,0)
+  calcVagaProp()
+}
+
+function voltarVaga(){
+  document.getElementById('prop-vaga-view').style.display = 'none'
+  document.getElementById('admin-page').style.display = 'block'
+  window.scrollTo(0,0)
+}
+
+function calcVagaProp(){
+  const sal = Number(g('vp-salario')?.value)||0
+  const com = Number(g('vp-comissao')?.value)||0
+  const perc = Number(g('vp-perc')?.value)||12
+  const qtd = Number(g('vp-qtd-cand')?.value)||0
+  const urgVal = Number(g('vp-urgencia-val')?.value)||0
+  const descPct = Number(g('vp-desc')?.value)||0
+  const entPct = Number(g('vp-entrada')?.value)||30
+  const sucPct = Number(g('vp-sucesso')?.value)||70
+
+  const selCount = (g('vp-add-ent')?.checked?1:0)+(g('vp-add-disc')?.checked?1:0)+(g('vp-add-tec')?.checked?1:0)
+  const adicVal = qtd * 110 * selCount
+
+  const mes = sal + com
+  const ano = mes * 12
+  const honorBase = ano * (perc/100)
+  const bruto = honorBase + adicVal + urgVal
+  const descVal = Math.round(bruto * descPct / 100)
+  const final = bruto - descVal
+  const entrada = Math.round(final * entPct / 100)
+  const sucesso = final - entrada
+
+  const brlF = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+  const rows = []
+  rows.push({l:`Salário anual bruto (${mes>0?brlF(mes)+'/mês':'—'})`, v: brlF(ano)})
+  rows.push({l:`Honorários base (${perc}% sobre anual)`, v: brlF(honorBase)})
+  if(urgVal>0) rows.push({l:'Urgência', v: brlF(urgVal)})
+  if(adicVal>0) rows.push({l:`Adicionais (${qtd} cand. × ${selCount} serv. × R$110)`, v: brlF(adicVal)})
+  if(descPct>0) rows.push({l:`Desconto (${descPct}%)`, v:'− '+brlF(descVal)})
+
+  const rr = g('vp-result-rows')
+  if(rr) rr.innerHTML = rows.map(r=>`<div class="result-row"><span class="result-lbl">${r.l}</span><span class="result-val">${r.v}</span></div>`).join('')
+
+  const orig = g('vp-res-orig'), fin = g('vp-res-final')
+  if(orig && fin){
+    if(descPct>0){ orig.style.display='block'; orig.textContent=brlF(bruto) } else orig.style.display='none'
+    fin.textContent = brlF(final)
+  }
+  const re = g('vp-res-entrada'), rs = g('vp-res-sucesso')
+  if(re) re.textContent = brlF(entrada)
+  if(rs) rs.textContent = brlF(sucesso)
+  const rn = g('vp-res-note')
+  if(rn) rn.textContent = `${entPct}% entrada + ${sucPct}% sucesso · Base: ${brlF(mes)}/mês`
+
+  vagaPropState._final = final
+  vagaPropState._honorBase = honorBase
+  vagaPropState._ano = ano
+  vagaPropState._mes = mes
+  vagaPropState._descVal = descVal
+  vagaPropState._descPct = descPct
+  vagaPropState._adicVal = adicVal
+  vagaPropState._urgVal = urgVal
+  vagaPropState._bruto = bruto
+  vagaPropState._entrada = entrada
+  vagaPropState._sucesso = sucesso
+  vagaPropState._perc = perc
+  vagaPropState._entPct = entPct
+  vagaPropState._sucPct = sucPct
+  vagaPropState._selCount = selCount
+  vagaPropState._qtd = qtd
+}
+
+function gerarPDFVaga(){
+  calcVagaProp()
+  const s = vagaPropState
+  const tipo = s.tipo || 'atracao'
+  const modo = s.modo || 'vaga'
+  const r = s.dados || {}
+
+  const empresa = g('vp-empresa')?.value || '—'
+  const filial = g('vp-filial')?.value || ''
+  const responsavel = g('vp-responsavel')?.value || '—'
+  const cargoResp = g('vp-cargo-resp')?.value || '—'
+  const email = g('vp-email')?.value || '—'
+  const whatsapp = g('vp-whatsapp')?.value || '—'
+  const cargo = g('vp-cargo')?.value || '—'
+  const nivel = g('vp-nivel')?.value || '—'
+  const senioridade = g('vp-senioridade')?.value || '—'
+  const numVagas = g('vp-num-vagas')?.value || '1'
+  const contrato = g('vp-contrato')?.value || '—'
+  const jornada = g('vp-jornada')?.value || '—'
+  const carga = g('vp-carga')?.value || '—'
+  const local = g('vp-local')?.value || '—'
+  const requisitos = g('vp-requisitos')?.value || '—'
+  const beneficios = g('vp-beneficios')?.value || '—'
+  const obsProp = g('vp-obs-prop')?.value || ''
+
+  // Hunting
+  const segmento = g('vp-segmento')?.value || ''
+  const prazoHunting = g('vp-prazo-hunting')?.value || ''
+  const remVariavel = g('vp-rem-variavel')?.value || ''
+  const confidencial = g('vp-confidencial')?.value || ''
+  const empresasRef = g('vp-empresas-ref')?.value || ''
+
+  const brlF = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+  const dataHoje = () => new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})
+  const data15 = () => { const d=new Date(); d.setDate(d.getDate()+15); return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}) }
+
+  const tipoLabel = tipo === 'hunting' ? 'Head Hunting' : 'Atração de Talentos'
+  const modoLabel = modo === 'orcamento' ? 'Orçamento' : 'Proposta Comercial'
+  const tituloDoc = modo === 'orcamento'
+    ? `Orçamento de Serviços — ${tipoLabel}`
+    : `Proposta Comercial — ${tipoLabel}`
+
+  // Escopo conforme tipo
+  const escopoAtracao = [
+    'Alinhamento de perfil com o responsável pela área',
+    'Divulgação multicanal: LinkedIn, plataformas especializadas e base própria',
+    'Triagem de currículos com entrevistas por competências',
+    '1ª rodada: até 3 candidatos aderentes ao perfil',
+    '2ª rodada: até 3 candidatos adicionais após feedback formal da 1ª rodada',
+    'Análise comportamental (DISC) inclusa em todos os perfis encaminhados',
+    'Relatório individual de candidato com destaques técnicos e fit cultural',
+    'Acompanhamento até a decisão final: contratação, pausa ou encerramento',
+    'Garantia de reposição em até 60 dias por questões de desempenho ou aderência'
+  ]
+  const escopoHunting = [
+    'Mapeamento de mercado e identificação de perfis estratégicos',
+    'Busca ativa e abordagem direta via LinkedIn Recruiter, rede proprietária e indicações',
+    'Análise comportamental (DISC) aprofundada com entrevistas estruturadas',
+    'Apresentação de finalistas com relatório executivo completo por candidato',
+    'Intermediação no processo de negociação: proposta, contraoferta e fechamento',
+    'Acompanhamento até a decisão final e início do candidato contratado',
+    'Garantia de reposição em até 60 dias por questões de desempenho ou aderência'
+  ]
+  const escopo = tipo === 'hunting' ? escopoHunting : escopoAtracao
+
+  const naoIncluso = tipo === 'hunting' ? [
+    'Processos seletivos para vagas operacionais ou de volume',
+    'Garantia de reposição por reestruturação interna ou corte de custos',
+    'Recrutamento fora do perfil definido no alinhamento inicial sem novo contrato'
+  ] : [
+    'Etapas de teste prático interno — responsabilidade do cliente',
+    'Garantia de reposição por reestruturação interna ou mudança de condições',
+    'Vagas adicionais além do limite do pacote sem aditivo contratual'
+  ]
+
+  const modoIntro = modo === 'orcamento'
+    ? 'Este orçamento não formaliza contratação nem inicia qualquer processo seletivo. Nossa equipe analisará as informações e entrará em contato para alinhamento. Sem compromisso de início.'
+    : 'Esta proposta formaliza o escopo, os honorários e as condições do processo seletivo. O processo inicia após confirmação do pagamento de entrada e assinatura do contrato.'
+
+  const adicsLista = []
+  if(g('vp-add-ent')?.checked) adicsLista.push('Entrevista comportamental aprofundada')
+  if(g('vp-add-disc')?.checked) adicsLista.push('Teste de perfil DISC e aplicação')
+  if(g('vp-add-tec')?.checked) adicsLista.push('Aplicação de teste técnico')
+
+  const huntingBlock = tipo === 'hunting' ? `
+    <div class="p-st">Informações — Head Hunting</div>
+    <div class="p-grid">
+      ${segmento?`<div class="p-gi"><div class="p-gl">Segmento-alvo</div><div class="p-gv">${segmento}</div></div>`:''}
+      ${prazoHunting?`<div class="p-gi"><div class="p-gl">Prazo ideal</div><div class="p-gv">${prazoHunting}</div></div>`:''}
+      ${remVariavel?`<div class="p-gi"><div class="p-gl">Remuneração variável</div><div class="p-gv">${remVariavel}</div></div>`:''}
+      ${confidencial?`<div class="p-gi"><div class="p-gl">Confidencialidade</div><div class="p-gv">${confidencial}</div></div>`:''}
+      ${empresasRef?`<div class="p-gi" style="grid-column:1/-1"><div class="p-gl">Empresas de referência</div><div class="p-gv">${empresasRef}</div></div>`:''}
+    </div>` : ''
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
+<title>${tituloDoc} · ${empresa} · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;1,400&family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--blue:#034C8B;--blue2:#3B82F6;--violet:#8B5CF6;--gm:linear-gradient(135deg,#034C8B 0%,#3B82F6 50%,#8B5CF6 100%);--gh:linear-gradient(135deg,#031D38 0%,#034C8B 40%,#3B82F6 75%,#8B5CF6 100%)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#f0f2f7;color:#222;font-size:13px}
+.no-print{max-width:860px;margin:0 auto 14px;background:var(--gh);border-radius:12px;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
+.no-print::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.np-inner{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%}
+.np-brand{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:18px;color:#fff}
+.np-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.np-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7)}
+.btn-print{background:#fff;color:var(--blue);border:none;border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.15);overflow:hidden}
+.p-hdr{background:var(--gh);padding:28px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;position:relative;overflow:hidden}
+.p-hdr::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90% 50%,rgba(139,92,246,.25) 0%,transparent 60%);pointer-events:none}
+.p-hdr-inner{position:relative;display:flex;justify-content:space-between;align-items:flex-start;width:100%}
+.p-hdr-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:3px}
+.p-hdr-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);letter-spacing:.1em;text-transform:uppercase}
+.p-logo{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:22px;color:#fff}
+.p-logo-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.modo-badge{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:3px 10px;border-radius:100px;border:1px solid;margin-bottom:8px}
+.modo-vaga{background:rgba(16,185,129,.15);color:#6ee7b7;border-color:rgba(16,185,129,.3)}
+.modo-orc{background:rgba(251,191,36,.15);color:#fbbf24;border-color:rgba(251,191,36,.3)}
+.p-body{padding:26px 40px 40px}
+.valid-bar{background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:8px 14px;margin-bottom:18px;display:flex;justify-content:space-between;font-size:10px;color:#7c6200}
+.p-st{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);border-bottom:2px solid;border-image:linear-gradient(90deg,#034C8B,#8B5CF6) 1;padding-bottom:5px;margin:20px 0 10px}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 16px}
+.p-gi{padding:8px 11px;border-radius:7px;background:#fafbfc;border:1px solid #EDEDED}
+.p-gl{font-family:'JetBrains Mono',monospace;font-size:8px;color:#778082;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.p-gv{font-size:12px;font-weight:600;color:#222}
+.escopo-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #EDEDED;font-size:12px;color:#222;line-height:1.55}
+.escopo-item::before{content:'✓';color:#16a34a;font-weight:700;font-size:11px;margin-top:2px;flex-shrink:0}
+.nao-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:11px;color:#778082;line-height:1.5}
+.nao-item::before{content:'✕';color:#ef4444;font-weight:700;font-size:10px;margin-top:2px;flex-shrink:0}
+.inv-row{display:flex;justify-content:space-between;padding:8px 11px;border-bottom:1px solid #EDEDED;background:#fafafa}
+.inv-l{font-size:12px;color:#222}
+.inv-r{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#222}
+.total-bar{background:var(--gh);padding:12px 16px;position:relative;overflow:hidden}
+.total-bar::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.total-inner{position:relative;display:flex;justify-content:space-between;align-items:center}
+.total-l{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:#fff}
+.total-v{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff}
+.pgto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pgto-item{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px}
+.pgto-item.suc{background:#eff6ff;border-color:#bfdbfe}
+.pgto-l{font-family:'JetBrains Mono',monospace;font-size:9px;color:#166534;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.pgto-item.suc .pgto-l{color:#1e40af}
+.pgto-v{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:#166534}
+.pgto-item.suc .pgto-v{color:#1e40af}
+.cond{font-size:11px;color:#333;padding:6px 0 6px 16px;border-bottom:1px solid #EDEDED;position:relative;line-height:1.65}
+.cond::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:900;font-size:14px;top:4px}
+.obs-box{margin-top:14px;padding:10px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:12px;color:#0369a1;line-height:1.7}
+.intro-box{margin-bottom:16px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.7}
+.intro-vaga{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.intro-orc{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.p-sig{margin-top:24px;background:#031D38;border-radius:10px;padding:18px 22px;position:relative;overflow:hidden}
+.p-sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 90% 30%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.p-sig-inner{position:relative}
+.p-sig-name{font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.p-sig-det{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.7);letter-spacing:.04em}
+.nao-box{background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:10px 14px;margin:10px 0}
+.nao-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:#991b1b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+@media print{body{background:#fff!important}.no-print{display:none!important}.page{box-shadow:none!important;margin:0!important;width:100%!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}@page{size:A4;margin:8mm}}
+</style></head><body>
+<div class="no-print"><div class="np-inner">
+  <div class="np-brand">azumi <span class="np-rh">RH</span></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span class="np-hint">Ative "Gráficos de fundo" no Ctrl+P</span>
+    <button class="btn-print" onclick="window.print()">Salvar como PDF</button>
+  </div>
+</div></div>
+<div class="page">
+  <div class="p-hdr"><div class="p-hdr-inner">
+    <div>
+      <div class="modo-badge ${modo==='orcamento'?'modo-orc':'modo-vaga'}">${modo==='orcamento'?'ORÇAMENTO':'PROPOSTA COMERCIAL'}</div>
+      <div class="p-hdr-title">${tituloDoc}</div>
+      <div class="p-hdr-sub">${tipoLabel.toUpperCase()} · AZUMI RH</div>
+    </div>
+    <div class="p-logo">azumi <span class="p-logo-rh">RH</span></div>
+  </div></div>
+  <div class="p-body">
+    <div class="valid-bar">
+      <span>Emissão: <strong>${dataHoje()}</strong></span>
+      <span>Válida até: <strong>${data15()}</strong></span>
+      ${r.protocolo?`<span>Protocolo: <strong>${r.protocolo}</strong></span>`:''}
+    </div>
+    <div class="intro-box ${modo==='orcamento'?'intro-orc':'intro-vaga'}">${modoIntro}</div>
+    <div class="p-st">Identificação</div>
+    <div class="p-grid">
+      <div class="p-gi"><div class="p-gl">Empresa</div><div class="p-gv">${empresa}${filial?' · '+filial:''}</div></div>
+      <div class="p-gi"><div class="p-gl">Responsável</div><div class="p-gv">${responsavel}</div></div>
+      <div class="p-gi"><div class="p-gl">Cargo</div><div class="p-gv">${cargoResp}</div></div>
+      <div class="p-gi"><div class="p-gl">E-mail</div><div class="p-gv">${email}</div></div>
+    </div>
+    <div class="p-st">Vaga</div>
+    <div class="p-grid">
+      <div class="p-gi"><div class="p-gl">Cargo</div><div class="p-gv">${cargo}</div></div>
+      <div class="p-gi"><div class="p-gl">Nível / Senioridade</div><div class="p-gv">${nivel} · ${senioridade}</div></div>
+      <div class="p-gi"><div class="p-gl">Nº de vagas</div><div class="p-gv">${numVagas}</div></div>
+      <div class="p-gi"><div class="p-gl">Contrato / Jornada</div><div class="p-gv">${contrato} · ${jornada}</div></div>
+      <div class="p-gi"><div class="p-gl">Carga horária</div><div class="p-gv">${carga}</div></div>
+      <div class="p-gi"><div class="p-gl">Local</div><div class="p-gv">${local}</div></div>
+      ${beneficios!=='—'?`<div class="p-gi" style="grid-column:1/-1"><div class="p-gl">Benefícios</div><div class="p-gv">${beneficios}</div></div>`:''}
+      ${requisitos!=='—'?`<div class="p-gi" style="grid-column:1/-1"><div class="p-gl">Requisitos</div><div class="p-gv" style="font-weight:400;line-height:1.6">${requisitos}</div></div>`:''}
+    </div>
+    ${huntingBlock}
+    <div class="p-st">Escopo do serviço</div>
+    ${escopo.map(e=>`<div class="escopo-item">${e}</div>`).join('')}
+    ${adicsLista.length?`<div style="margin-top:12px;padding:10px 14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#1e40af;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Adicionais contratados</div>${adicsLista.map(a=>`<div class="escopo-item" style="border-color:#bfdbfe">${a} — R$ 110/candidato</div>`).join('')}</div>`:''}
+    <div class="nao-box"><div class="nao-title">O que não está incluído</div>${naoIncluso.map(n=>`<div class="nao-item">${n}</div>`).join('')}</div>
+    <div class="p-st">Investimento</div>
+    <div class="inv-row"><div class="inv-l">Remuneração mensal total</div><div class="inv-r">${brlF(s._mes||0)}</div></div>
+    <div class="inv-row"><div class="inv-l">Remuneração anual bruta</div><div class="inv-r">${brlF(s._ano||0)}</div></div>
+    <div class="inv-row"><div class="inv-l">Percentual aplicado</div><div class="inv-r">${s._perc||12}%</div></div>
+    <div class="inv-row"><div class="inv-l">Honorários base</div><div class="inv-r">${brlF(s._honorBase||0)}</div></div>
+    ${(s._urgVal||0)>0?`<div class="inv-row"><div class="inv-l">Urgência</div><div class="inv-r">${brlF(s._urgVal)}</div></div>`:''}
+    ${(s._adicVal||0)>0?`<div class="inv-row"><div class="inv-l">Adicionais (${s._qtd} cand. × ${s._selCount} serv.)</div><div class="inv-r">${brlF(s._adicVal)}</div></div>`:''}
+    ${(s._descPct||0)>0?`<div class="inv-row"><div class="inv-l">Desconto (${s._descPct}%)</div><div class="inv-r" style="color:#16a34a">− ${brlF(s._descVal||0)}</div></div>`:''}
+    <div class="total-bar"><div class="total-inner">
+      <span class="total-l">HONORÁRIOS TOTAIS</span>
+      <span class="total-v">${brlF(s._final||0)}</span>
+    </div></div>
+    <div class="pgto-grid">
+      <div class="pgto-item"><div class="pgto-l">Entrada (${s._entPct||30}%)</div><div class="pgto-v">${brlF(s._entrada||0)}</div></div>
+      <div class="pgto-item suc"><div class="pgto-l">Sucesso (${s._sucPct||70}%)</div><div class="pgto-v">${brlF(s._sucesso||0)}</div></div>
+    </div>
+    <div class="p-st">Condições gerais</div>
+    ${modo==='vaga'?`
+    <div class="cond">Pagamento de entrada na assinatura do contrato. Sucesso no fechamento da vaga (aceite do candidato).</div>
+    <div class="cond">Sem exclusividade obrigatória — processo pode correr em paralelo com recrutamento interno.</div>
+    <div class="cond">Garantia de reposição: 1 reposição sem custo adicional em até 60 dias corridos por desempenho ou aderência, desde que as condições da vaga permaneçam iguais.</div>
+    <div class="cond">Vedação de contratação direta: candidatos apresentados pela Azumi RH não podem ser contratados diretamente nos 60 dias corridos subsequentes ao processo, sob pena de pagamento integral dos honorários.</div>
+    <div class="cond">Cancelamento após início: sem reembolso. As horas investidas em divulgação, triagem e entrevistas já realizadas não são revertidas.</div>
+    <div class="cond">Mudanças relevantes de escopo (salário, carga, local, perfil) após o início podem gerar readequação de valores ou novo contrato.</div>
+    `:`
+    <div class="cond">Este orçamento é uma estimativa baseada nas informações fornecidas. O valor final pode variar após alinhamento de escopo.</div>
+    <div class="cond">O recebimento deste orçamento não gera obrigação de contratação por nenhuma das partes.</div>
+    <div class="cond">Proposta válida por 15 dias. Após esse prazo, os valores podem ser revisados.</div>
+    <div class="cond">Vedação de contratação direta: mesmo em fase de orçamento, candidatos que venham a ser apresentados informalmente pela Azumi RH não podem ser contratados diretamente nos 60 dias subsequentes.</div>
+    `}
+    ${obsProp?`<div class="obs-box"><strong>Observações:</strong> ${obsProp}</div>`:''}
+    <div class="p-sig"><div class="p-sig-inner">
+      <div class="p-sig-name">Patricia Lima · Azumi RH</div>
+      <div class="p-sig-det">patricia@azumirh.com.br · +55 41 98835-0743 · azumirh.com.br · AKAYKO AZUMI RH LTDA · CNPJ 56.660.675/0001-11</div>
+    </div></div>
+  </div>
+</div>
+<script>window.onload=function(){setTimeout(()=>window.print(),800)}<\/script>
+</body></html>`
+
+  const blob = new Blob([html],{type:'text/html;charset=utf-8'})
+  const url = URL.createObjectURL(blob)
+  const win = window.open(url,'_blank')
+  if(!win){ const w=window.open('','_blank'); w.document.write(html); w.document.close(); setTimeout(()=>w.print(),800) }
+  setTimeout(()=>URL.revokeObjectURL(url),120000)
 }
 </script>
 </body>
