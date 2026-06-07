@@ -2460,8 +2460,8 @@ function abrirProposta(r){
   g('prop-proto-titulo').textContent='Sol.: '+r.protocolo
   atualizarPillProp('rascunho')
   carregarPropostaExistente(r.id)
-  g('admin-view').style.display='none'
-  g('prop-view').style.display='block'
+  document.getElementById('admin-page').style.display='none'
+  document.getElementById('prop-view').style.display='block'
   window.scrollTo(0,0)
   calcProp()
 }
@@ -2502,8 +2502,8 @@ async function carregarPropostaExistente(reqId){
 }
 
 function voltarAdmin(){
-  g('prop-view').style.display='none'
-  g('admin-view').style.display='block'
+  document.getElementById('prop-view').style.display='none'
+  document.getElementById('admin-page').style.display='block'
   window.scrollTo(0,0)
 }
 
