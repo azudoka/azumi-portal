@@ -550,13 +550,22 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
   </div>
 
   <div class="success" id="success">
-    <div class="s-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-    <h2>Diagnóstico enviado!</h2>
-    <p>Recebemos o diagnóstico HRaaS da sua empresa. Em breve nossa equipe entrará em contato com uma proposta personalizada.</p>
-    <div class="prot-badge" id="s-prot"></div>
-    <br>
-    <a href="/" class="btn-home">Voltar ao início</a>
+<div style="text-align:center;padding:60px 24px;max-width:520px;margin:0 auto">
+  <div style="width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,.15);border:1.5px solid rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(52,211,153,.8);margin-bottom:12px">Solicitação recebida</div>
+  <h2 style="font-family:'Sora',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:10px">Recebemos tudo!</h2>
+  <p style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.75;max-width:400px;margin:0 auto 20px" id="ty-msg">Nossa equipe retorna em até 24h com uma proposta personalizada de HRaaS.</p>
+  <div id="ty-proto" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#93C5FD;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:8px 16px;display:inline-block;margin-bottom:24px"></div>
+  <div style="background:rgba(3,30,56,.6);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 22px;margin-bottom:24px;text-align:left">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Dúvidas? Fale direto</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:6px">WhatsApp: (41) 98835-0743</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75)">contato@azumirh.com.br</div>
+  </div>
+  <a href="/" style="display:inline-block;padding:12px 28px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px">Voltar ao início</a>
+</div>
+
 </main>
 
 <footer>© 2026 Azumi RH · contato@azumirh.com.br · azumirh.com.br</footer>
@@ -798,7 +807,7 @@ async function enviar(){
   const sEl=g('success')
   sEl.style.display='block';sEl.classList.add('active')
   const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
-  g('s-prot').textContent=protocolo
+  g('ty-proto').textContent=protocolo
   if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
   window.scrollTo({top:0,behavior:'smooth'})
 }
