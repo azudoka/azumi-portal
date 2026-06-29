@@ -3,295 +3,567 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azumi RH · Serviços</title>
+<title>Career Plan · Azumi RH</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
+:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
-header{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
 .logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
-.header-admin{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
-.header-admin:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
-main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:108px 24px 80px}
-.hero{text-align:center;margin-bottom:56px}
-.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
-.hero h1{font-family:'Sora',sans-serif;font-size:clamp(34px,5vw,54px);font-weight:800;line-height:1.1;letter-spacing:-.8px;margin-bottom:16px}
-.hero h1 span{background:linear-gradient(135deg,#3B82F6 0%,#8B5CF6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:16px;color:var(--ts);line-height:1.7;max-width:460px;margin:0 auto}
-.section-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;padding:0 2px}
-.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px}
-@media(max-width:620px){.cards-grid{grid-template-columns:1fr}header{padding:14px 20px}}
-.card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:28px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:18px;transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);opacity:0;transform:translateX(60px)}
-.card:nth-child(odd){transform:translateX(-60px)}
-.card.visible{opacity:1;transform:translateX(0)}
-.card:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.05);transform:translateY(-4px)!important;transition:transform .3s ease!important}
-.card.b2c-card:hover{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.04)!important}
-.card.free-card:hover{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)!important}
-.card-icon{width:44px;height:44px;border-radius:12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.b2c-card .card-icon{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2)}
-.free-card .card-icon{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.2)}
-.card-body{flex:1}
-.card-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.6);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
-.b2c-card .card-tag{color:rgba(196,181,253,.7)}
-.badge-free{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3);border-radius:100px;padding:1px 8px;font-size:8px;font-weight:700;letter-spacing:.08em}
-.badge-b2c{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.3);border-radius:100px;padding:1px 8px;font-size:8px;font-weight:700;letter-spacing:.08em}
-.card-title{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;margin-bottom:9px;letter-spacing:-.2px}
-.card-desc{font-size:13px;color:var(--ts);line-height:1.65}
-.card-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);border-radius:100px;padding:11px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#fff;transition:opacity .2s}
-.b2c-card .card-cta{background:linear-gradient(135deg,#4c1d95,#7c3aed,#8B5CF6)}
-.free-card .card-cta{background:linear-gradient(135deg,#065f46,#10b981)}
-.card:hover .card-cta{opacity:.9}
-.card-cta svg{width:13px;height:13px;transition:transform .2s}
-.card:hover .card-cta svg{transform:translateX(3px)}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
+.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
+main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
+.hero{text-align:center;padding:48px 24px 32px;width:100%}
+.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:480px;margin:0 auto}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:720px;padding:20px 24px 12px}
+.prog-steps{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);color:var(--ts);transition:all .3s;flex-shrink:0}
+.dot.active{background:linear-gradient(135deg,#3B82F6,#8B5CF6);border-color:transparent;color:#fff}
+.dot.done{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#3B82F6}
+.line{flex:1;height:1px;background:var(--border);transition:background .3s}
+.line.done{background:rgba(59,130,246,.35)}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+
+/* FORM */
+.form-wrap{width:100%;max-width:720px;padding:4px 24px 80px}
+.step{display:none}
+.step.active{display:block;animation:fadeup .35s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.step-sub{font-size:13px;color:var(--ts);margin-bottom:22px}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px;font-size:11px}
+.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.field select option{background:#0a2540}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}header{padding:0 20px}}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+.chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+
+/* INFO BOX */
+.info-box{padding:16px 18px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:12px;margin-bottom:17px}
+.info-box-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.7);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.info-box ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.info-box ul li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.45}
+.info-box ul li::before{content:'';width:6px;height:6px;border-radius:50%;background:#3B82F6;flex-shrink:0;margin-top:5px}
+
+/* SITUACAO CARDS */
+.sit-cards{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:17px}
+.sit-card{flex:1;min-width:140px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px}
+.sit-card:hover{border-color:rgba(59,130,246,.3)}
+.sit-card.active{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.07)}
+.sit-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s;position:relative}
+.sit-card.active .sit-radio{border-color:#3B82F6}
+.sit-card.active .sit-radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:#3B82F6}
+.sit-card span{font-size:13px;font-weight:600;color:var(--tp)}
+
+/* LGPD */
+.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
+.lgpd-row.on{border-color:rgba(59,130,246,.4)}
+.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
+.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
+.lgpd-row.on .lgpd-box{background:#3B82F6;border-color:#3B82F6}
+
+/* NAV */
+.nav{display:flex;gap:10px;margin-top:28px}
+.btn-back{padding:12px 24px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--ts);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-back:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
+.btn-next,.btn-sub{flex:1;padding:13px;border:none;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-next:hover,.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
+.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
+.field.err .err-msg{display:block}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
+.success.active{display:block;animation:fadeup .4s ease}
+.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
+.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
+.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
+.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
+.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
 footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
-.social-icons{display:flex;justify-content:center;gap:16px;margin-top:18px}
-.social-icon{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:rgba(147,197,253,.6);text-decoration:none;transition:all .2s ease}
-.social-icon:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#93C5FD;transform:translateY(-2px)}
-.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.bg-icon{position:absolute;opacity:0;animation:floatIcon linear infinite;will-change:transform,opacity;color:rgba(59,130,246,.12)}
-@keyframes floatIcon{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(.8)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-120px) rotate(15deg) scale(1.05)}}
 </style>
+<script src="/azumi-analytics.js"></script>
+<script src="/cookie-banner.js"></script>
 </head>
-<body>
-<div class="bg-canvas" id="bgCanvas" aria-hidden="true"></div>
+<body data-form-slug="career" data-form-secs="4">
 <header>
   <a href="/" class="logo-wrap">
     <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
       <defs>
-        <linearGradient id="lg-h" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse">
+        <linearGradient id="lg-c" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stop-color="#034C8B"/>
           <stop offset="50%" stop-color="#3B82F6"/>
           <stop offset="100%" stop-color="#8B5CF6"/>
         </linearGradient>
       </defs>
-      <circle cx="44" cy="48" r="34" fill="url(#lg-h)" opacity=".9"/>
-      <circle cx="76" cy="48" r="34" fill="url(#lg-h)" opacity=".7"/>
+      <circle cx="44" cy="48" r="34" fill="url(#lg-c)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg-c)" opacity=".7"/>
     </svg>
     <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
   </a>
-  <a href="/admin" class="header-admin">Área administrativa</a>
+  <a href="/" class="back">Voltar</a>
 </header>
 
 <main>
   <div class="hero">
-    <div class="hero-badge">Azumi RH · Serviços</div>
-    <h1>Como podemos<br><span>te ajudar?</span></h1>
-    <p>Selecione o serviço e preencha o formulário. Nossa equipe retorna em até 24 horas.</p>
-    <div class="social-icons">
-      <a href="https://azumirh.com.br" target="_blank" class="social-icon" aria-label="Site Azumi RH">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      </a>
-      <a href="https://linkedin.com/company/azumirh" target="_blank" class="social-icon" aria-label="LinkedIn Azumi RH">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-      </a>
-      <a href="https://instagram.com/azumirh" target="_blank" class="social-icon" aria-label="Instagram Azumi RH">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-      </a>
-      <a href="https://wa.me/5541988350743" target="_blank" class="social-icon" aria-label="WhatsApp Azumi RH">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-      </a>
+    <div class="hero-badge">Carreira · Diagnostico</div>
+    <h1><span>Career Plan</span></h1>
+    <p>Reposicionamento, curriculo, LinkedIn e entrevistas — um plano completo para o seu proximo passo na carreira.</p>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-wrap" id="progWrap">
+    <div class="prog-steps">
+      <div class="dot active" id="d1">1</div><div class="line" id="l1"></div>
+      <div class="dot" id="d2">2</div><div class="line" id="l2"></div>
+      <div class="dot" id="d3">3</div><div class="line" id="l3"></div>
+      <div class="dot" id="d4">4</div>
     </div>
+    <div class="prog-label" id="prog-label">Passo 1 de 4 — Dados pessoais</div>
   </div>
 
-  <div class="section-label">Serviços B2B — Empresas</div>
-  <div class="cards-grid">
+  <!-- FORM -->
+  <div class="form-wrap" id="formWrap">
 
-    <a href="/career" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 10"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-tag">Carreira</div>
-        <div class="card-title">Career Plan</div>
-        <div class="card-desc">Reposicionamento, currículo, LinkedIn e entrevistas — um plano completo para o seu próximo passo na carreira.</div>
-      </div>
-      <div class="card-cta">Iniciar diagnóstico<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
+    <!-- STEP 1 — Dados pessoais -->
+    <div class="step active" id="s1">
+      <div class="step-title">Dados pessoais</div>
+      <div class="step-sub">Informacoes de contato para retorno da equipe Azumi.</div>
 
-    <a href="/vaga" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      <div class="row2">
+        <div class="field" id="f-nome">
+          <label>Nome completo<span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome completo">
+          <div class="err-msg">Campo obrigatorio</div>
+        </div>
+        <div class="field" id="f-email">
+          <label>E-mail<span class="req">*</span></label>
+          <input type="email" id="email" placeholder="voce@email.com">
+          <div class="err-msg">Informe um e-mail valido</div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="card-tag">Recrutamento</div>
-        <div class="card-title">Solicitação de Vaga</div>
-        <div class="card-desc">Contrate com estratégia. Compartilhe o perfil da vaga e a Azumi cuida de todo o processo seletivo.</div>
+      <div class="row2">
+        <div class="field" id="f-whatsapp">
+          <label>WhatsApp<span class="req">*</span></label>
+          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999">
+          <div class="err-msg">Campo obrigatorio</div>
+        </div>
+        <div class="field">
+          <label>LinkedIn<span class="opt">(opcional)</span></label>
+          <input type="text" id="linkedin" placeholder="linkedin.com/in/seuperfil">
+        </div>
       </div>
-      <div class="card-cta">Solicitar vaga<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
+      <div class="row2">
+        <div class="field" id="f-cidade">
+          <label>Cidade<span class="req">*</span></label>
+          <input type="text" id="cidade" placeholder="Ex: Curitiba">
+          <div class="err-msg">Campo obrigatorio</div>
+        </div>
+        <div class="field" id="f-estado">
+          <label>Estado<span class="req">*</span></label>
+          <select id="estado">
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
+          </select>
+          <div class="err-msg">Selecione</div>
+        </div>
+      </div>
 
-    <a href="/nr1" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <div class="nav">
+        <button class="btn-next" onclick="go(2)">Continuar</button>
       </div>
-      <div class="card-body">
-        <div class="card-tag">Conformidade</div>
-        <div class="card-title">Programa NR-1</div>
-        <div class="card-desc">Diagnóstico e implementação do programa de saúde mental e gestão de riscos psicossociais obrigatório pelo MTE.</div>
-      </div>
-      <div class="card-cta">Solicitar diagnóstico<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
+    </div>
 
-    <a href="/treinamento" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-tag">Desenvolvimento</div>
-        <div class="card-title">Treinamentos In Company</div>
-        <div class="card-desc">Programas de desenvolvimento personalizados para equipes — do diagnóstico à entrega, presencial ou remoto.</div>
-      </div>
-      <div class="card-cta">Solicitar proposta<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
+    <!-- STEP 2 — Situacao atual -->
+    <div class="step" id="s2">
+      <div class="step-title">Situacao atual</div>
+      <div class="step-sub">Conte um pouco sobre seu momento profissional hoje.</div>
 
-    <a href="/diagnostico" class="card">
-      <div class="card-icon">
-        <svg width="22" height="18" viewBox="0 0 120 96" fill="none">
-          <circle cx="44" cy="48" r="34" fill="rgba(147,197,253,.4)"/>
-          <circle cx="76" cy="48" r="34" fill="rgba(139,92,246,.35)"/>
-        </svg>
+      <div class="field">
+        <label>Situacao profissional atual</label>
+        <div class="sit-cards">
+          <div class="sit-card active" id="sit-empregado" onclick="setSituacao('empregado')">
+            <div class="sit-radio"></div>
+            <span>Empregado</span>
+          </div>
+          <div class="sit-card" id="sit-desempregado" onclick="setSituacao('desempregado')">
+            <div class="sit-radio"></div>
+            <span>Desempregado</span>
+          </div>
+          <div class="sit-card" id="sit-transicao" onclick="setSituacao('transicao')">
+            <div class="sit-radio"></div>
+            <span>Em transicao</span>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="card-tag">HRaaS</div>
-        <div class="card-title">Diagnóstico HRaaS</div>
-        <div class="card-desc">Avalie o momento atual do RH da sua empresa e receba uma proposta personalizada de HR as a Service.</div>
-      </div>
-      <div class="card-cta">Iniciar diagnóstico<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
 
-    <a href="/diagnostico-org" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="5" cy="16" r="2"/><circle cx="19" cy="16" r="2"/><circle cx="12" cy="16" r="2"/><path d="M5 14v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>
+      <div class="row2">
+        <div class="field">
+          <label>Cargo atual<span class="opt">(opcional)</span></label>
+          <input type="text" id="cargo_atual" placeholder="Ex: Analista de Marketing Pleno">
+        </div>
+        <div class="field">
+          <label>Area de atuacao<span class="opt">(opcional)</span></label>
+          <input type="text" id="area_atuacao" placeholder="Ex: Marketing, RH, Financas">
+        </div>
       </div>
-      <div class="card-body">
-        <div class="card-tag">B2B · Diagnóstico</div>
-        <div class="card-title">Diagnóstico Organizacional</div>
-        <div class="card-desc">Mapeamento estratégico de People, Process e Performance. Entenda seus gargalos antes de agir.</div>
-      </div>
-      <div class="card-cta">Solicitar diagnóstico<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
 
-    <a href="/lideres" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <div class="row2">
+        <div class="field" id="f-nivel">
+          <label>Nivel de senioridade<span class="req">*</span></label>
+          <select id="nivel_senioridade">
+            <option value="">Selecione</option>
+            <option>Estagiario</option>
+            <option>Junior</option>
+            <option>Pleno</option>
+            <option>Senior</option>
+            <option>Especialista</option>
+            <option>Coordenador / Supervisor</option>
+            <option>Gerente</option>
+            <option>Diretor</option>
+            <option>C-Level</option>
+          </select>
+          <div class="err-msg">Selecione o nivel</div>
+        </div>
+        <div class="field" id="f-exp">
+          <label>Tempo de experiencia<span class="req">*</span></label>
+          <select id="tempo_experiencia">
+            <option value="">Selecione</option>
+            <option>Menos de 1 ano</option>
+            <option>1 a 3 anos</option>
+            <option>3 a 5 anos</option>
+            <option>5 a 10 anos</option>
+            <option>Mais de 10 anos</option>
+          </select>
+          <div class="err-msg">Selecione</div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="card-tag">B2B · Desenvolvimento</div>
-        <div class="card-title">Programa de Líderes</div>
-        <div class="card-desc">Desenvolvimento prático de gestores em três níveis: Jump, Rise e Soar — conectado à realidade do negócio.</div>
-      </div>
-      <div class="card-cta">Solicitar proposta<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
 
-    <a href="/cultura" class="card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <div class="field">
+        <label>Empresa atual<span class="opt">(opcional)</span></label>
+        <input type="text" id="empresa_atual" placeholder="Nome da empresa onde trabalha">
       </div>
-      <div class="card-body">
-        <div class="card-tag">B2B · Cultura</div>
-        <div class="card-title">Cultura e Endomarketing</div>
-        <div class="card-desc">Valores, rituais, comunicação interna e employer branding. Cultura que sustenta estratégia.</div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(1)">Voltar</button>
+        <button class="btn-next" onclick="go(3)">Continuar</button>
       </div>
-      <div class="card-cta">Solicitar diagnóstico<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
+    </div>
+
+    <!-- STEP 3 — Objetivos -->
+    <div class="step" id="s3">
+      <div class="step-title">Objetivos de carreira</div>
+      <div class="step-sub">O que voce quer desenvolver ou ajustar na sua trajetoria?</div>
+
+      <div class="info-box">
+        <div class="info-box-title">O que o Career Plan inclui</div>
+        <ul>
+          <li>Diagnostico completo do momento e posicionamento de carreira</li>
+          <li>Revisao e reescrita estrategica do curriculo</li>
+          <li>Otimizacao do perfil LinkedIn com foco em visibilidade</li>
+          <li>Preparacao para entrevistas com simulacoes e feedback</li>
+          <li>Plano de acao personalizado para os proximos 90 dias</li>
+        </ul>
+      </div>
+
+      <div class="field" id="f-foco">
+        <label>Principal foco do programa<span class="req">*</span></label>
+        <div class="chips" id="chips-foco">
+          <button class="chip" type="button" data-v="Reposicionamento de carreira">Reposicionamento</button>
+          <button class="chip" type="button" data-v="Curriculo">Curriculo</button>
+          <button class="chip" type="button" data-v="LinkedIn">LinkedIn</button>
+          <button class="chip" type="button" data-v="Preparacao para entrevistas">Entrevistas</button>
+          <button class="chip" type="button" data-v="Transicao de area">Transicao de area</button>
+          <button class="chip" type="button" data-v="Primeiro emprego">Primeiro emprego</button>
+          <button class="chip" type="button" data-v="Retorno ao mercado">Retorno ao mercado</button>
+        </div>
+        <div class="err-msg" id="err-foco">Selecione ao menos um foco</div>
+      </div>
+
+      <div class="field" id="f-setor">
+        <label>Setor / area de interesse<span class="req">*</span></label>
+        <input type="text" id="setor_interesse" placeholder="Ex: Tecnologia, Financas, Saude, Varejo">
+        <div class="err-msg">Campo obrigatorio</div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Cargo-alvo<span class="opt">(opcional)</span></label>
+          <input type="text" id="cargo_alvo" placeholder="Ex: Gerente de Produto">
+        </div>
+        <div class="field">
+          <label>Faixa salarial desejada<span class="opt">(opcional)</span></label>
+          <input type="text" id="faixa_salarial" placeholder="Ex: R$ 8.000 a 12.000">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Prazo para mudanca</label>
+        <select id="prazo_mudanca">
+          <option value="">Selecione</option>
+          <option>Imediato (ja estou em busca)</option>
+          <option>Ate 3 meses</option>
+          <option>3 a 6 meses</option>
+          <option>6 meses a 1 ano</option>
+          <option>Ainda estou explorando opcoes</option>
+        </select>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(2)">Voltar</button>
+        <button class="btn-next" onclick="go(4)">Continuar</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Contexto e envio -->
+    <div class="step" id="s4">
+      <div class="step-title">Contexto e envio</div>
+      <div class="step-sub">Informacoes finais para personalizar seu plano.</div>
+
+      <div class="field" id="f-contexto">
+        <label>Qual seu principal desafio de carreira hoje?<span class="req">*</span></label>
+        <textarea id="contexto_carreira" placeholder="Seja especifico — isso nos ajuda a montar um plano certeiro para o seu momento"></textarea>
+        <div class="err-msg">Preencha este campo</div>
+      </div>
+
+      <div class="field">
+        <label>O que te motivou a buscar o Career Plan agora?<span class="opt">(opcional)</span></label>
+        <textarea id="motivacao" placeholder="Um evento, uma insatisfacao, uma oportunidade..." style="min-height:72px"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Como ficou sabendo da Azumi RH?</label>
+        <select id="como_conheceu">
+          <option value="">Selecione</option>
+          <option>Indicacao</option>
+          <option>LinkedIn</option>
+          <option>Instagram</option>
+          <option>Google</option>
+          <option>Evento</option>
+          <option>Outro</option>
+        </select>
+      </div>
+
+      <div class="field" id="f-lgpd">
+        <label>Protecao de dados</label>
+        <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
+          <div class="lgpd-box" id="lgpd-box">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" id="lgpd-tick" style="display:none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitacao para contato sobre o Career Plan, conforme a LGPD — Lei 13.709/2018. Seus dados nao serao compartilhados com terceiros. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+        </div>
+        <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="go(3)">Voltar</button>
+        <button class="btn-sub" id="btn-sub" onclick="enviar()">Enviar diagnostico</button>
+      </div>
+    </div>
 
   </div>
 
-  <div class="section-label" style="margin-top:24px">Programas B2C — Profissionais</div>
-  <div class="cards-grid">
-
-    <a href="/impulso" class="card b2c-card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-tag">B2C · Mentoria RH <span class="badge-b2c">B2C</span></div>
-        <div class="card-title">Programa Impulso</div>
-        <div class="card-desc">Mentoria premium para profissionais de RH — do estagiário ao executivo. Com a Patrícia Lima.</div>
-      </div>
-      <div class="card-cta">Quero fazer o Impulso<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
-
-    <a href="/gtm" class="card b2c-card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-tag">B2C · Posicionamento <span class="badge-b2c">B2C</span></div>
-        <div class="card-title">Go-to-Market Pessoal</div>
-        <div class="card-desc">Posicionamento e estratégia de mercado para autônomos, consultores e MEIs. Sua marca no mundo.</div>
-      </div>
-      <div class="card-cta">Estruturar meu posicionamento<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
-
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="s-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Diagnostico enviado!</h2>
+    <p>Recebemos suas informacoes. Nossa equipe entrara em contato em ate 24h para alinhar os proximos passos do seu Career Plan.</p>
+    <div class="prot-badge" id="s-prot"></div>
+    <br>
+    <a href="/" class="btn-home">Voltar ao inicio</a>
   </div>
-
-  <div class="cards-grid" style="margin-top:10px">
-    <a href="/raiox" class="card free-card">
-      <div class="card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M8 12h1M15 12h1M12 8v1M12 15v1"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-tag">Gratuito <span class="badge-free">GRATUITO</span></div>
-        <div class="card-title">Raio-X de Maturidade</div>
-        <div class="card-desc">Diagnóstico gratuito de maturidade do capital humano. Receba uma análise estratégica da Azumi RH sem custo.</div>
-      </div>
-      <div class="card-cta">Solicitar Raio-X<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-    </a>
-  </div>
-
 </main>
 
 <footer>© 2026 Azumi RH · contato@azumirh.com.br · azumirh.com.br</footer>
 
 <script>
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
-},{threshold:0.05,rootMargin:'0px 0px -40px 0px'})
-document.querySelectorAll('.card').forEach(c=>observer.observe(c))
-</script>
-<script>
-// ── FUNDO ANIMADO ──
-(function(){
-  const icons=[
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.5-2 4-2 4s2.5-.5 4-2"/><path d="M12 2s4 2 4 10l-4 2-4-2c0-8 4-10 4-10z"/><path d="M9 12l-4 4"/><path d="M15 12l4 4"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3v3H5zM11 3h3v3h-3zM16 3h3v3h-3z"/><path d="M7 6v8l2 2h6l2-2V6"/><path d="M4 20h16v1H4z"/><path d="M6 16h12v4H6z"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41L13.7 2.71a2.41 2.41 0 0 0-3.41 0z"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-  ];
-  const colors=['rgba(59,130,246,','rgba(139,92,246,','rgba(147,197,253,'];
-  const canvas=document.getElementById('bgCanvas');
-  if(!canvas)return;
-  function criarIcone(){
-    const el=document.createElement('div');
-    el.className='bg-icon';
-    const icon=icons[Math.floor(Math.random()*icons.length)];
-    const color=colors[Math.floor(Math.random()*colors.length)];
-    const size=16+Math.random()*20;
-    const duration=18+Math.random()*20;
-    const delay=Math.random()*8;
-    const x=Math.random()*100;
-    const startY=30+Math.random()*60;
-    el.innerHTML=icon;
-    el.style.cssText=`left:${x}%;top:${startY}%;width:${size}px;height:${size}px;color:${color}0.10);animation-duration:${duration}s;animation-delay:${delay}s;`;
-    canvas.appendChild(el);
-    setTimeout(()=>el.remove(),(duration+delay)*1000);
+const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmptbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzAxNjAsImV4cCI6MjA4Njk0NjE2MH0.3jEvmlcjrOGLOf1kxjy3TURE2SQ6UMbiCUlDN_HAXb0'
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+
+let situacao='empregado', lgpd=false, focoSet=new Set(), cur=1
+
+const LABELS=['','Passo 1 de 4 — Dados pessoais','Passo 2 de 4 — Situacao atual','Passo 3 de 4 — Objetivos','Passo 4 de 4 — Contexto e envio']
+
+function gerarProtocolo(){
+  const d=new Date()
+  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
+  return 'AZ-CAR-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
+}
+
+function setSituacao(s){
+  situacao=s
+  ;['empregado','desempregado','transicao'].forEach(id=>{
+    document.getElementById('sit-'+id).classList.toggle('active',id===s)
+  })
+}
+
+function go(n){
+  if(n>cur&&!validar(cur))return
+  document.getElementById('s'+cur).classList.remove('active')
+  cur=n
+  document.getElementById('s'+cur).classList.add('active')
+  atualizarProg()
+  window.scrollTo({top:0,behavior:'smooth'})
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.avancarSecao(n)
+}
+
+function atualizarProg(){
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('d'+i)
+    d.classList.remove('active','done')
+    if(i<cur)d.classList.add('done')
+    else if(i===cur)d.classList.add('active')
+    if(i<4)document.getElementById('l'+i).classList.toggle('done',i<cur)
   }
-  let count=0;
-  const max=12;
-  function tick(){
-    if(count<max){criarIcone();count++;}
-    else{criarIcone();}
-    setTimeout(tick,2200+Math.random()*1800);
+  document.getElementById('prog-label').textContent=LABELS[cur]
+}
+
+function validar(step){
+  let ok=true
+  if(step===1){ok=req('nome','f-nome')&reqEmail('email','f-email')&req('whatsapp','f-whatsapp')&req('cidade','f-cidade')&reqSel('estado','f-estado')}
+  if(step===2){ok=reqSel('nivel_senioridade','f-nivel')&reqSel('tempo_experiencia','f-exp')}
+  if(step===3){
+    if(focoSet.size===0){document.getElementById('err-foco').style.display='block';ok=false}
+    else document.getElementById('err-foco').style.display='none'
+    ok=req('setor_interesse','f-setor')&ok
   }
-  setTimeout(tick,1000);
-})();
+  return !!ok
+}
+
+function req(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  if(!el||!field)return true
+  const inv=!el.value.trim()
+  field.classList.toggle('err',inv)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return !inv
+}
+function reqSel(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  if(!el||!field)return true
+  const inv=!el.value
+  field.classList.toggle('err',inv)
+  el.addEventListener('change',()=>field.classList.remove('err'),{once:true})
+  return !inv
+}
+function reqEmail(id,fid){
+  const el=document.getElementById(id),field=document.getElementById(fid)
+  if(!el||!field)return true
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
+  field.classList.toggle('err',!ok)
+  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  return ok
+}
+
+// Chips foco (multi-select)
+document.getElementById('chips-foco').querySelectorAll('.chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    c.classList.toggle('on')
+    if(c.classList.contains('on'))focoSet.add(c.dataset.v)
+    else focoSet.delete(c.dataset.v)
+    if(focoSet.size>0)document.getElementById('err-foco').style.display='none'
+  })
+})
+
+function toggleLGPD(){
+  lgpd=!lgpd
+  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
+  const box=document.getElementById('lgpd-box')
+  box.style.background=lgpd?'#3B82F6':''
+  box.style.borderColor=lgpd?'#3B82F6':''
+  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
+  document.getElementById('lgpd-err').style.display='none'
+  document.getElementById('f-lgpd').classList.remove('err')
+}
+
+function g(id){return document.getElementById(id)}
+
+async function enviar(){
+  if(!lgpd){
+    document.getElementById('f-lgpd').classList.add('err')
+    document.getElementById('lgpd-err').style.display='block'
+    return
+  }
+  if(!req('contexto_carreira','f-contexto'))return
+
+  const btn=g('btn-sub')
+  btn.disabled=true;btn.textContent='Enviando...'
+  const protocolo=gerarProtocolo()
+
+  const dados={
+    protocolo,
+    nome:g('nome').value.trim(),
+    email:g('email').value.trim(),
+    whatsapp:g('whatsapp').value.trim(),
+    linkedin_url:g('linkedin').value.trim(),
+    cidade:g('cidade').value.trim(),
+    estado:g('estado').value,
+    situacao_atual:situacao,
+    cargo_atual:g('cargo_atual').value.trim(),
+    area_atuacao:g('area_atuacao').value.trim(),
+    senioridade:g('nivel_senioridade').value,
+    tempo_experiencia:g('tempo_experiencia').value,
+    objetivo_principal:Array.from(focoSet).join(', '),
+    segmento:g('setor_interesse').value.trim(),
+    prazo_desejado:g('prazo_mudanca').value,
+    contexto:g('contexto_carreira').value.trim(),
+    obs:g('motivacao').value.trim(),
+    status:'novo'
+  }
+
+  const {error}=await sb.from('career_plan_requests').insert(dados)
+  if(error){
+    btn.disabled=false
+    btn.textContent='Enviar diagnostico'
+    alert('Erro ao enviar. Tente novamente.')
+    console.error(error)
+    return
+  }
+
+  try{
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        to:'patricia@azumirh.com.br',
+        subject:'['+protocolo+'] Career Plan — '+dados.nome,
+        html:'<h2>Novo Career Plan</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Nome:</b> '+dados.nome+'</p><p><b>E-mail:</b> '+dados.email+'</p><p><b>WhatsApp:</b> '+dados.whatsapp+'</p><p><b>Situacao:</b> '+dados.situacao_atual+'</p><p><b>Nivel:</b> '+dados.senioridade+'</p><p><b>Foco:</b> '+dados.objetivo_principal+'</p><p><b>Setor:</b> '+dados.segmento+'</p><p><b>Desafio:</b> '+dados.contexto+'</p>'
+      })
+    })
+  }catch(e){console.error('Erro ao enviar email:',e)}
+
+  document.getElementById('formWrap').style.display='none'
+  document.getElementById('progWrap').style.display='none'
+  const el=document.getElementById('success')
+  el.style.display='block'
+  el.classList.add('active')
+  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
+  document.getElementById('s-prot').textContent=protocolo
+  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
+  window.scrollTo({top:0,behavior:'smooth'})
+}
 </script>
 </body>
 </html>
