@@ -1,568 +1,1704 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Career Plan · Azumi RH</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Poppins:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#031D38;--blue:#3B82F6;--purple:#8B5CF6;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.03);--tp:rgba(255,255,255,.92);--ts:rgba(255,255,255,.5)}
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,.1) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 90%,rgba(139,92,246,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
-header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,29,56,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
-.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:100px;transition:all .2s}
-.back:hover{color:var(--tp);border-color:rgba(59,130,246,.4)}
-main{position:relative;z-index:1;padding-top:64px;display:flex;flex-direction:column;align-items:center}
-.hero{text-align:center;padding:48px 24px 32px;width:100%}
-.hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 16px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
-.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
-.hero h1 span{background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:15px;color:var(--ts);line-height:1.6;max-width:480px;margin:0 auto}
+:root{
+  --ocean:#031D38;--blue:#034C8B;--blue2:#3B82F6;--violet:#8B5CF6;
+  --ts:rgba(240,244,255,.55);--tp:rgba(240,244,255,.92);--border:rgba(255,255,255,.1);
+  --gm:linear-gradient(135deg,#034C8B 0%,#3B82F6 50%,#8B5CF6 100%);
+  --gh:linear-gradient(135deg,#031D38 0%,#034C8B 40%,#3B82F6 75%,#8B5CF6 100%);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:#031D38;color:var(--tp);min-height:100vh;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(59,130,246,.18) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 90% 80%,rgba(139,92,246,.12) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* HEADER */
+.header{background:rgba(3,30,56,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo svg{width:28px;height:22px}
+.logo-az{font-family:'Sora',sans-serif;font-weight:700;color:#fff;font-size:20px;letter-spacing:-.01em}
+.logo-rh{font-family:'Sora',sans-serif;font-style:italic;font-weight:400;color:#93C5FD;font-size:20px}
+.header-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.1em;text-transform:uppercase}
+
+/* WRAPPER */
+.wrapper{max-width:740px;margin:0 auto;padding:48px 24px 80px;position:relative;z-index:1}
+
+/* HERO */
+.hero{text-align:center;margin-bottom:40px}
+.hero-badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ts);border:1px solid var(--border);display:inline-block;padding:5px 16px;border-radius:100px;margin-bottom:18px}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:12px}
+.hero h1 span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:14px;color:var(--ts);max-width:480px;margin:0 auto 22px;line-height:1.7}
+.hero-links{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.hero-link{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:600;color:var(--ts);text-decoration:none;background:rgba(255,255,255,.03);transition:all .15s}
+.hero-link:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
 
 /* PROGRESS */
-.prog-wrap{width:100%;max-width:720px;padding:20px 24px 12px}
-.prog-steps{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);color:var(--ts);transition:all .3s;flex-shrink:0}
-.dot.active{background:linear-gradient(135deg,#3B82F6,#8B5CF6);border-color:transparent;color:#fff}
-.dot.done{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#3B82F6}
-.line{flex:1;height:1px;background:var(--border);transition:background .3s}
-.line.done{background:rgba(59,130,246,.35)}
-.prog-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em}
+.progress-bar{background:rgba(255,255,255,.08);border-radius:100px;height:3px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gm);border-radius:100px;transition:width .4s ease;width:0%}
+.progress-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.04em;margin-bottom:20px}
 
-/* FORM */
-.form-wrap{width:100%;max-width:720px;padding:4px 24px 80px}
-.step{display:none}
-.step.active{display:block;animation:fadeup .35s ease}
-@keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.step-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
-.step-sub{font-size:13px;color:var(--ts);margin-bottom:22px}
-.field{margin-bottom:17px}
-.field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:7px}
-.req{color:#ef4444;margin-left:2px;font-size:11px}
-.opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
-.field input,.field select,.field textarea{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.04)}
-.field textarea{resize:vertical;min-height:88px;line-height:1.6}
-.field select option{background:#0a2540}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:560px){.row2{grid-template-columns:1fr}header{padding:0 20px}}
+/* SECTIONS */
+.section{background:rgba(3,30,56,.6);border:1px solid var(--border);border-radius:16px;margin-bottom:12px;backdrop-filter:blur(8px);overflow:hidden}
+.section.open .section-body{display:block}
+.section-body{display:none;padding:20px 24px 24px}
+.section-header{display:flex;align-items:center;gap:12px;padding:16px 22px;cursor:pointer;transition:background .2s;user-select:none}
+.section-header:hover{background:rgba(59,130,246,.05)}
+.section-number{width:28px;height:28px;border-radius:8px;background:var(--gm);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.section-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ts);flex:1}
+.section-chevron{color:var(--ts);font-size:14px;transition:transform .3s}
+.section.open .section-chevron{transform:rotate(180deg)}
 
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:13px;color:var(--ts);cursor:pointer;background:transparent;font-family:'Space Grotesk',sans-serif;transition:all .2s}
+/* FORM ELEMENTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.question{margin-bottom:18px}
+.question:last-child{margin-bottom:0}
+label{display:block;font-size:13px;font-weight:600;color:var(--tp);margin-bottom:6px}
+label .hint{display:block;font-size:11px;font-weight:400;color:var(--ts);margin-top:2px;line-height:1.5}
+input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;
+  color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;padding:11px 14px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:rgba(59,130,246,.5)}
+select option{background:#031D38;color:#fff}
+textarea{min-height:80px;resize:vertical;line-height:1.6}
+.req{color:#f87171;margin-left:2px}
+.err-msg{color:#f87171;font-size:11px;margin-top:4px;display:none}
+
+/* CHIPS — serviços */
+.servicos-grid{display:grid;gap:8px}
+.srv-card{border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.02);user-select:none}
+.srv-card:hover{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.06)}
+.srv-card.sel{border-color:#3B82F6;background:rgba(59,130,246,.12)}
+.srv-card-name{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--tp);margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.srv-card.sel .srv-card-name{color:#93C5FD}
+.srv-card-desc{font-size:11px;color:var(--ts);line-height:1.55}
+.srv-group-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+
+/* CHIPS simples */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border:1px solid var(--border);border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;background:rgba(255,255,255,.04);color:var(--ts);transition:all .15s;user-select:none}
 .chip:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
-.chip.on{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#3B82F6;font-weight:600}
+.chip.sel{background:rgba(59,130,246,.15);color:#93C5FD;border-color:#3B82F6;font-weight:600}
 
-/* INFO BOX */
-.info-box{padding:16px 18px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:12px;margin-bottom:17px}
-.info-box-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.7);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.info-box ul{list-style:none;display:flex;flex-direction:column;gap:7px}
-.info-box ul li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.45}
-.info-box ul li::before{content:'';width:6px;height:6px;border-radius:50%;background:#3B82F6;flex-shrink:0;margin-top:5px}
-
-/* SITUACAO CARDS */
-.sit-cards{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:17px}
-.sit-card{flex:1;min-width:140px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px}
-.sit-card:hover{border-color:rgba(59,130,246,.3)}
-.sit-card.active{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.07)}
-.sit-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s;position:relative}
-.sit-card.active .sit-radio{border-color:#3B82F6}
-.sit-card.active .sit-radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:#3B82F6}
-.sit-card span{font-size:13px;font-weight:600;color:var(--tp)}
+/* PACOTES SUGERIDOS */
+.pkg-sugestao{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:16px 18px;margin-top:12px;display:none}
+.pkg-sugestao.vis{display:block}
+.pkg-sugestao-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:#93C5FD;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.pkg-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pkg-opt{border:1.5px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;background:rgba(255,255,255,.02)}
+.pkg-opt:hover{border-color:rgba(59,130,246,.4)}
+.pkg-opt.sel{border-color:#3B82F6;background:rgba(59,130,246,.15)}
+.pkg-opt-name{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:var(--tp);margin-bottom:2px}
+.pkg-opt.sel .pkg-opt-name{color:#93C5FD}
+.pkg-opt-sub{font-size:10px;color:var(--ts);line-height:1.4}
 
 /* LGPD */
-.lgpd-row{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;transition:border-color .2s}
-.lgpd-row.on{border-color:rgba(59,130,246,.4)}
-.lgpd-row p{font-size:13px;color:var(--ts);line-height:1.55}
-.lgpd-box{width:20px;height:20px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s}
-.lgpd-row.on .lgpd-box{background:#3B82F6;border-color:#3B82F6}
+.lgpd-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px 18px;font-size:11px;color:var(--ts);line-height:1.7;margin-top:16px}
+.lgpd-block strong{color:var(--tp);font-size:12px}
 
-/* NAV */
-.nav{display:flex;gap:10px;margin-top:28px}
-.btn-back{padding:12px 24px;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--ts);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-back:hover{color:var(--tp);border-color:rgba(255,255,255,.2)}
-.btn-next,.btn-sub{flex:1;padding:13px;border:none;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s}
-.btn-next:hover,.btn-sub:hover{opacity:.88;transform:translateY(-1px)}
-.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.err-msg{font-size:12px;color:#ef4444;margin-top:5px;display:none}
-.field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
-.field.err .err-msg{display:block}
+/* BOTÃO ENVIAR */
+.btn-submit{width:100%;padding:16px;background:var(--gm);border:none;border-radius:12px;color:#fff;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:16px;letter-spacing:.02em}
+.btn-submit:hover{opacity:.9}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
 
-/* SUCCESS */
-.success{display:none;text-align:center;padding:56px 24px;max-width:540px;margin:0 auto}
-.success.active{display:block;animation:fadeup .4s ease}
-.s-icon{width:72px;height:72px;border-radius:20px;margin:0 auto 28px;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center}
-.success h2{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:12px}
-.success p{font-size:15px;color:var(--ts);line-height:1.6;margin-bottom:24px}
-.prot-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:#3B82F6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px 24px;letter-spacing:.08em;margin-bottom:28px}
-.btn-home{display:inline-block;padding:13px 32px;border-radius:100px;background:linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+/* FOOTER */
+.footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);letter-spacing:.05em;margin-top:32px}
+
+/* TELA OBRIGADO */
+#ty{display:none}
+.ty-wrap{max-width:520px;margin:0 auto;padding:60px 24px;text-align:center}
+.ty-icon{width:56px;height:56px;background:rgba(16,185,129,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.ty-badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(52,211,153,.8);margin-bottom:12px}
+.ty-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:8px}
+.ty-title span{background:var(--gm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ty-msg{font-size:13px;color:var(--ts);line-height:1.75;max-width:400px;margin:0 auto 20px}
+.ty-proto{font-family:'JetBrains Mono',monospace;font-size:12px;color:#93C5FD;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:8px 16px;display:inline-block;margin-bottom:24px}
+.ty-social{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.ty-social a{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:600;color:var(--ts);text-decoration:none;background:rgba(255,255,255,.03);transition:all .15s}
+.ty-social a:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+
+/* ADMIN */
+#admin-login,#admin-view{display:none}
+.admin-wrap{max-width:1100px;margin:0 auto;padding:24px;position:relative;z-index:1}
+.admin-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.admin-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#fff}
+.admin-filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.04);color:var(--ts);transition:all .15s}
+.filter-btn:hover,.filter-btn.act{background:rgba(59,130,246,.15);color:#93C5FD;border-color:rgba(59,130,246,.3)}
+.req-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;backdrop-filter:blur(8px);overflow:hidden;transition:border-color .2s}
+.req-card:hover{border-color:rgba(59,130,246,.3)}
+.req-card-header{padding:16px 20px 14px;border-bottom:1px solid var(--border)}
+.req-card-body{padding:14px 20px}
+.req-card-footer{padding:10px 20px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.req-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px;flex-wrap:wrap}
+.req-nome{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#fff}
+.req-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);margin-top:2px}
+.status-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:4px 12px;border-radius:100px;border:1px solid}
+.s-novo{background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.3)}
+.s-contato{background:rgba(59,130,246,.1);color:#93C5FD;border-color:rgba(59,130,246,.3)}
+.s-proposta{background:rgba(16,185,129,.1);color:#34d399;border-color:rgba(16,185,129,.3)}
+.s-fechado{background:rgba(139,92,246,.1);color:#c4b5fd;border-color:rgba(139,92,246,.3)}
+.s-arquivado{background:rgba(120,120,120,.1);color:#aaa;border-color:rgba(120,120,120,.3)}
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.req-item{padding:4px 0;display:flex;gap:6px;align-items:baseline;border-bottom:1px solid rgba(255,255,255,.04)}
+.req-item:last-child{border-bottom:none}
+.req-item-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;min-width:90px;flex-shrink:0}
+.req-item-val{font-size:12px;font-weight:500;color:var(--tp)}
+.req-servicos{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.req-servicos-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#93C5FD;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.req-servicos-list{display:flex;flex-wrap:wrap;gap:5px}
+.req-srv-tag{font-size:10px;font-weight:600;color:#93C5FD;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:3px 10px}
+.req-motivo{border-left:3px solid rgba(59,130,246,.4);padding:8px 12px;font-size:12px;color:var(--ts);line-height:1.65;margin-bottom:10px}
+.req-btns{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.btn-small{padding:8px 14px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s}
+.btn-wa{background:rgba(37,211,102,.2);color:#25d366;border:1px solid rgba(37,211,102,.3)}
+.btn-email{background:rgba(59,130,246,.15);color:#93C5FD;border:1px solid rgba(59,130,246,.25)}
+.btn-prop{background:var(--gm);color:#fff}
+.btn-del{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.admin-select{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-size:11px;padding:7px 10px;cursor:pointer;outline:none}
+.admin-input{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:12px;padding:8px 12px;width:100%;outline:none;margin-bottom:8px}
+.admin-input:focus{border-color:rgba(59,130,246,.4)}
+.empty-state{text-align:center;padding:60px 20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ts);letter-spacing:.05em}
+.sair-btn{background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;padding:7px 16px;font-size:11px;font-weight:600;color:var(--ts);cursor:pointer;font-family:'Space Grotesk',sans-serif}
+
+/* PROPOSTA VIEW */
+#prop-view{display:none}
+.prop-wrap{max-width:1100px;margin:0 auto;padding:20px 24px 80px;position:relative;z-index:1}
+.prop-layout{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+.prop-left{display:flex;flex-direction:column;gap:12px}
+.prop-right{position:sticky;top:80px;display:flex;flex-direction:column;gap:12px}
+.prop-card{background:rgba(3,30,56,.7);border:1px solid var(--border);border-radius:14px;padding:18px;backdrop-filter:blur(8px)}
+.prop-card-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ts);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.prop-card-title::before{content:'';width:3px;height:14px;border-radius:100px;background:var(--gm);flex-shrink:0}
+.cfg-inp{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s}
+.cfg-inp:focus{border-color:rgba(59,130,246,.4)}
+.pkg-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px}
+.pkg-card{border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.02);text-align:center}
+.pkg-card:hover{border-color:rgba(59,130,246,.4)}
+.pkg-card.sel{border-color:#3B82F6;background:rgba(59,130,246,.12)}
+.pkg-card-name{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:var(--tp);margin-bottom:2px}
+.pkg-card.sel .pkg-card-name{color:#93C5FD}
+.pkg-card-sub{font-size:10px;color:var(--ts)}
+.result-box{background:var(--gh);border-radius:14px;padding:18px;position:relative;overflow:hidden}
+.result-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 90% 30%,rgba(139,92,246,.25) 0%,transparent 60%);pointer-events:none}
+.result-inner{position:relative}
+.result-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:12px}
+.result-lbl{color:rgba(240,244,255,.7)}
+.result-val{font-family:'Sora',sans-serif;font-weight:700;color:#fff}
+.result-total{display:flex;justify-content:space-between;align-items:flex-end;padding-top:12px;margin-top:4px}
+.result-total-lbl{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff}
+.result-total-val{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.result-orig{font-size:11px;color:rgba(255,255,255,.4);text-decoration:line-through;text-align:right}
+.result-note{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.6);padding:7px 10px;background:rgba(255,255,255,.08);border-radius:7px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:4px 12px;border-radius:100px;border:1px solid}
+.pill-rascunho{background:rgba(120,120,120,.15);color:#aaa;border-color:rgba(120,120,120,.3)}
+.pill-aprovada{background:rgba(16,185,129,.1);color:#34d399;border-color:rgba(16,185,129,.3)}
+.pill-enviada{background:rgba(59,130,246,.15);color:#93C5FD;border-color:rgba(59,130,246,.3)}
+.prop-action-bar{display:flex;gap:8px;flex-wrap:wrap}
+.btn-prop-action{padding:10px 18px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s}
+.btn-save{background:rgba(59,130,246,.2);color:#93C5FD;border:1px solid rgba(59,130,246,.3)}
+.btn-approve{background:var(--gm);color:#fff}
+.btn-print{background:rgba(255,255,255,.1);color:var(--tp);border:1px solid var(--border)}
+.btn-back{background:rgba(255,255,255,.06);color:var(--ts);border:1px solid var(--border)}
+.aviso{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:10px 13px;font-size:12px;color:rgba(251,191,36,.9);line-height:1.6;margin-top:8px}
+.cx-badge{display:inline-flex;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px;flex-shrink:0;letter-spacing:.04em}
+.cx1{background:rgba(34,197,94,.15);color:#16a34a;border:1px solid rgba(34,197,94,.3)}
+.cx2{background:rgba(234,179,8,.15);color:#a16207;border:1px solid rgba(234,179,8,.3)}
+.cx3{background:rgba(239,68,68,.15);color:#dc2626;border:1px solid rgba(239,68,68,.3)}
+.cx-legenda{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap}
+.cx-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ts)}
+
+@media(max-width:768px){.two-col{grid-template-columns:1fr}.pkg-opts{grid-template-columns:1fr}.prop-layout{grid-template-columns:1fr}.prop-right{position:static}.req-grid{grid-template-columns:1fr}}
 </style>
-<script src="/azumi-analytics.js"></script>
-<script src="/cookie-banner.js"></script>
 </head>
-<body data-form-slug="career" data-form-secs="4">
-<header>
-  <a href="/" class="logo-wrap">
-    <svg width="32" height="26" viewBox="0 0 120 96" fill="none">
-      <defs>
-        <linearGradient id="lg-c" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#034C8B"/>
-          <stop offset="50%" stop-color="#3B82F6"/>
-          <stop offset="100%" stop-color="#8B5CF6"/>
-        </linearGradient>
-      </defs>
-      <circle cx="44" cy="48" r="34" fill="url(#lg-c)" opacity=".9"/>
-      <circle cx="76" cy="48" r="34" fill="url(#lg-c)" opacity=".7"/>
+<body>
+
+<div class="header">
+  <a href="https://azumirh.com.br" target="_blank" class="logo">
+    <svg viewBox="0 0 120 96" fill="none">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#034C8B"/><stop offset="50%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      <circle cx="44" cy="48" r="34" fill="url(#lg)" opacity=".9"/>
+      <circle cx="76" cy="48" r="34" fill="url(#lg)" opacity=".7"/>
     </svg>
-    <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em">azumi</span><span style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:400;font-size:20px;color:#93C5FD;margin-left:1px">RH</span>
+    <span class="logo-az">azumi</span><span class="logo-rh">RH</span>
   </a>
-  <a href="/" class="back">Voltar</a>
-</header>
+  <div class="header-tag">Career Plan · Solicite sua proposta</div>
+</div>
 
-<main>
+<!-- ══ FORMULÁRIO PÚBLICO ══ -->
+<div id="app">
+<div class="wrapper">
+
   <div class="hero">
-    <div class="hero-badge">Carreira · Diagnostico</div>
-    <h1><span>Career Plan</span></h1>
-    <p>Reposicionamento, curriculo, LinkedIn e entrevistas — um plano completo para o seu proximo passo na carreira.</p>
+    <div class="hero-badge">Career Plan · Azumi RH</div>
+    <h1>Sua carreira com <span>estratégia e clareza</span></h1>
+    <p>Preencha o formulário e nossa equipe monta uma proposta personalizada com base no que você realmente precisa. Sem pacote inflado, sem promessa irreal.</p>
+    <div class="hero-links">
+      <a href="https://azumirh.com.br" target="_blank" class="hero-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        azumirh.com.br
+      </a>
+      <a href="https://instagram.com/azumirh" target="_blank" class="hero-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @azumirh
+      </a>
+      <a href="https://linkedin.com/company/azumirh" target="_blank" class="hero-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        Azumi RH
+      </a>
+    </div>
   </div>
 
-  <!-- PROGRESS BAR -->
-  <div class="prog-wrap" id="progWrap">
-    <div class="prog-steps">
-      <div class="dot active" id="d1">1</div><div class="line" id="l1"></div>
-      <div class="dot" id="d2">2</div><div class="line" id="l2"></div>
-      <div class="dot" id="d3">3</div><div class="line" id="l3"></div>
-      <div class="dot" id="d4">4</div>
+  <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+  <div class="progress-label"><span id="ptxt">0 de 4 seções</span><span id="ppct">0%</span></div>
+
+  <!-- SEÇÃO 1 — DADOS PESSOAIS -->
+  <div class="section open">
+    <div class="section-header" onclick="toggleSec(this)">
+      <div class="section-number">1</div>
+      <div class="section-title">Identificação</div>
+      <div class="section-chevron">▾</div>
     </div>
-    <div class="prog-label" id="prog-label">Passo 1 de 4 — Dados pessoais</div>
-  </div>
-
-  <!-- FORM -->
-  <div class="form-wrap" id="formWrap">
-
-    <!-- STEP 1 — Dados pessoais -->
-    <div class="step active" id="s1">
-      <div class="step-title">Dados pessoais</div>
-      <div class="step-sub">Informacoes de contato para retorno da equipe Azumi.</div>
-
-      <div class="row2">
-        <div class="field" id="f-nome">
-          <label>Nome completo<span class="req">*</span></label>
-          <input type="text" id="nome" placeholder="Seu nome completo">
-          <div class="err-msg">Campo obrigatorio</div>
+    <div class="section-body">
+      <div class="two-col">
+        <div class="question" id="f-nome">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome completo" oninput="upd()"/>
+          <div class="err-msg" id="e-nome">Campo obrigatório</div>
         </div>
-        <div class="field" id="f-email">
-          <label>E-mail<span class="req">*</span></label>
-          <input type="email" id="email" placeholder="voce@email.com">
-          <div class="err-msg">Informe um e-mail valido</div>
+        <div class="question" id="f-email">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="seu@email.com" oninput="upd()"/>
+          <div class="err-msg" id="e-email">E-mail inválido</div>
         </div>
-      </div>
-      <div class="row2">
-        <div class="field" id="f-whatsapp">
-          <label>WhatsApp<span class="req">*</span></label>
-          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999">
-          <div class="err-msg">Campo obrigatorio</div>
+        <div class="question">
+          <label>WhatsApp</label>
+          <input type="tel" id="whatsapp" placeholder="(41) 99999-0000" oninput="upd()"/>
         </div>
-        <div class="field">
-          <label>LinkedIn<span class="opt">(opcional)</span></label>
-          <input type="text" id="linkedin" placeholder="linkedin.com/in/seuperfil">
+        <div class="question">
+          <label>LinkedIn
+            <span class="hint">URL do seu perfil — opcional mas útil</span>
+          </label>
+          <input type="url" id="linkedin_url" placeholder="linkedin.com/in/seuperfil" oninput="upd()"/>
         </div>
-      </div>
-      <div class="row2">
-        <div class="field" id="f-cidade">
-          <label>Cidade<span class="req">*</span></label>
-          <input type="text" id="cidade" placeholder="Ex: Curitiba">
-          <div class="err-msg">Campo obrigatorio</div>
+        <div class="question">
+          <label>Cidade</label>
+          <input type="text" id="cidade" placeholder="Ex.: São Paulo" oninput="upd()"/>
         </div>
-        <div class="field" id="f-estado">
-          <label>Estado<span class="req">*</span></label>
-          <select id="estado">
-            <option value="">UF</option>
-            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
-          </select>
-          <div class="err-msg">Selecione</div>
-        </div>
-      </div>
-
-      <div class="nav">
-        <button class="btn-next" onclick="go(2)">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 2 — Situacao atual -->
-    <div class="step" id="s2">
-      <div class="step-title">Situacao atual</div>
-      <div class="step-sub">Conte um pouco sobre seu momento profissional hoje.</div>
-
-      <div class="field">
-        <label>Situacao profissional atual</label>
-        <div class="sit-cards">
-          <div class="sit-card active" id="sit-empregado" onclick="setSituacao('empregado')">
-            <div class="sit-radio"></div>
-            <span>Empregado</span>
-          </div>
-          <div class="sit-card" id="sit-desempregado" onclick="setSituacao('desempregado')">
-            <div class="sit-radio"></div>
-            <span>Desempregado</span>
-          </div>
-          <div class="sit-card" id="sit-transicao" onclick="setSituacao('transicao')">
-            <div class="sit-radio"></div>
-            <span>Em transicao</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Cargo atual<span class="opt">(opcional)</span></label>
-          <input type="text" id="cargo_atual" placeholder="Ex: Analista de Marketing Pleno">
-        </div>
-        <div class="field">
-          <label>Area de atuacao<span class="opt">(opcional)</span></label>
-          <input type="text" id="area_atuacao" placeholder="Ex: Marketing, RH, Financas">
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field" id="f-nivel">
-          <label>Nivel de senioridade<span class="req">*</span></label>
-          <select id="nivel_senioridade">
+        <div class="question">
+          <label>Estado</label>
+          <select id="estado" onchange="upd()">
             <option value="">Selecione</option>
-            <option>Estagiario</option>
-            <option>Junior</option>
-            <option>Pleno</option>
-            <option>Senior</option>
-            <option>Especialista</option>
-            <option>Coordenador / Supervisor</option>
-            <option>Gerente</option>
-            <option>Diretor</option>
-            <option>C-Level</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+            <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+            <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+            <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+            <option>SE</option><option>TO</option><option value="N/A">Fora do Brasil</option>
           </select>
-          <div class="err-msg">Selecione o nivel</div>
         </div>
-        <div class="field" id="f-exp">
-          <label>Tempo de experiencia<span class="req">*</span></label>
-          <select id="tempo_experiencia">
-            <option value="">Selecione</option>
-            <option>Menos de 1 ano</option>
-            <option>1 a 3 anos</option>
-            <option>3 a 5 anos</option>
-            <option>5 a 10 anos</option>
-            <option>Mais de 10 anos</option>
-          </select>
-          <div class="err-msg">Selecione</div>
+        <div class="question">
+          <label>País de residência atual</label>
+          <input type="text" id="pais" placeholder="Ex.: Irlanda, Portugal, Estados Unidos" oninput="upd()"/>
         </div>
       </div>
-
-      <div class="field">
-        <label>Empresa atual<span class="opt">(opcional)</span></label>
-        <input type="text" id="empresa_atual" placeholder="Nome da empresa onde trabalha">
-      </div>
-
-      <div class="nav">
-        <button class="btn-back" onclick="go(1)">Voltar</button>
-        <button class="btn-next" onclick="go(3)">Continuar</button>
+      <div class="question">
+        <label>Idiomas além do português
+          <span class="hint">Informe o nível se quiser — ex.: Inglês intermediário, Espanhol básico</span>
+        </label>
+        <input type="text" id="idiomas" placeholder="Ex.: Inglês intermediário, Espanhol básico" oninput="upd()"/>
       </div>
     </div>
+  </div>
 
-    <!-- STEP 3 — Objetivos -->
-    <div class="step" id="s3">
-      <div class="step-title">Objetivos de carreira</div>
-      <div class="step-sub">O que voce quer desenvolver ou ajustar na sua trajetoria?</div>
-
-      <div class="info-box">
-        <div class="info-box-title">O que o Career Plan inclui</div>
-        <ul>
-          <li>Diagnostico completo do momento e posicionamento de carreira</li>
-          <li>Revisao e reescrita estrategica do curriculo</li>
-          <li>Otimizacao do perfil LinkedIn com foco em visibilidade</li>
-          <li>Preparacao para entrevistas com simulacoes e feedback</li>
-          <li>Plano de acao personalizado para os proximos 90 dias</li>
-        </ul>
-      </div>
-
-      <div class="field" id="f-foco">
-        <label>Principal foco do programa<span class="req">*</span></label>
-        <div class="chips" id="chips-foco">
-          <button class="chip" type="button" data-v="Reposicionamento de carreira">Reposicionamento</button>
-          <button class="chip" type="button" data-v="Curriculo">Curriculo</button>
-          <button class="chip" type="button" data-v="LinkedIn">LinkedIn</button>
-          <button class="chip" type="button" data-v="Preparacao para entrevistas">Entrevistas</button>
-          <button class="chip" type="button" data-v="Transicao de area">Transicao de area</button>
-          <button class="chip" type="button" data-v="Primeiro emprego">Primeiro emprego</button>
-          <button class="chip" type="button" data-v="Retorno ao mercado">Retorno ao mercado</button>
+  <!-- SEÇÃO 2 — PERFIL PROFISSIONAL -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSec(this)">
+      <div class="section-number">2</div>
+      <div class="section-title">Perfil profissional</div>
+      <div class="section-chevron">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="two-col">
+        <div class="question">
+          <label>Cargo atual ou mais recente <span class="req">*</span></label>
+          <input type="text" id="cargo_atual" placeholder="Ex.: Coordenadora de Marketing" oninput="upd()"/>
         </div>
-        <div class="err-msg" id="err-foco">Selecione ao menos um foco</div>
-      </div>
-
-      <div class="field" id="f-setor">
-        <label>Setor / area de interesse<span class="req">*</span></label>
-        <input type="text" id="setor_interesse" placeholder="Ex: Tecnologia, Financas, Saude, Varejo">
-        <div class="err-msg">Campo obrigatorio</div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Cargo-alvo<span class="opt">(opcional)</span></label>
-          <input type="text" id="cargo_alvo" placeholder="Ex: Gerente de Produto">
-        </div>
-        <div class="field">
-          <label>Faixa salarial desejada<span class="opt">(opcional)</span></label>
-          <input type="text" id="faixa_salarial" placeholder="Ex: R$ 8.000 a 12.000">
+        <div class="question">
+          <label>Área de atuação <span class="req">*</span></label>
+          <input type="text" id="area_atuacao" placeholder="Ex.: Marketing e Comunicação" oninput="upd()"/>
         </div>
       </div>
-
-      <div class="field">
-        <label>Prazo para mudanca</label>
-        <select id="prazo_mudanca">
-          <option value="">Selecione</option>
-          <option>Imediato (ja estou em busca)</option>
-          <option>Ate 3 meses</option>
-          <option>3 a 6 meses</option>
-          <option>6 meses a 1 ano</option>
-          <option>Ainda estou explorando opcoes</option>
-        </select>
+      <div class="question">
+        <label>Nível de senioridade <span class="req">*</span></label>
+        <div class="chips" id="chips-senior">
+          <div class="chip" data-v="Júnior" onclick="selChip(this,'senior')">Júnior</div>
+          <div class="chip" data-v="Pleno" onclick="selChip(this,'senior')">Pleno</div>
+          <div class="chip" data-v="Sênior / Especialista" onclick="selChip(this,'senior')">Sênior / Especialista</div>
+          <div class="chip" data-v="Coordenação / Supervisão" onclick="selChip(this,'senior')">Coordenação / Supervisão</div>
+          <div class="chip" data-v="Gerência / Diretoria" onclick="selChip(this,'senior')">Gerência / Diretoria</div>
+          <div class="chip" data-v="C-level / Sócio" onclick="selChip(this,'senior')">C-level / Sócio</div>
+        </div>
       </div>
-
-      <div class="nav">
-        <button class="btn-back" onclick="go(2)">Voltar</button>
-        <button class="btn-next" onclick="go(4)">Continuar</button>
+      <div class="question">
+        <label>Segmento / setor</label>
+        <div class="chips" id="chips-segmento">
+          <div class="chip" data-v="Corporativo" onclick="selChip(this,'segmento')">Corporativo</div>
+          <div class="chip" data-v="Startup / Scale-up" onclick="selChip(this,'segmento')">Startup / Scale-up</div>
+          <div class="chip" data-v="Setor público" onclick="selChip(this,'segmento')">Setor público</div>
+          <div class="chip" data-v="Multinacional" onclick="selChip(this,'segmento')">Multinacional</div>
+          <div class="chip" data-v="Tecnologia / TI" onclick="selChip(this,'segmento')">Tecnologia / TI</div>
+          <div class="chip" data-v="Saúde" onclick="selChip(this,'segmento')">Saúde</div>
+          <div class="chip" data-v="Financeiro / Jurídico" onclick="selChip(this,'segmento')">Financeiro / Jurídico</div>
+          <div class="chip" data-v="Criativo / Comunicação" onclick="selChip(this,'segmento')">Criativo / Comunicação</div>
+          <div class="chip" data-v="Outro" onclick="selChip(this,'segmento')">Outro</div>
+        </div>
+      </div>
+      <div class="question">
+        <label>Tempo de experiência profissional</label>
+        <div class="chips" id="chips-exp">
+          <div class="chip" data-v="Até 2 anos" onclick="selChip(this,'exp')">Até 2 anos</div>
+          <div class="chip" data-v="2 a 5 anos" onclick="selChip(this,'exp')">2 a 5 anos</div>
+          <div class="chip" data-v="5 a 10 anos" onclick="selChip(this,'exp')">5 a 10 anos</div>
+          <div class="chip" data-v="Mais de 10 anos" onclick="selChip(this,'exp')">Mais de 10 anos</div>
+        </div>
+      </div>
+      <div class="question">
+        <label>Grau de escolaridade</label>
+        <div class="chips" id="chips-escolaridade">
+          <div class="chip" data-v="Ensino médio completo" onclick="selChip(this,'escolaridade')">Ensino médio</div>
+          <div class="chip" data-v="Graduação em andamento" onclick="selChip(this,'escolaridade')">Graduação em andamento</div>
+          <div class="chip" data-v="Graduação completa" onclick="selChip(this,'escolaridade')">Graduação completa</div>
+          <div class="chip" data-v="Pós-graduação / MBA" onclick="selChip(this,'escolaridade')">Pós-graduação / MBA</div>
+          <div class="chip" data-v="Mestrado" onclick="selChip(this,'escolaridade')">Mestrado</div>
+          <div class="chip" data-v="Doutorado" onclick="selChip(this,'escolaridade')">Doutorado</div>
+        </div>
+      </div>
+      <div class="question">
+        <label>Contexto atual
+          <span class="hint">Me conte brevemente o que está acontecendo na sua carreira agora</span>
+        </label>
+        <textarea id="situacao_atual" placeholder="Ex.: Voltei de um intercâmbio e quero me recolocar no mercado. Meu currículo está desatualizado e preciso de um novo posicionamento." oninput="upd()"></textarea>
       </div>
     </div>
+  </div>
 
-    <!-- STEP 4 — Contexto e envio -->
-    <div class="step" id="s4">
-      <div class="step-title">Contexto e envio</div>
-      <div class="step-sub">Informacoes finais para personalizar seu plano.</div>
-
-      <div class="field" id="f-contexto">
-        <label>Qual seu principal desafio de carreira hoje?<span class="req">*</span></label>
-        <textarea id="contexto_carreira" placeholder="Seja especifico — isso nos ajuda a montar um plano certeiro para o seu momento"></textarea>
-        <div class="err-msg">Preencha este campo</div>
+  <!-- SEÇÃO 3 — OBJETIVO E SERVIÇOS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSec(this)">
+      <div class="section-number">3</div>
+      <div class="section-title">Objetivo e serviços</div>
+      <div class="section-chevron">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label>Quais são seus objetivos? <span class="req">*</span>
+          <span class="hint">Selecione até 3 opções que representem seu momento atual</span>
+        </label>
+        <div class="chips" id="chips-objetivo">
+          <div class="chip" data-v="Crescimento interno — avançar na empresa onde estou" onclick="toggleChipMulti(this,'objetivo',3)">Crescimento interno</div>
+          <div class="chip" data-v="Transição de área — mudar de função ou setor" onclick="toggleChipMulti(this,'objetivo',3)">Transição de área</div>
+          <div class="chip" data-v="Busca de nova oportunidade no mercado" onclick="toggleChipMulti(this,'objetivo',3)">Busca de oportunidade</div>
+          <div class="chip" data-v="Posicionamento e autoridade — ser reconhecido pelo que entrego" onclick="toggleChipMulti(this,'objetivo',3)">Posicionamento e autoridade</div>
+          <div class="chip" data-v="Mercado internacional — oportunidades fora do Brasil" onclick="toggleChipMulti(this,'objetivo',3)">Mercado internacional</div>
+          <div class="chip" data-v="Atualização de documentos — currículo, LinkedIn ou narrativa" onclick="toggleChipMulti(this,'objetivo',3)">Atualização de documentos</div>
+          <div class="chip" data-v="Preparação para entrevistas e processos seletivos" onclick="toggleChipMulti(this,'objetivo',3)">Preparação para entrevistas</div>
+          <div class="chip" data-v="Negociação salarial ou de proposta" onclick="toggleChipMulti(this,'objetivo',3)">Negociação salarial</div>
+          <div class="chip" data-v="Primeiro emprego ou retorno ao mercado" onclick="toggleChipMulti(this,'objetivo',3)">Primeiro emprego / retorno</div>
+          <div class="chip" data-v="Liderança — transição para cargo de gestão" onclick="toggleChipMulti(this,'objetivo',3)">Assumir liderança</div>
+          <div class="chip" data-v="Empreendedorismo — transição para negócio próprio" onclick="toggleChipMulti(this,'objetivo',3)">Empreender</div>
+          <div class="chip" data-v="Outro" onclick="toggleChipMulti(this,'objetivo',3)">Outro</div>
+        </div>
+        <div id="aviso-obj-max" style="display:none;margin-top:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:8px 12px;font-size:11px;color:rgba(251,191,36,.9)">Máximo de 3 objetivos selecionados.</div>
+        <div id="outro-objetivo" style="display:none;margin-top:10px">
+          <input type="text" id="outro-obj-txt" placeholder="Descreva seu objetivo..." oninput="upd()"/>
+        </div>
       </div>
 
-      <div class="field">
-        <label>O que te motivou a buscar o Career Plan agora?<span class="opt">(opcional)</span></label>
-        <textarea id="motivacao" placeholder="Um evento, uma insatisfacao, uma oportunidade..." style="min-height:72px"></textarea>
-      </div>
-
-      <div class="field">
-        <label>Como ficou sabendo da Azumi RH?</label>
-        <select id="como_conheceu">
-          <option value="">Selecione</option>
-          <option>Indicacao</option>
-          <option>LinkedIn</option>
-          <option>Instagram</option>
-          <option>Google</option>
-          <option>Evento</option>
-          <option>Outro</option>
-        </select>
-      </div>
-
-      <div class="field" id="f-lgpd">
-        <label>Protecao de dados</label>
-        <div class="lgpd-row" id="lgpd-row" onclick="toggleLGPD()">
-          <div class="lgpd-box" id="lgpd-box">
-            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" id="lgpd-tick" style="display:none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="question">
+        <label>Qual é a sua urgência?
+          <span class="hint">O prazo de entrega é sempre definido com base no escopo e na complexidade do serviço</span>
+        </label>
+        <div class="chips" id="chips-prazo">
+          <div class="chip" data-v="Urgente — até 30 dias" onclick="selChip(this,'prazo');onPrazoChange()">Urgente — até 30 dias</div>
+          <div class="chip" data-v="Médio prazo — 60 a 90 dias" onclick="selChip(this,'prazo');onPrazoChange()">Médio prazo — 60 a 90 dias</div>
+          <div class="chip" data-v="Longo prazo — 6 meses ou mais" onclick="selChip(this,'prazo');onPrazoChange()">Longo prazo — 6 meses ou mais</div>
+          <div class="chip" data-v="Sem prazo definido" onclick="selChip(this,'prazo');onPrazoChange()">Sem prazo definido</div>
+        </div>
+        <div id="aviso-urgencia" style="display:none;margin-top:10px">
+          <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:rgba(248,113,113,.95);line-height:1.7">
+            <strong>Atenção — entrega urgente:</strong> solicitações com prazo inferior a 30 dias estão sujeitas a <strong>taxa de urgência</strong>. Os serviços elegíveis para entrega em até 30 dias são: atualização de currículo, otimização de LinkedIn e pitch profissional — dependendo do escopo e das informações fornecidas. Todos os demais serviços exigem prazo superior. Nossa equipe confirmará a viabilidade e o custo adicional na proposta.
           </div>
-          <p>Autorizo a Azumi RH a armazenar e utilizar os dados desta solicitacao para contato sobre o Career Plan, conforme a LGPD — Lei 13.709/2018. Seus dados nao serao compartilhados com terceiros. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
         </div>
-        <div class="err-msg" id="lgpd-err">Aceite os termos para enviar</div>
+        <div style="margin-top:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:11px;color:var(--ts);line-height:1.65">
+          O prazo real de entrega é definido pela Azumi RH com base no escopo contratado, nas informações fornecidas e na complexidade do projeto.
+        </div>
       </div>
 
-      <div class="nav">
-        <button class="btn-back" onclick="go(3)">Voltar</button>
-        <button class="btn-sub" id="btn-sub" onclick="enviar()">Enviar diagnostico</button>
+      <div class="question">
+        <label>Selecione os serviços de interesse
+          <span class="hint">Marque tudo que faz sentido para o seu momento — a Azumi vai avaliar e montar a combinação certa</span>
+        </label>
+        <div class="cx-legenda">
+          <div class="cx-leg-item"><span class="cx-badge cx1">C1</span> Baixa complexidade — entrega de documento, sem sessão</div>
+          <div class="cx-leg-item"><span class="cx-badge cx2">C2</span> Média complexidade — análise + 1 sessão</div>
+          <div class="cx-leg-item"><span class="cx-badge cx3">C3</span> Alta complexidade — processo estratégico com múltiplas sessões</div>
+        </div>
+
+        <div class="srv-group-label">Documentos e narrativa</div>
+        <div class="servicos-grid">
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Atualização de currículo — incluir novas experiências, conquistas ou reformulação de linguagem">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Atualização de currículo
+              <span class="cx-badge cx1">C1</span>
+            </div>
+            <div class="srv-card-desc">Incluir novas experiências, conquistas, idiomas ou reformular a linguagem e o posicionamento</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Construção de currículo do zero — estrutura, linguagem e posicionamento para quem não tem ou precisa recomeçar">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Currículo do zero
+              <span class="cx-badge cx1">C1</span>
+            </div>
+            <div class="srv-card-desc">Para quem não tem currículo ou precisa reconstruir do início com nova estrutura e posicionamento</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Currículo adaptado para mercado internacional — em inglês ou para recrutadores de outros países">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Currículo internacional
+              <span class="cx-badge cx1">C1</span>
+            </div>
+            <div class="srv-card-desc">Em inglês ou adaptado para recrutadores de outros países e multinacionais</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Otimização do LinkedIn — headline, sobre, experiências e competências para gerar mais visibilidade e conexões">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              Otimização do LinkedIn
+              <span class="cx-badge cx1">C1</span>
+            </div>
+            <div class="srv-card-desc">Headline, sobre, experiências e competências revisados para gerar mais visibilidade e as conexões certas</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Reposicionamento estratégico no LinkedIn — mudança de direção ou imagem profissional">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+              Reposicionamento no LinkedIn
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Você quer ser percebido de forma diferente do que está hoje — mudança de direção ou imagem</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Pitch profissional — como se apresentar em até 2 minutos, por escrito ou verbalmente">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Pitch profissional
+              <span class="cx-badge cx1">C1</span>
+            </div>
+            <div class="srv-card-desc">Como se apresentar em até 2 minutos com clareza e impacto — para entrevistas, networking ou perfil</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Narrativa de transição — como contar a história de uma mudança de área, país ou momento sem parecer inconsistente">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              Narrativa de transição
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Como contar a história de uma mudança de área, país ou momento sem parecer inconsistente</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Repositório de projetos e cases — organização das principais entregas com linguagem estratégica para currículo e LinkedIn">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Repositório de projetos
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Organização das suas principais entregas com linguagem estratégica — para currículo, LinkedIn ou entrevistas</div>
+          </div>
+        </div>
+
+        <div class="srv-group-label">Entrevistas e processos seletivos</div>
+        <div class="servicos-grid">
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Preparação estratégica para entrevistas — como se apresentar, responder perguntas difíceis e transmitir segurança">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Preparação para entrevista
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Como se apresentar, responder perguntas difíceis e transmitir segurança e clareza ao entrevistador</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Simulação de entrevista com feedback — prática real com análise de postura, discurso e comunicação">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              Simulação de entrevista
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Prática real com feedback direto sobre postura, discurso, comunicação e pontos de melhora</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Preparação para entrevista internacional — foco em inglês, cultura e formato de empresas globais">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l-4 4 4 4 4-4-4-4z"/></svg>
+              Entrevista internacional
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Preparação em inglês com foco no formato e cultura de empresas multinacionais e processos globais</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Negociação de proposta salarial — como negociar oferta, benefícios e condições sem comprometer o processo">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Negociação salarial
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Como negociar oferta, benefícios e condições de forma estratégica sem comprometer o processo</div>
+          </div>
+        </div>
+
+        <div class="srv-group-label">Estratégia de carreira</div>
+        <div class="servicos-grid">
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Diagnóstico de carreira — onde você está, onde quer chegar e o que está travando, com plano de ação">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Diagnóstico de carreira
+              <span class="cx-badge cx3">C3</span>
+            </div>
+            <div class="srv-card-desc">Sessão de 60 min para mapear onde você está, onde quer chegar e o que está travando — com plano de ação escrito</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Plano de carreira 30-60-90 dias — mapa de ações concretas e checkpoints para os próximos meses">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+              Plano de carreira
+              <span class="cx-badge cx3">C3</span>
+            </div>
+            <div class="srv-card-desc">Mapa de ações concretas para 30, 60 e 90 dias — com prioridades, checkpoints e ajustes de rota</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Estratégia de posicionamento e visibilidade — como ser percebido do jeito certo dentro ou fora da empresa">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Posicionamento e visibilidade
+              <span class="cx-badge cx3">C3</span>
+            </div>
+            <div class="srv-card-desc">Como ser percebido do jeito certo — dentro da empresa ou no mercado, sem confronto ou autopromoção forçada</div>
+          </div>
+          <div class="srv-card" onclick="toggleSrv(this)" data-v="Estratégia de networking e candidatura — onde buscar oportunidades, como abordar pessoas e usar sua rede">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Networking e candidatura
+              <span class="cx-badge cx2">C2</span>
+            </div>
+            <div class="srv-card-desc">Onde buscar oportunidades, como abordar pessoas e usar sua rede de forma estratégica para gerar abertura</div>
+          </div>
+        </div>
+
+        <div class="srv-group-label">Outro</div>
+        <div class="servicos-grid">
+          <div class="srv-card" onclick="toggleSrv(this,true)" data-v="outro" id="srv-outro">
+            <div class="srv-card-name">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Outro serviço
+            </div>
+            <div class="srv-card-desc">Descreva o que você precisa e a Azumi avalia se consegue atender</div>
+          </div>
+        </div>
+        <div id="outro-srv-campo" style="display:none;margin-top:8px">
+          <input type="text" id="outro-srv-txt" class="admin-input" placeholder="Descreva o que você precisa..." oninput="upd()"/>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>Contexto adicional
+          <span class="hint">Quanto mais você contar, mais personalizada será a proposta</span>
+        </label>
+        <textarea id="contexto" placeholder="Ex.: Estou há 1 ano e meio na Irlanda e volto em julho. Tenho experiência em projetos grandes de comunicação mas não atualizei meu currículo nem LinkedIn. Quero entrar em uma multinacional." oninput="upd()" style="min-height:100px"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4 — PREFERÊNCIAS DE ATENDIMENTO -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSec(this)">
+      <div class="section-number">4</div>
+      <div class="section-title">Preferências de atendimento</div>
+      <div class="section-chevron">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label>Com quem você prefere ser atendido?
+          <span class="hint">Todas as opções seguem o mesmo padrão Azumi de qualidade</span>
+        </label>
+        <div class="chips" id="chips-atend">
+          <div class="chip" data-v="Exclusivo com Patrícia" onclick="selChip(this,'atend');onAtendChange()">Exclusivo com Patrícia</div>
+          <div class="chip" data-v="Misto — Patrícia + consultor Azumi" onclick="selChip(this,'atend');onAtendChange()">Misto — Patrícia + consultor</div>
+          <div class="chip" data-v="Consultor Azumi (com checkpoints da Patrícia)" onclick="selChip(this,'atend');onAtendChange()">Consultor Azumi</div>
+          <div class="chip" data-v="Sem preferência" onclick="selChip(this,'atend');onAtendChange()">Sem preferência</div>
+        </div>
+        <div id="aviso-patricia" style="display:none;margin-top:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:9px;padding:10px 13px;font-size:11px;color:rgba(192,132,252,.9);line-height:1.65">
+          O atendimento exclusivo com Patrícia tem disponibilidade limitada de agenda e pode implicar em custo adicional. Nossa equipe informará na proposta.
+        </div>
+      </div>
+      <div class="question">
+        <label>Nível de suporte entre as sessões</label>
+        <div class="chips" id="chips-suporte">
+          <div class="chip" data-v="Pontual — dúvidas rápidas via WhatsApp (48h)" onclick="selChip(this,'suporte');onSuporteChange()">Pontual (48h)</div>
+          <div class="chip" data-v="Padrão — ajustes táticos via WhatsApp (24h)" onclick="selChip(this,'suporte');onSuporteChange()">Padrão (24h)</div>
+          <div class="chip" data-v="Premium — suporte ampliado 24h/6 dias" onclick="selChip(this,'suporte');onSuporteChange()">Premium (24h/6 dias)</div>
+          <div class="chip" data-v="Não sei ainda" onclick="selChip(this,'suporte');onSuporteChange()">Não sei ainda</div>
+        </div>
+        <div id="aviso-premium" style="display:none;margin-top:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:9px;padding:10px 13px;font-size:11px;color:rgba(192,132,252,.9);line-height:1.65">
+          O suporte premium implica em custo adicional. Suporte contínuo não substitui sessões e não garante resposta instantânea — o SLA é de até 12h em horário comercial.
+        </div>
+      </div>
+      <div class="question">
+        <label>Observações adicionais</label>
+        <textarea id="obs" placeholder="Algo mais que queira compartilhar com a equipe..." oninput="upd()"></textarea>
+      </div>
+
+      <div class="lgpd-block">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(147,197,253,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <strong>Privacidade & LGPD</strong>
+        </div>
+        Suas informações são tratadas com sigilo total, utilizadas exclusivamente para elaboração da proposta, conforme a LGPD (Lei 13.709/2018). Não compartilhamos dados com terceiros. A Azumi RH não garante resultados específicos como promoções, aumentos ou recolocação — trabalhamos para aumentar sua probabilidade de avanço por meio de estratégia e execução. O protagonismo é sempre seu.
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--ts)">Ao enviar, você concorda com nossa política de privacidade e autoriza o contato da Azumi RH sobre esta solicitação.</div>
+      </div>
+
+      <button class="btn-submit" id="btn-submit" onclick="enviar()">Enviar solicitação</button>
+    </div>
+  </div>
+
+  <div class="footer">AZUMI RH · contato@azumirh.com.br · azumirh.com.br · +55 41 98835-0743</div>
+</div>
+</div>
+
+<!-- ══ TELA OBRIGADO ══ -->
+<div id="ty">
+<div class="wrapper">
+  <div class="ty-wrap">
+    <div class="ty-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="ty-badge">Solicitação recebida</div>
+    <div class="ty-title">Recebemos tudo, <span>obrigado!</span></div>
+    <div class="ty-msg">Nossa equipe analisará seu perfil e entrará em contato em até <strong style="color:#93C5FD">36 horas úteis</strong> com uma proposta personalizada para o seu momento.</div>
+    <div class="ty-proto" id="ty-proto"></div>
+    <div class="ty-social">
+      <a href="https://instagram.com/azumirh" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @azumirh
+      </a>
+      <a href="https://linkedin.com/company/azumirh" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://azumirh.com.br" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Site
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ LOGIN ADMIN ══ -->
+<div id="admin-login">
+<div class="wrapper" style="max-width:400px;padding-top:80px">
+  <div style="text-align:center;margin-bottom:32px">
+    <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Admin Career Plan</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);letter-spacing:.08em">ACESSO RESTRITO</div>
+  </div>
+  <input type="password" id="admin-pwd" class="admin-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()"/>
+  <button class="btn-submit" onclick="doLogin()">Entrar</button>
+  <div id="login-err" style="color:#f87171;font-size:11px;text-align:center;margin-top:8px;display:none">Senha incorreta</div>
+</div>
+</div>
+
+<!-- ══ ADMIN VIEW ══ -->
+<div id="admin-view">
+<div class="admin-wrap">
+  <div class="admin-hdr">
+    <div class="admin-title">Career Plan — Solicitações</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="admin-count" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)"></span>
+      <button class="sair-btn" onclick="sair()">Sair</button>
+    </div>
+  </div>
+  <div class="admin-filters" id="admin-filters">
+    <button class="filter-btn act" onclick="filtrar('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="filtrar('novo',this)">Novo</button>
+    <button class="filter-btn" onclick="filtrar('contato',this)">Em contato</button>
+    <button class="filter-btn" onclick="filtrar('proposta',this)">Proposta enviada</button>
+    <button class="filter-btn" onclick="filtrar('fechado',this)">Fechado</button>
+  </div>
+  <div id="cards-container" style="margin-top:16px"></div>
+</div>
+</div>
+
+<!-- ══ PROPOSTA VIEW ══ -->
+<div id="prop-view">
+<div class="prop-wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-prop-action btn-back" onclick="voltarAdmin()">← Voltar</button>
+      <div>
+        <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#fff" id="prop-nome-titulo">Proposta</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts)" id="prop-proto-titulo"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="status-pill pill-rascunho" id="prop-status-pill">Rascunho</span>
+      <select class="admin-select" id="prop-status-sel" onchange="mudarStatusProp(this.value)">
+        <option value="">Mudar status...</option>
+        <option value="rascunho">Rascunho</option>
+        <option value="em_revisao">Em revisão</option>
+        <option value="aprovada">Aprovada</option>
+        <option value="enviada">Enviada</option>
+        <option value="fechada">Fechada</option>
+      </select>
+      <button class="btn-prop-action btn-save" onclick="salvarProp()">Salvar</button>
+      <button class="btn-prop-action btn-print" onclick="imprimirProp()">PDF</button>
+    </div>
+  </div>
+
+  <div class="prop-layout">
+    <div class="prop-left">
+      <div class="prop-card">
+        <div class="prop-card-title">Dados do cliente — preenchido pelo formulário</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Nome</div><input class="cfg-inp" id="pe-nome" placeholder="Nome completo"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">E-mail</div><input class="cfg-inp" id="pe-email" placeholder="email@exemplo.com"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">WhatsApp</div><input class="cfg-inp" id="pe-wa" placeholder="(41) 99999-0000"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">LinkedIn</div><input class="cfg-inp" id="pe-li" placeholder="linkedin.com/in/..."/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Cidade / Estado / País</div><input class="cfg-inp" id="pe-local" placeholder="São Paulo / SP"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Cargo atual</div><input class="cfg-inp" id="pe-cargo" placeholder="Ex.: Coordenadora de Marketing"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Área de atuação</div><input class="cfg-inp" id="pe-area" placeholder="Ex.: Marketing, RH..."/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Senioridade</div><input class="cfg-inp" id="pe-senioridade" placeholder="Ex.: Coordenação / Supervisão"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Segmento</div><input class="cfg-inp" id="pe-segmento" placeholder="Ex.: Multinacional"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Experiência</div><input class="cfg-inp" id="pe-experiencia" placeholder="Ex.: Mais de 10 anos"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Escolaridade</div><input class="cfg-inp" id="pe-escolaridade" placeholder="Ex.: Pós-graduação / MBA"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Idiomas</div><input class="cfg-inp" id="pe-idiomas" placeholder="Ex.: Inglês intermediário"/></div>
+        </div>
+        <div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Objetivos selecionados pelo cliente</div>
+          <textarea class="cfg-inp" id="pe-objetivos" placeholder="Objetivos que a cliente marcou..." style="min-height:50px;resize:vertical;font-size:12px" oninput="calcProp()"></textarea>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Urgência / Prazo desejado</div>
+          <input class="cfg-inp" id="pe-prazo" placeholder="Ex.: Médio prazo — 60 a 90 dias"/>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Modelo de atendimento solicitado</div>
+          <input class="cfg-inp" id="pe-atendimento" placeholder="Ex.: Misto — Patrícia + consultor Azumi"/>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Suporte desejado</div>
+          <input class="cfg-inp" id="pe-suporte" placeholder="Ex.: Padrão — ajustes táticos via WhatsApp (24h)"/>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Contexto (situação atual preenchida pelo cliente)</div>
+          <textarea class="cfg-inp" id="pe-contexto-cli" placeholder="O que o cliente descreveu sobre o momento atual..." style="min-height:60px;resize:vertical;font-size:12px" oninput="calcProp()"></textarea>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Nível de complexidade do projeto</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <button onclick="selCx(this,'C1')" class="cx-sel-btn" data-cx="C1" style="flex:1;padding:10px 8px;border:1.5px solid var(--border);border-radius:9px;background:rgba(255,255,255,.04);cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#16a34a;transition:all .15s">C1<div style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ts);font-weight:400;margin-top:2px">Baixa</div></button>
+          <button onclick="selCx(this,'C2')" class="cx-sel-btn" data-cx="C2" style="flex:1;padding:10px 8px;border:1.5px solid var(--border);border-radius:9px;background:rgba(255,255,255,.04);cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#a16207;transition:all .15s">C2<div style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ts);font-weight:400;margin-top:2px">Média</div></button>
+          <button onclick="selCx(this,'C3')" class="cx-sel-btn" data-cx="C3" style="flex:1;padding:10px 8px;border:1.5px solid var(--border);border-radius:9px;background:rgba(255,255,255,.04);cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#dc2626;transition:all .15s">C3<div style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ts);font-weight:400;margin-top:2px">Alta</div></button>
+        </div>
+        <textarea class="cfg-inp" id="pe-cx-just" placeholder="Justificativa breve — ex.: Projeto envolve múltiplos módulos estratégicos com intercâmbio recente e foco em mercado internacional..." style="min-height:50px;resize:vertical;font-size:12px" oninput="calcProp()"></textarea>
+        <div style="font-size:10px;color:var(--ts);margin-top:4px">Aparece na proposta como contexto de complexidade</div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Pacote</div>
+        <div class="pkg-cards">
+          <div class="pkg-card sel" data-pkg="FOCUS" onclick="selPkgProp(this)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              <div class="pkg-card-name">FOCUS</div>
+            </div>
+            <div class="pkg-card-sub">Entrega cirúrgica</div>
+          </div>
+          <div class="pkg-card" data-pkg="ROUTE" onclick="selPkgProp(this)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 10"/><circle cx="3" cy="17" r="1.5" fill="#8B5CF6"/><circle cx="21" cy="17" r="1.5" fill="#8B5CF6"/></svg>
+              <div class="pkg-card-name">ROUTE</div>
+            </div>
+            <div class="pkg-card-sub">Estratégia + execução</div>
+          </div>
+          <div class="pkg-card" data-pkg="SOAR" onclick="selPkgProp(this)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+              <div class="pkg-card-name">SOAR</div>
+            </div>
+            <div class="pkg-card-sub">Processo completo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Escopo e sessões</div>
+        <div class="two-col" style="gap:10px;margin-bottom:14px">
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Nº de sessões</div><input class="cfg-inp" id="pe-sessoes" type="number" min="0" max="50" value="0" oninput="calcProp()"/></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Duração / sessão</div>
+            <select class="cfg-inp" id="pe-duracao" onchange="calcProp()">
+              <option value="30min">30 min</option>
+              <option value="60min" selected>60 min</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Prazo estimado de entrega</div>
+          <input class="cfg-inp" id="pe-prazo-entrega" placeholder="Ex.: 7 a 10 dias úteis após coleta de insumos" oninput="calcProp()"/>
+          <div style="font-size:10px;color:var(--ts);margin-top:4px">Aparece na proposta como referência — não é garantia de prazo</div>
+        </div>
+        <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Serviços incluídos na proposta</div>
+        <textarea class="cfg-inp" id="pe-servicos" placeholder="Liste os serviços contratados, um por linha..." style="min-height:80px;resize:vertical" oninput="calcProp()"></textarea></div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">O que está incluído</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:11px;color:var(--ts)">Edite antes de gerar o PDF</div>
+          <button onclick="resetIncluido()" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;cursor:pointer">Restaurar</button>
+        </div>
+        <textarea class="cfg-inp" id="pe-incluido" placeholder="Um item por linha..." style="min-height:120px;resize:vertical;font-size:12px;line-height:1.7" oninput="calcProp()"></textarea>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Observações</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Contexto — aparece na proposta para o cliente</div>
+          <textarea class="cfg-inp" id="pe-obs-prop" placeholder="Contexto e objetivo da proposta..." style="min-height:80px;resize:vertical" oninput="calcProp()"></textarea>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Notas internas — não aparecem na proposta</div>
+          <textarea class="cfg-inp" id="pe-obs-int" placeholder="Observações internas, histórico..." style="min-height:60px;resize:vertical" oninput="calcProp()"></textarea>
+        </div>
+      </div>
+
+      <div class="prop-action-bar">
+        <button class="btn-prop-action btn-save" onclick="salvarProp()">Salvar rascunho</button>
+        <button class="btn-prop-action btn-approve" onclick="salvarProp('aprovada')">Marcar como aprovada</button>
+        <button class="btn-prop-action btn-print" onclick="imprimirProp()">Imprimir / PDF</button>
       </div>
     </div>
 
-  </div>
+    <div class="prop-right">
+      <div class="prop-card">
+        <div class="prop-card-title">Valores base / sessão</div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">FOCUS — R$ / sessão</div><input class="cfg-inp" id="cfg-focus" type="number" value="499" min="0" step="50" oninput="calcProp()"/></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">ROUTE — R$ / sessão</div><input class="cfg-inp" id="cfg-route" type="number" value="599" min="0" step="50" oninput="calcProp()"/></div>
+        <div><div style="font-size:11px;color:var(--ts);margin-bottom:5px">SOAR — R$ / sessão</div><input class="cfg-inp" id="cfg-soar" type="number" value="799" min="0" step="50" oninput="calcProp()"/></div>
+      </div>
 
-  <!-- SUCCESS -->
-  <div class="success" id="success">
-    <div class="s-icon">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div class="prop-card">
+        <div class="prop-card-title">Adicionais manuais</div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Currículo (entrega fixa, R$)</div><input class="cfg-inp" id="cfg-cv" type="number" value="0" min="0" step="50" oninput="calcProp()"/></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">LinkedIn (entrega fixa, R$)</div><input class="cfg-inp" id="cfg-li" type="number" value="0" min="0" step="50" oninput="calcProp()"/></div>
+        <div><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Outros adicionais (R$)</div><input class="cfg-inp" id="cfg-outros" type="number" value="0" min="0" step="50" oninput="calcProp()"/></div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-inner">
+          <div class="result-label">Orçamento referencial</div>
+          <div id="prop-result-rows"></div>
+          <div class="result-total">
+            <div class="result-total-lbl">INVESTIMENTO TOTAL</div>
+            <div>
+              <div class="result-orig" id="prop-res-orig" style="display:none"></div>
+              <div class="result-total-val" id="prop-res-final">R$ 0,00</div>
+            </div>
+          </div>
+          <div class="result-note" id="prop-res-note"></div>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Desconto</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input class="cfg-inp" id="pe-desc" type="number" min="0" max="50" value="0" step="1" oninput="calcProp()" style="width:80px"/>
+          <span style="font-size:13px;color:var(--ts)">% sobre o total</span>
+        </div>
+        <div class="aviso" id="aviso-desc-prop" style="display:none;margin-top:8px"></div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Bônus</div>
+        <input class="cfg-inp" id="pe-bonus" placeholder="Ex.: 1 sessão de feedback express gratuita, acesso à comunidade por 3 meses..." oninput="calcProp()"/>
+        <div style="font-size:10px;color:var(--ts);margin-top:6px">Aparece destacado na proposta — não entra no cálculo financeiro</div>
+      </div>
     </div>
-    <h2>Career Plan enviado!</h2>
-    <p>Recebemos suas informacoes. Nossa equipe entrara em contato em ate 24h para alinhar os proximos passos do seu Career Plan.</p>
-    <div class="prot-badge" id="s-prot"></div>
-    <br>
-    <a href="/" class="btn-home">Voltar ao inicio</a>
   </div>
-</main>
-
-<footer>© 2026 Azumi RH · contato@azumirh.com.br · azumirh.com.br</footer>
+</div>
+</div>
 
 <script>
-const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmptbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzAxNjAsImV4cCI6MjA4Njk0NjE2MH0.3jEvmlcjrOGLOf1kxjy3TURE2SQ6UMbiCUlDN_HAXb0'
-const sb=supabase.createClient(SUPA_URL,SUPA_KEY)
+const SUPA_URL = 'https://yxtirmonrjmlasnrqwwl.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmptbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzAxNjAsImV4cCI6MjA4Njk0NjE2MH0.3jEvmlcjrOGLOf1kxjy3TURE2SQ6UMbiCUlDN_HAXb0'
+const ADMIN_PWD = 'azumi2026carreira'
 
-let situacao='empregado', lgpd=false, focoSet=new Set(), cur=1
+function g(id){return document.getElementById(id)}
+function v(id){return g(id)?.value?.trim()||''}
 
-const LABELS=['','Passo 1 de 4 — Dados pessoais','Passo 2 de 4 — Situacao atual','Passo 3 de 4 — Objetivos','Passo 4 de 4 — Contexto e envio']
-
-function gerarProtocolo(){
-  const d=new Date()
-  const ym=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')
-  return 'AZ-CAR-'+ym+'-'+String(Math.floor(Math.random()*99999)).padStart(5,'0')
-}
-
-function setSituacao(s){
-  situacao=s
-  ;['empregado','desempregado','transicao'].forEach(id=>{
-    document.getElementById('sit-'+id).classList.toggle('active',id===s)
+async function api(method,path,body){
+  const r = await fetch(SUPA_URL+'/rest/v1/'+path,{
+    method,
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,
+      'Prefer':method==='POST'?'return=representation':method==='DELETE'?'':'return=minimal'},
+    body:body?JSON.stringify(body):undefined
   })
+  return r.status===204||method==='DELETE'?{}:r.json().catch(()=>({}))
 }
 
-function go(n){
-  if(n>cur&&!validar(cur))return
-  document.getElementById('s'+cur).classList.remove('active')
-  cur=n
-  document.getElementById('s'+cur).classList.add('active')
-  atualizarProg()
-  window.scrollTo({top:0,behavior:'smooth'})
-  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.avancarSecao(n)
+function toast(msg){
+  const d=document.createElement('div')
+  d.style.cssText='position:fixed;bottom:24px;right:24px;background:#031D38;border:1px solid rgba(59,130,246,.3);color:#93C5FD;font-family:"JetBrains Mono",monospace;font-size:11px;padding:10px 18px;border-radius:10px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.3)'
+  d.textContent=msg
+  document.body.appendChild(d)
+  setTimeout(()=>d.remove(),3000)
 }
 
-function atualizarProg(){
-  for(let i=1;i<=4;i++){
-    const d=document.getElementById('d'+i)
-    d.classList.remove('active','done')
-    if(i<cur)d.classList.add('done')
-    else if(i===cur)d.classList.add('active')
-    if(i<4)document.getElementById('l'+i).classList.toggle('done',i<cur)
+// ── ROTEAMENTO ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  if(window.location.hash==='#admin'){
+    g('app').style.display='none'
+    g('admin-login').style.display='block'
   }
-  document.getElementById('prog-label').textContent=LABELS[cur]
+  upd()
+})
+
+// ── FORMULÁRIO PÚBLICO ────────────────────────────────────────
+let srvSel = []
+let chips = {senior:'',segmento:'',exp:'',objetivo:[],prazo:'',atend:'',suporte:'',escolaridade:''}
+
+function toggleChipMulti(el, grp, max){
+  const selList = document.querySelectorAll('#chips-'+grp+' .chip.sel')
+  if(!el.classList.contains('sel') && selList.length >= max){
+    const av = g('aviso-obj-max')
+    if(av){av.style.display='block';setTimeout(()=>av.style.display='none',3000)}
+    return
+  }
+  el.classList.toggle('sel')
+  chips[grp] = [...document.querySelectorAll('#chips-'+grp+' .chip.sel')].map(c=>c.dataset.v)
+  const hasOutro = chips[grp].includes('Outro')
+  const outroDiv = g('outro-objetivo')
+  if(outroDiv) outroDiv.style.display = hasOutro ? 'block' : 'none'
+  upd()
 }
 
-function validar(step){
+function onPrazoChange(){
+  const av = g('aviso-urgencia')
+  if(av) av.style.display = chips.prazo === 'Urgente — até 30 dias' ? 'block' : 'none'
+}
+
+function onAtendChange(){
+  const av = g('aviso-patricia')
+  if(av) av.style.display = chips.atend === 'Exclusivo com Patrícia' ? 'block' : 'none'
+}
+
+function onSuporteChange(){
+  const av = g('aviso-premium')
+  if(av) av.style.display = chips.suporte === 'Premium — suporte ampliado 24h/6 dias' ? 'block' : 'none'
+}
+
+function toggleSec(hdr){
+  const sec=hdr.closest('.section')
+  if(sec) sec.classList.toggle('open')
+  upd()
+}
+
+function selChip(el, grp){
+  document.querySelectorAll('#chips-'+grp+' .chip').forEach(c=>c.classList.remove('sel'))
+  el.classList.add('sel')
+  chips[grp]=el.dataset.v
+  if(grp==='objetivo'){
+    g('outro-objetivo').style.display=el.dataset.v==='Outro'?'block':'none'
+  }
+  upd()
+}
+
+function toggleSrv(el, hasOther){
+  el.classList.toggle('sel')
+  const val=el.dataset.v
+  if(hasOther){
+    g('outro-srv-campo').style.display=el.classList.contains('sel')?'block':'none'
+    if(!el.classList.contains('sel')){
+      srvSel=srvSel.filter(s=>s.startsWith('Outro')===false)
+    }
+    return
+  }
+  if(el.classList.contains('sel')){if(!srvSel.includes(val))srvSel.push(val)}
+  else srvSel=srvSel.filter(s=>s!==val)
+  upd()
+}
+
+function upd(){
+  const secs=document.querySelectorAll('#app .section')
+  let abertas=0
+  secs.forEach(s=>{if(s.classList.contains('open'))abertas++})
+  const pct=Math.round(abertas/secs.length*100)
+  g('pfill').style.width=pct+'%'
+  g('ptxt').textContent=abertas+' de '+secs.length+' seções'
+  g('ppct').textContent=pct+'%'
+}
+
+function validar(){
   let ok=true
-  if(step===1){ok=req('nome','f-nome')&reqEmail('email','f-email')&req('whatsapp','f-whatsapp')&req('cidade','f-cidade')&reqSel('estado','f-estado')}
-  if(step===2){ok=reqSel('nivel_senioridade','f-nivel')&reqSel('tempo_experiencia','f-exp')}
-  if(step===3){
-    if(focoSet.size===0){document.getElementById('err-foco').style.display='block';ok=false}
-    else document.getElementById('err-foco').style.display='none'
-    ok=req('setor_interesse','f-setor')&ok
-  }
-  return !!ok
-}
-
-function req(id,fid){
-  const el=document.getElementById(id),field=document.getElementById(fid)
-  if(!el||!field)return true
-  const inv=!el.value.trim()
-  field.classList.toggle('err',inv)
-  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
-  return !inv
-}
-function reqSel(id,fid){
-  const el=document.getElementById(id),field=document.getElementById(fid)
-  if(!el||!field)return true
-  const inv=!el.value
-  field.classList.toggle('err',inv)
-  el.addEventListener('change',()=>field.classList.remove('err'),{once:true})
-  return !inv
-}
-function reqEmail(id,fid){
-  const el=document.getElementById(id),field=document.getElementById(fid)
-  if(!el||!field)return true
-  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
-  field.classList.toggle('err',!ok)
-  el.addEventListener('input',()=>field.classList.remove('err'),{once:true})
+  if(!v('nome')){g('e-nome').style.display='block';ok=false}else g('e-nome').style.display='none'
+  const em=v('email')
+  if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){g('e-email').style.display='block';ok=false}else g('e-email').style.display='none'
   return ok
 }
 
-// Chips foco (multi-select)
-document.getElementById('chips-foco').querySelectorAll('.chip').forEach(c=>{
-  c.addEventListener('click',()=>{
-    c.classList.toggle('on')
-    if(c.classList.contains('on'))focoSet.add(c.dataset.v)
-    else focoSet.delete(c.dataset.v)
-    if(focoSet.size>0)document.getElementById('err-foco').style.display='none'
-  })
-})
-
-function toggleLGPD(){
-  lgpd=!lgpd
-  document.getElementById('lgpd-row').classList.toggle('on',lgpd)
-  const box=document.getElementById('lgpd-box')
-  box.style.background=lgpd?'#3B82F6':''
-  box.style.borderColor=lgpd?'#3B82F6':''
-  document.getElementById('lgpd-tick').style.display=lgpd?'block':'none'
-  document.getElementById('lgpd-err').style.display='none'
-  document.getElementById('f-lgpd').classList.remove('err')
-}
-
-function g(id){return document.getElementById(id)}
-
 async function enviar(){
-  if(!lgpd){
-    document.getElementById('f-lgpd').classList.add('err')
-    document.getElementById('lgpd-err').style.display='block'
-    return
-  }
-  if(!req('contexto_carreira','f-contexto'))return
+  if(!validar()) return
+  const btn=g('btn-submit')
+  btn.disabled=true; btn.textContent='Enviando...'
 
-  const btn=g('btn-sub')
-  btn.disabled=true;btn.textContent='Enviando...'
-  const protocolo=gerarProtocolo()
+  const proto='AZ-CP-'+new Date().getFullYear()+String(new Date().getMonth()+1).padStart(2,'0')+'-'+Math.floor(Math.random()*90000+10000)
 
-  const dados={
-    protocolo,
-    nome:g('nome').value.trim(),
-    email:g('email').value.trim(),
-    whatsapp:g('whatsapp').value.trim(),
-    linkedin_url:g('linkedin').value.trim(),
-    cidade:g('cidade').value.trim(),
-    estado:g('estado').value,
-    situacao_atual:situacao,
-    cargo_atual:g('cargo_atual').value.trim(),
-    area_atuacao:g('area_atuacao').value.trim(),
-    senioridade:g('nivel_senioridade').value,
-    tempo_experiencia:g('tempo_experiencia').value,
-    objetivo_principal:Array.from(focoSet).join(', '),
-    segmento:g('setor_interesse').value.trim(),
-    prazo_desejado:g('prazo_mudanca').value,
-    contexto:g('contexto_carreira').value.trim(),
-    obs:g('motivacao').value.trim(),
-    status:'novo'
-  }
+  let servicos=[...srvSel]
+  if(g('srv-outro')?.classList.contains('sel')&&v('outro-srv-txt')) servicos.push('Outro: '+v('outro-srv-txt'))
 
-  const {error}=await sb.from('career_plan_requests').insert(dados)
-  if(error){
-    btn.disabled=false
-    btn.textContent='Enviar diagnostico'
-    alert('Erro ao enviar. Tente novamente.')
-    console.error(error)
-    return
+  const obj = chips.objetivo==='Outro'?(v('outro-obj-txt')||'Outro'):chips.objetivo
+
+  const payload={
+    protocolo:proto,
+    nome:v('nome'), email:v('email'), whatsapp:v('whatsapp'),
+    linkedin_url:v('linkedin_url'), cidade:v('cidade'), estado:v('estado'),
+    area_atuacao:v('area_atuacao'), cargo_atual:v('cargo_atual'),
+    senioridade:chips.senior, segmento:chips.segmento,
+    tempo_experiencia:chips.exp,
+    objetivo_principal:Array.isArray(chips.objetivo)?chips.objetivo.join(', '):(chips.objetivo||''), prazo_desejado:chips.prazo,
+    contexto:v('contexto'), situacao_atual:v('situacao_atual'),
+    servicos_interesse:servicos.join(', '),
+    idiomas:v('idiomas'),
+    pais:v('pais'),
+    escolaridade:chips.escolaridade,
+    modelo_atendimento:chips.atend, suporte_desejado:chips.suporte,
+    obs:v('obs'), status:'novo'
   }
 
   try{
-    await fetch('https://azumi-email-api.vercel.app/api/send-email',{
+    const res = await fetch(SUPA_URL+'/rest/v1/career_plan_requests',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        to:'patricia@azumirh.com.br',
-        subject:'['+protocolo+'] Career Plan — '+dados.nome,
-        html:'<h2>Novo Career Plan</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Nome:</b> '+dados.nome+'</p><p><b>E-mail:</b> '+dados.email+'</p><p><b>WhatsApp:</b> '+dados.whatsapp+'</p><p><b>Situacao:</b> '+dados.situacao_atual+'</p><p><b>Nivel:</b> '+dados.senioridade+'</p><p><b>Foco:</b> '+dados.objetivo_principal+'</p><p><b>Setor:</b> '+dados.segmento+'</p><p><b>Desafio:</b> '+dados.contexto+'</p>'
-      })
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+      body:JSON.stringify(payload)
     })
-  }catch(e){console.error('Erro ao enviar email:',e)}
+    if(!res.ok){
+      const err=await res.text()
+      throw new Error('HTTP '+res.status+': '+err)
+    }
+    const saved = await res.json()
+    // Disparar notificação por email via Edge Function
+    fetch(SUPA_URL+'/functions/v1/notify-career-plan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+      body:JSON.stringify({record: Array.isArray(saved)?saved[0]:payload})
+    }).catch(()=>{}) // não bloqueia se falhar
+    g('app').style.display='none'
+    g('ty').style.display='block'
+    g('ty-proto').textContent='Protocolo: '+proto
+    const hdr=document.querySelector('.header');if(hdr)hdr.style.display='none'
+    window.scrollTo(0,0)
+  }catch(e){
+    btn.disabled=false; btn.textContent='Enviar solicitação'
+    console.error('Erro ao enviar:',e)
+    toast('Erro ao enviar: '+e.message)
+  }
+}
 
-  document.getElementById('formWrap').style.display='none'
-  document.getElementById('progWrap').style.display='none'
-  const el=document.getElementById('success')
-  el.style.display='block'
-  el.classList.add('active')
-  const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
-  document.getElementById('s-prot').textContent=protocolo
-  if(typeof AzumiAnalytics!=='undefined')AzumiAnalytics.concluir(protocolo)
-  window.scrollTo({top:0,behavior:'smooth'})
+// ── ADMIN ─────────────────────────────────────────────────────
+let adminData=[]
+let filtroAtivo='todos'
+let propState={id:null,reqId:null,reqProto:null,status:'rascunho',pkg:'FOCUS'}
+
+function doLogin(){
+  if(v('admin-pwd')===ADMIN_PWD){
+    g('admin-login').style.display='none'
+    g('admin-view').style.display='block'
+    carregarSolicitacoes()
+  }else{
+    g('login-err').style.display='block'
+    setTimeout(()=>g('login-err').style.display='none',3000)
+  }
+}
+
+function sair(){
+  g('admin-view').style.display='none'
+  g('admin-login').style.display='block'
+  g('admin-pwd').value=''
+}
+
+async function carregarSolicitacoes(){
+  const data=await api('GET','career_plan_requests?order=created_at.desc')
+  adminData=Array.isArray(data)?data:[]
+  g('admin-count').textContent=adminData.length+' solicitação'+(adminData.length!==1?'ões':'')
+  renderCards()
+}
+
+function filtrar(status,btn){
+  filtroAtivo=status
+  document.querySelectorAll('#admin-filters .filter-btn').forEach(b=>b.classList.remove('act'))
+  btn.classList.add('act')
+  renderCards()
+}
+
+const STS_LBL={novo:'Novo',contato:'Em contato',proposta:'Proposta enviada',fechado:'Fechado',arquivado:'Arquivado'}
+const STS_CLS={novo:'s-novo',contato:'s-contato',proposta:'s-proposta',fechado:'s-fechado',arquivado:'s-arquivado'}
+const brl=v=>Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+
+const SRV_CX={'Atualização de currículo':'C1','Currículo do zero':'C1','Currículo internacional':'C1','Otimização do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transição':'C2','Repositório de projetos':'C2','Preparação para entrevista':'C2','Simulação de entrevista':'C2','Entrevista internacional':'C2','Negociação salarial':'C2','Networking e candidatura':'C2','Diagnóstico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
+function cxBadge(cx){const cls={C1:'cx1',C2:'cx2',C3:'cx3'};return cx?`<span class="cx-badge ${cls[cx]||''}">${cx}</span>`:'' }
+
+function renderCards(){
+  const cont=g('cards-container')
+  const lista=filtroAtivo==='todos'?adminData:adminData.filter(r=>r.status===filtroAtivo)
+  if(!lista.length){cont.innerHTML=`<div class="empty-state">NENHUMA SOLICITAÇÃO ENCONTRADA</div>`;return}
+  cont.innerHTML=lista.map(r=>{
+    const srvs=r.servicos_interesse?r.servicos_interesse.split(',').map(s=>s.trim()).filter(Boolean):[]
+    const localStr=[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')
+    return `
+  <div class="req-card">
+    <div class="req-card-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+            <div class="req-nome">${r.nome}</div>
+            <div class="req-meta">${r.protocolo}</div>
+            <div class="req-meta">${new Date(r.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
+          </div>
+          <div style="font-size:12px;color:rgba(147,197,253,.7);font-weight:500">${r.cargo_atual||''}${r.area_atuacao?' · '+r.area_atuacao:''}</div>
+          <div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap">
+            ${r.senioridade?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.senioridade}</span>`:''}
+            ${r.segmento?`<span style="font-size:10px;color:var(--ts);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:100px;padding:2px 9px">${r.segmento}</span>`:''}
+            ${r.prazo_desejado?`<span style="font-size:10px;color:rgba(251,191,36,.8);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:100px;padding:2px 9px">${r.prazo_desejado}</span>`:''}
+            ${r.modelo_atendimento?`<span style="font-size:10px;color:rgba(167,139,250,.8);background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:100px;padding:2px 9px">${r.modelo_atendimento}</span>`:''}
+          </div>
+        </div>
+        <span class="status-badge ${STS_CLS[r.status]||'s-novo'}">${STS_LBL[r.status]||r.status}</span>
+      </div>
+    </div>
+
+    <div class="req-card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;margin-bottom:12px">
+        ${r.email?`<div class="req-item"><div class="req-item-lbl">E-mail</div><div class="req-item-val">${r.email}</div></div>`:''}
+        ${r.whatsapp?`<div class="req-item"><div class="req-item-lbl">WhatsApp</div><div class="req-item-val">${r.whatsapp}</div></div>`:''}
+        ${localStr?`<div class="req-item"><div class="req-item-lbl">Localização</div><div class="req-item-val">${localStr}</div></div>`:''}
+        ${r.tempo_experiencia?`<div class="req-item"><div class="req-item-lbl">Experiência</div><div class="req-item-val">${r.tempo_experiencia}</div></div>`:''}
+        ${r.escolaridade?`<div class="req-item"><div class="req-item-lbl">Escolaridade</div><div class="req-item-val">${r.escolaridade}</div></div>`:''}
+        ${r.idiomas?`<div class="req-item"><div class="req-item-lbl">Idiomas</div><div class="req-item-val">${r.idiomas}</div></div>`:''}
+        ${r.suporte_desejado?`<div class="req-item"><div class="req-item-lbl">Suporte</div><div class="req-item-val">${r.suporte_desejado}</div></div>`:''}
+        ${r.linkedin_url?`<div class="req-item"><div class="req-item-lbl">LinkedIn</div><div class="req-item-val"><a href="${r.linkedin_url}" target="_blank" style="color:#93C5FD;text-decoration:none">Ver perfil</a></div></div>`:''}
+      </div>
+
+      ${r.objetivo_principal?`<div style="margin-bottom:10px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Objetivos</div><div style="font-size:11px;color:var(--ts);line-height:1.6">${r.objetivo_principal}</div></div>`:''}
+
+      ${srvs.length?`
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Serviços de interesse (${srvs.length})</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${srvs.map(s=>{const cx=SRV_CX[s]||'';return `<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--tp)">${cxBadge(cx)}<span>${s}</span></div>`}).join('')}
+        </div>
+      </div>`:''}
+
+      ${r.situacao_atual?`<div style="margin-top:10px;padding:8px 11px;background:rgba(255,255,255,.04);border-left:2px solid rgba(59,130,246,.4);border-radius:0 6px 6px 0;font-size:11px;color:var(--ts);line-height:1.6;font-style:italic">"${r.situacao_atual}"</div>`:''}
+    </div>
+
+    <div class="req-card-footer" style="background:rgba(0,0,0,.15);border-top:1px solid var(--border)">
+      ${r.whatsapp?`<button class="btn-small btn-wa" onclick="window.open('https://wa.me/55'+('${r.whatsapp}'.replace(/\D/g,'')))">WhatsApp</button>`:''}
+      <button class="btn-small btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+      <button class="btn-small btn-prop" onclick="abrirProposta(${JSON.stringify(r).replace(/"/g,'&quot;')})">Gerar Proposta</button>
+      <select class="admin-select" onchange="atualizarStatus('${r.id}',this.value,this)" style="margin-left:auto">
+        <option value="">Mudar status...</option>
+        <option value="novo">Novo</option>
+        <option value="contato">Em contato</option>
+        <option value="proposta">Proposta enviada</option>
+        <option value="fechado">Fechado</option>
+        <option value="arquivado">Arquivado</option>
+      </select>
+      <button class="btn-small btn-del" onclick="excluir('${r.id}','${(r.nome||'').replace(/'/g,'')}')">Excluir</button>
+    </div>
+  </div>`}).join('')
+}
+
+async function atualizarStatus(id,status,sel){
+  if(!status)return
+  sel.value=''
+  await api('PATCH',`career_plan_requests?id=eq.${id}`,{status})
+  const idx=adminData.findIndex(r=>r.id===id)
+  if(idx>-1)adminData[idx].status=status
+  renderCards()
+  toast('Status atualizado')
+}
+
+async function excluir(id,nome){
+  if(!confirm('Excluir solicitação de "'+nome+'"?')) return
+  await api('DELETE',`career_plan_requests?id=eq.${id}`)
+  adminData=adminData.filter(r=>r.id!==id)
+  renderCards()
+  toast('Excluído')
+}
+
+// ── PROPOSTA ──────────────────────────────────────────────────
+function abrirProposta(r){
+  propState={id:null,reqId:r.id,reqProto:r.protocolo,status:'rascunho',pkg:'FOCUS'}
+
+  // ── Dados pessoais e profissionais ──
+  g('pe-nome').value=r.nome||''
+  g('pe-email').value=r.email||''
+  g('pe-wa').value=r.whatsapp||''
+  g('pe-li').value=r.linkedin_url||''
+  g('pe-local').value=[r.cidade,r.estado,r.pais].filter(Boolean).join(' / ')
+  g('pe-cargo').value=r.cargo_atual||''
+  g('pe-area').value=r.area_atuacao||''
+  g('pe-senioridade').value=r.senioridade||''
+  g('pe-segmento').value=r.segmento||''
+  g('pe-experiencia').value=r.tempo_experiencia||''
+  g('pe-escolaridade').value=r.escolaridade||''
+  g('pe-idiomas').value=r.idiomas||''
+  // ── Objetivos, prazo, atendimento ──
+  g('pe-objetivos').value=r.objetivo_principal||''
+  g('pe-prazo').value=r.prazo_desejado||''
+  g('pe-atendimento').value=r.modelo_atendimento||''
+  g('pe-suporte').value=r.suporte_desejado||''
+  g('pe-contexto-cli').value=r.situacao_atual||''
+  // ── Escopo e cálculo ──
+  g('pe-sessoes').value=0
+  g('pe-desc').value=0
+  g('cfg-cv').value=0; g('cfg-li').value=0; g('cfg-outros').value=0
+  g('pe-prazo-entrega').value=''
+  g('pe-bonus').value=''
+
+  // ── Serviços ──
+  if(r.servicos_interesse){
+    g('pe-servicos').value=r.servicos_interesse.split(',').map(s=>s.trim()).join('\n')
+  } else g('pe-servicos').value=''
+
+  // ── Contexto na proposta ──
+  g('pe-obs-prop').value=r.obs||r.contexto||''
+  g('pe-obs-int').value=''
+
+  // Pacote baseado no prazo/objetivo
+  let pkg='FOCUS'
+  if(r.prazo_desejado?.includes('6 meses')||r.objetivo_principal?.toLowerCase().includes('posicionamento')) pkg='SOAR'
+  else if(r.prazo_desejado?.includes('60')||r.prazo_desejado?.includes('90')) pkg='ROUTE'
+  propState.pkg=pkg
+  document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('sel'))
+  document.querySelector(`[data-pkg="${pkg}"]`)?.classList.add('sel')
+
+  // O que inclui
+  g('pe-incluido').value=getInclusoDefault(pkg).join('\n')
+
+  g('prop-nome-titulo').textContent=r.nome
+  g('prop-proto-titulo').textContent='Sol.: '+r.protocolo
+
+  atualizarPillProp('rascunho')
+  carregarPropostaExistente(r.id)
+
+  g('admin-view').style.display='none'
+  g('prop-view').style.display='block'
+  window.scrollTo(0,0)
+  calcProp()
+}
+
+async function carregarPropostaExistente(reqId){
+  const data=await api('GET',`career_plan_proposals?request_id=eq.${reqId}&order=updated_at.desc&limit=1`)
+  if(Array.isArray(data)&&data[0]){
+    const p=data[0]
+    propState.id=p.id; propState.status=p.status
+    if(p.nome)g('pe-nome').value=p.nome
+    if(p.email)g('pe-email').value=p.email
+    if(p.whatsapp)g('pe-wa').value=p.whatsapp
+    if(p.linkedin_url)g('pe-li').value=p.linkedin_url
+    if(p.cidade||p.estado)g('pe-local').value=(p.cidade?p.cidade+' / ':'')+( p.estado||'')
+    if(p.cargo_atual)g('pe-cargo').value=p.cargo_atual
+    if(p.area_atuacao)g('pe-area').value=p.area_atuacao
+    if(p.senioridade)g('pe-senioridade').value=p.senioridade
+    if(p.segmento)g('pe-segmento').value=p.segmento
+    if(p.objetivo_principal)g('pe-objetivos').value=p.objetivo_principal
+    if(p.prazo_desejado)g('pe-prazo').value=p.prazo_desejado
+    if(p.modelo_atendimento)g('pe-atendimento').value=p.modelo_atendimento
+    if(p.suporte_desejado)g('pe-suporte').value=p.suporte_desejado
+    if(p.num_sessoes)g('pe-sessoes').value=p.num_sessoes
+    if(p.desconto_pct)g('pe-desc').value=p.desconto_pct
+    if(p.servicos)g('pe-servicos').value=p.servicos
+    if(p.incluido)g('pe-incluido').value=p.incluido
+    if(p.obs_proposta)g('pe-obs-prop').value=p.obs_proposta
+    if(p.obs_interna)g('pe-obs-int').value=p.obs_interna
+    if(p.pacote){
+      propState.pkg=p.pacote
+      document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('sel'))
+      document.querySelector(`[data-pkg="${p.pacote}"]`)?.classList.add('sel')
+    }
+    atualizarPillProp(p.status)
+    g('prop-proto-titulo').textContent='Proposta: '+p.protocolo+' | Sol.: '+(propState.reqProto||'')
+    calcProp()
+  }
+}
+
+function voltarAdmin(){
+  g('prop-view').style.display='none'
+  g('admin-view').style.display='block'
+  window.scrollTo(0,0)
+}
+
+function selPkgProp(el){
+  document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('sel'))
+  el.classList.add('sel')
+  propState.pkg=el.dataset.pkg
+  g('pe-incluido').value=getInclusoDefault(propState.pkg).join('\n')
+  calcProp()
+}
+
+function getInclusoDefault(pkg){
+  const base=['Alinhamento de escopo e diagnóstico inicial','Materiais digitais personalizados','Suporte via WhatsApp conforme pacote']
+  const route=['Diagnóstico 360 (sessão de 60 min)','Plano de ação com checkpoints','Preparação de conversas e estratégia','Registro de evolução e entregáveis']
+  const soar=['Diagnóstico 360 profundo','Estratégia completa com cenários A/B/C','Execução assistida com checkpoints semanais','Ferramentas: mapa de stakeholders, roteiros de conversa crítica','Relatório final com próximos passos']
+  if(pkg==='SOAR') return [...base,...soar]
+  if(pkg==='ROUTE') return [...base,...route]
+  return base
+}
+
+function selCx(btn, cx){
+  document.querySelectorAll('.cx-sel-btn').forEach(b=>{
+    b.style.border='1.5px solid var(--border)'
+    b.style.background='rgba(255,255,255,.04)'
+  })
+  const colors={C1:'rgba(34,197,94,.2)',C2:'rgba(234,179,8,.2)',C3:'rgba(239,68,68,.2)'}
+  const borders={C1:'rgba(34,197,94,.4)',C2:'rgba(234,179,8,.4)',C3:'rgba(239,68,68,.4)'}
+  btn.style.background=colors[cx]||'rgba(255,255,255,.08)'
+  btn.style.border='1.5px solid '+(borders[cx]||'var(--border)')
+  propState.cx=cx
+  calcProp()
+}
+
+function resetIncluido(){
+  g('pe-incluido').value=getInclusoDefault(propState.pkg).join('\n')
+  calcProp()
+}
+
+function calcProp(){
+  const baseVals={FOCUS:Number(g('cfg-focus').value)||499, ROUTE:Number(g('cfg-route').value)||599, SOAR:Number(g('cfg-soar').value)||799}
+  const sessoes=Number(g('pe-sessoes').value)||0
+  const valSessao=baseVals[propState.pkg]||499
+  const subSessoes=valSessao*sessoes
+  const addCv=Number(g('cfg-cv').value)||0
+  const addLi=Number(g('cfg-li').value)||0
+  const addOutros=Number(g('cfg-outros').value)||0
+  const bruto=subSessoes+addCv+addLi+addOutros
+  const descPct=Math.min(50,Math.max(0,Number(g('pe-desc').value)||0))
+  const descVal=Math.round(bruto*descPct/100)
+  const final=bruto-descVal
+
+  const rows=[]
+  if(sessoes>0)rows.push({l:sessoes+'× sessão '+propState.pkg+' ('+brl(valSessao)+'/h)',v:brl(subSessoes)})
+  if(addCv>0)rows.push({l:'Currículo',v:brl(addCv)})
+  if(addLi>0)rows.push({l:'LinkedIn',v:brl(addLi)})
+  if(addOutros>0)rows.push({l:'Outros',v:brl(addOutros)})
+  if(descPct>0)rows.push({l:'Desconto ('+descPct+'%)',v:'− '+brl(descVal)})
+
+  g('prop-result-rows').innerHTML=rows.map(r=>`<div class="result-row"><span class="result-lbl">${r.l}</span><span class="result-val">${r.v}</span></div>`).join('')
+
+  const orig=g('prop-res-orig'), fin=g('prop-res-final')
+  if(descPct>0){orig.style.display='block';orig.textContent=brl(bruto)}else orig.style.display='none'
+  fin.textContent=brl(final)
+  g('prop-res-note').textContent=propState.pkg+' · '+brl(valSessao)+'/sessão · '+sessoes+' sessão'+(sessoes!==1?'ões':'')
+
+  const av=g('aviso-desc-prop')
+  if(descPct>0){av.style.display='block';av.textContent=descPct+'% de desconto aplicado: economia de '+brl(descVal)+'. Total: '+brl(final)+'.'}
+  else av.style.display='none'
+
+  propState._bruto=bruto; propState._descVal=descVal; propState._final=final; propState._valSessao=valSessao; propState._sessoes=sessoes
+}
+
+function atualizarPillProp(status){
+  const pill=g('prop-status-pill')
+  const map={rascunho:'pill-rascunho',em_revisao:'pill-em_revisao',aprovada:'pill-aprovada',enviada:'pill-enviada',fechada:'pill-fechada'}
+  const lbl={rascunho:'Rascunho',em_revisao:'Em revisão',aprovada:'Aprovada',enviada:'Enviada',fechada:'Fechada'}
+  pill.className='status-pill '+(map[status]||'pill-rascunho')
+  pill.textContent=lbl[status]||status
+  propState.status=status
+}
+
+function mudarStatusProp(status){
+  if(!status)return
+  g('prop-status-sel').value=''
+  atualizarPillProp(status)
+  if(propState.id)salvarProp(status,true)
+}
+
+async function salvarProp(forceStatus,silencioso){
+  const status=forceStatus||propState.status
+  const local=g('pe-local').value.split('/')
+  const proto=propState.id?null:'AZ-CPP-'+new Date().getFullYear()+String(new Date().getMonth()+1).padStart(2,'0')+'-'+Math.floor(Math.random()*90000+10000)
+
+  const payload={
+    ...(proto?{protocolo:proto}:{}),
+    request_id:propState.reqId, request_protocolo:propState.reqProto,
+    nome:g('pe-nome').value, email:g('pe-email').value,
+    whatsapp:g('pe-wa').value, linkedin_url:g('pe-li').value,
+    cidade:local[0]?.trim()||'', estado:local[1]?.trim()||'',
+    cargo_atual:g('pe-cargo').value,
+    pacote:propState.pkg, num_sessoes:Number(g('pe-sessoes').value)||0,
+    duracao_sessao:g('pe-duracao').value,
+    servicos:g('pe-servicos').value,
+    incluido:g('pe-incluido').value,
+    valor_base:propState._valSessao||0, valor_bruto:propState._bruto||0,
+    desconto_pct:Number(g('pe-desc').value)||0, desconto_valor:propState._descVal||0, bonus:g('pe-bonus')?.value||'',
+    valor_final:propState._final||0,
+    obs_proposta:g('pe-obs-prop').value, obs_interna:g('pe-obs-int').value,
+    status
+  }
+
+  let res
+  if(propState.id){res=await api('PATCH',`career_plan_proposals?id=eq.${propState.id}`,payload)}
+  else{res=await api('POST','career_plan_proposals',payload);if(Array.isArray(res)&&res[0]?.id){propState.id=res[0].id;g('prop-proto-titulo').textContent='Proposta: '+res[0].protocolo+' | Sol.: '+(propState.reqProto||'')}}
+  atualizarPillProp(status)
+  if(!silencioso)toast(status==='aprovada'?'Proposta aprovada!':'Rascunho salvo')
+}
+
+function imprimirProp(){
+  salvarProp(propState.status,true)
+  const html=gerarHTMLProp()
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'})
+  const url=URL.createObjectURL(blob)
+  const win=window.open(url,'_blank')
+  if(!win){const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),800)}
+  setTimeout(()=>URL.revokeObjectURL(url),120000)
+}
+
+function gerarHTMLProp(){
+  const nome=g('pe-nome').value||''
+  const email=g('pe-email').value||''
+  const wa=g('pe-wa').value||''
+  const li=g('pe-li').value||''
+  const local=g('pe-local').value||''
+  const cargo=g('pe-cargo').value||''
+  const area=g('pe-area')?.value||''
+  const senioridade=g('pe-senioridade')?.value||''
+  const segmento=g('pe-segmento')?.value||''
+  const experiencia=g('pe-experiencia')?.value||''
+  const escolaridade=g('pe-escolaridade')?.value||''
+  const idiomas=g('pe-idiomas')?.value||''
+  const objetivos=g('pe-objetivos')?.value||''
+  const prazoDesejado=g('pe-prazo')?.value||''
+  const atendimento=g('pe-atendimento')?.value||''
+  const suporte=g('pe-suporte')?.value||''
+  const contextoCliente=g('pe-contexto-cli')?.value||''
+  const prazoEntrega=g('pe-prazo-entrega')?.value||''
+  const bonus=g('pe-bonus')?.value||''
+  const pkg=propState.pkg||'FOCUS'
+  const sessoes=Number(g('pe-sessoes').value)||0
+  const dur=g('pe-duracao').value||'60min'
+  const servicos=g('pe-servicos').value||''
+  const incluido=g('pe-incluido').value||''
+  const obsProp=g('pe-obs-prop').value||''
+  const descPct=Number(g('pe-desc').value)||0
+  const bruto=propState._bruto||0
+  const final=propState._final||0
+  const descVal=propState._descVal||0
+  const valSessao=propState._valSessao||0
+
+  const brlF=v=>Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+  const dataHoje=()=>new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})
+  const data15=()=>{const d=new Date();d.setDate(d.getDate()+15);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}
+
+  const pkgInfo={FOCUS:{sub:'Entrega cirúrgica',desc:'Intervenção focada no que você realmente precisa, sem encher linguiça.'},ROUTE:{sub:'Estratégia + execução',desc:'Plano, acompanhamento e execução em ciclos estruturados.'},SOAR:{sub:'Processo completo',desc:'Programa completo de desenvolvimento, diagnóstico profundo e alta cadência.'}}
+  const incluidoItens=incluido.split('\n').filter(l=>l.trim())
+  const servicosItens=servicos.split('\n').filter(l=>l.trim())
+
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
+<title>Proposta Career Plan · ${nome} · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;1,400&family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--blue:#034C8B;--blue2:#3B82F6;--violet:#8B5CF6;--gm:linear-gradient(135deg,#034C8B 0%,#3B82F6 50%,#8B5CF6 100%);--gh:linear-gradient(135deg,#031D38 0%,#034C8B 40%,#3B82F6 75%,#8B5CF6 100%)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#f0f2f7;color:#222;font-size:13px}
+.no-print{max-width:860px;margin:0 auto 14px;background:var(--gh);border-radius:12px;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
+.no-print::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.np-inner{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%}
+.np-brand{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:18px;color:#fff}
+.np-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.np-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7)}
+.btn-print{background:#fff;color:var(--blue);border:none;border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.15);overflow:hidden}
+.p-hdr{background:var(--gh);padding:28px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;position:relative;overflow:hidden}
+.p-hdr::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90% 50%,rgba(139,92,246,.25) 0%,transparent 60%);pointer-events:none}
+.p-hdr-inner{position:relative;display:flex;justify-content:space-between;align-items:flex-start;width:100%}
+.p-hdr-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:3px}
+.p-hdr-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7);letter-spacing:.1em;text-transform:uppercase}
+.p-logo{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:24px;color:#fff}
+.p-logo-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.p-greet{background:#031D38;padding:20px 40px;position:relative;overflow:hidden}
+.p-greet::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.15) 0%,transparent 60%);pointer-events:none}
+.p-greet-name{position:relative;font-family:'Sora',sans-serif;font-size:26px;font-weight:800;color:rgba(255,255,255,.92);letter-spacing:-.4px}
+.p-greet-name span{color:#93C5FD}
+.p-body{padding:28px 40px 40px}
+.valid-bar{background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:8px 14px;margin-bottom:24px;display:flex;justify-content:space-between;font-size:10px;color:#7c6200}
+.pkg-badge{border-radius:12px;padding:16px 20px;margin-bottom:20px;color:#fff;background:var(--gh);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
+.pkg-badge::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.pkg-badge-inner{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%}
+.pkg-badge-name{font-family:'Sora',sans-serif;font-size:28px;font-weight:800}
+.pkg-badge-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(147,197,253,.8);margin-top:3px}
+.pkg-badge-desc{font-size:12px;color:rgba(255,255,255,.8);max-width:300px;line-height:1.5}
+.p-stitle{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);border-bottom:2px solid;border-image:linear-gradient(90deg,#034C8B,#8B5CF6) 1;padding-bottom:5px;margin-bottom:12px;margin-top:22px}
+.incluso-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px}
+.incluso-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:#166534;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:600}
+.incluso-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.incluso-item{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#166534;padding:3px 0}
+.p-inv-row{display:flex;justify-content:space-between;padding:8px 11px;border-bottom:1px solid #EDEDED;background:#fafafa}
+.p-inv-l{font-size:12px;color:#222}
+.p-inv-r{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#222}
+.p-inv-r.desc{color:var(--blue)}
+.p-total-bar{background:var(--gh);padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-end;position:relative;overflow:hidden}
+.p-total-bar::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.p-total-inner{position:relative;display:flex;justify-content:space-between;align-items:flex-end;width:100%}
+.p-total-l{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:#fff}
+.p-total-val{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.p-total-orig{font-size:11px;color:rgba(255,255,255,.4);text-decoration:line-through;text-align:right}
+.p-cond{font-size:11px;color:#333;padding:7px 0 7px 16px;border-bottom:1px solid #EDEDED;position:relative;line-height:1.65}
+.p-cond::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:900;font-size:14px;top:5px}
+.p-nao{background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:10px 14px;margin:12px 0 16px}
+.p-nao-title{font-family:'JetBrains Mono',monospace;font-size:8px;color:#991b1b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.p-nao-body{font-size:11px;color:#7f1d1d;line-height:1.75}
+.p-step{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #EDEDED;align-items:flex-start}
+.p-step-n{width:26px;height:26px;border-radius:50%;background:var(--gm);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px}
+.p-step-t{font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:#031D38;margin-bottom:2px}
+.p-step-d{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#778082;line-height:1.5}
+.p-sig{margin-top:24px;background:#031D38;border-radius:10px;padding:20px 24px;position:relative;overflow:hidden}
+.p-sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 90% 30%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.p-sig-inner{position:relative}
+.p-sig-txt{font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:5px}
+.p-sig-sub{font-family:'Space Grotesk',sans-serif;font-size:11px;color:rgba(220,235,255,.85);line-height:1.65;max-width:480px;margin-bottom:12px}
+.p-sig-det{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.75);letter-spacing:.05em}
+.desc-banner{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:7px;padding:10px 14px;font-size:12px;font-weight:700;color:#10b981;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+@media print{body{background:#fff!important}.no-print{display:none!important}.page{box-shadow:none!important;margin:0!important;width:100%!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}@page{size:A4;margin:8mm}}
+</style></head><body>
+<div class="no-print"><div class="np-inner">
+  <div class="np-brand">azumi <span class="np-rh">RH</span></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span class="np-hint">Ative "Gráficos de fundo" no Ctrl+P</span>
+    <button class="btn-print" onclick="window.print()">Salvar como PDF</button>
+  </div>
+</div></div>
+<div class="page">
+  <div class="p-hdr"><div class="p-hdr-inner">
+    <div><div class="p-hdr-title">Proposta Career Plan</div><div class="p-hdr-sub">Carreira Estratégica · Azumi RH</div></div>
+    <div class="p-logo">azumi <span class="p-logo-rh">RH</span></div>
+  </div></div>
+  <div class="p-greet">
+    <div class="p-greet-name">Olá, <span>${nome.split(' ')[0]||nome}</span>!</div>
+    ${cargo?`<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.65);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;position:relative">${cargo}</div>`:''}
+    ${area?`<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.38);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;position:relative">${area}</div>`:''  }
+  </div>
+  <div style="background:#fff;padding:12px 40px;border-bottom:1px solid #EDEDED">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px">
+      ${senioridade?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Senioridade</div><div style="font-size:11px;font-weight:600;color:#1a2533">${senioridade}</div></div>`:''}
+      ${segmento?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Segmento</div><div style="font-size:11px;font-weight:600;color:#1a2533">${segmento}</div></div>`:''}
+      ${experiencia?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Experiência</div><div style="font-size:11px;font-weight:600;color:#1a2533">${experiencia}</div></div>`:''}
+      ${escolaridade?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Escolaridade</div><div style="font-size:11px;font-weight:600;color:#1a2533">${escolaridade}</div></div>`:''}
+      ${idiomas?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Idiomas</div><div style="font-size:11px;font-weight:600;color:#1a2533">${idiomas}</div></div>`:''}
+      ${prazoDesejado?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Prazo desejado</div><div style="font-size:11px;font-weight:600;color:#1a2533">${prazoDesejado}</div></div>`:''}
+      ${atendimento?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Atendimento</div><div style="font-size:11px;font-weight:600;color:#1a2533">${atendimento}</div></div>`:''}
+      ${suporte?`<div style="padding:6px 9px;background:#fafbfc;border-radius:6px;border:1px solid #E8EDF2"><div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9EACB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Suporte</div><div style="font-size:11px;font-weight:600;color:#1a2533">${suporte}</div></div>`:''}
+    </div>
+    ${objetivos?`<div style="padding:7px 10px;background:#f4f7fc;border-radius:7px;border:1px solid #EDEDED;margin-bottom:5px"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#778082;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Objetivos do cliente</div><div style="font-size:11px;color:#222;line-height:1.6">${objetivos}</div></div>`:''}
+    ${contextoCliente?`<div style="padding:7px 10px;background:#eff6ff;border-radius:7px;border-left:3px solid #3B82F6"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#034C8B;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Contexto — palavras do cliente</div><div style="font-size:11px;color:#222;line-height:1.6;font-style:italic">"${contextoCliente}"</div></div>`:''}
+  </div>
+  <div class="p-body">
+    <div class="valid-bar">
+      <span>Emissão: <strong>${dataHoje()}</strong></span>
+      <span>Válida até: <strong>${data15()}</strong> — 15 dias</span>
+    </div>
+    <div class="pkg-badge"><div class="pkg-badge-inner">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${pkg==='FOCUS'?'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(147,197,253,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>':pkg==='ROUTE'?'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 10"/></svg>':'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>'}
+          <div class="pkg-badge-name">${pkg}</div>
+        </div>
+        <div class="pkg-badge-sub">${pkgInfo[pkg]?.sub||''}</div>
+      </div>
+      <div class="pkg-badge-desc">${pkgInfo[pkg]?.desc||''}</div>
+    </div></div>
+
+    ${incluidoItens.length?`
+    <div class="incluso-box">
+      <div class="incluso-title">O que está incluído</div>
+      <div class="incluso-grid">
+        ${incluidoItens.map(i=>`<div class="incluso-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><polyline points="20 6 9 17 4 12"/></svg>${i.trim()}</div>`).join('')}
+      </div>
+    </div>`:''}
+
+    ${propState.cx?`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="padding:8px 16px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:800;font-size:13px;${propState.cx==='C1'?'background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.25)':propState.cx==='C2'?'background:rgba(234,179,8,.1);color:#a16207;border:1px solid rgba(234,179,8,.25)':'background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.25)'}">
+        ${propState.cx} — ${propState.cx==='C1'?'Baixa complexidade':propState.cx==='C2'?'Média complexidade':'Alta complexidade'}
+      </div>
+      ${g('pe-cx-just')?.value?`<div style="font-size:11px;color:#555;font-style:italic">${g('pe-cx-just').value}</div>`:''}
+    </div>`:''}
+    ${obsProp?`<div class="p-stitle">Contexto</div><div style="font-size:12px;color:#444;line-height:1.75;background:#f8f9fb;border-left:3px solid var(--blue2);padding:11px 14px;border-radius:0 8px 8px 0;margin-bottom:16px">${obsProp.split('\n').join('<br>')}</div>`:''}
+
+    ${servicosItens.length?`<div class="p-stitle">Serviços contratados</div><div style="margin-bottom:16px">${servicosItens.map(s=>{
+      const n=s.trim()
+      const pdfCxMap={'Atualização de currículo':'C1','Currículo do zero':'C1','Currículo internacional':'C1','Otimização do LinkedIn':'C1','Pitch profissional':'C1','Reposicionamento no LinkedIn':'C2','Narrativa de transição':'C2','Repositório de projetos':'C2','Preparação para entrevista':'C2','Simulação de entrevista':'C2','Entrevista internacional':'C2','Negociação salarial':'C2','Networking e candidatura':'C2','Diagnóstico de carreira':'C3','Plano de carreira':'C3','Posicionamento e visibilidade':'C3'}
+      const cx=pdfCxMap[n]||''
+      const cxStyle=cx==='C1'?'background:rgba(34,197,94,.12);color:#16a34a;border:1px solid rgba(34,197,94,.25)':cx==='C2'?'background:rgba(234,179,8,.12);color:#a16207;border:1px solid rgba(234,179,8,.25)':cx==='C3'?'background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.25)':''
+      const cxBadge=cx?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:1px 6px;border-radius:100px;flex-shrink:0;${cxStyle}">${cx}</span>`:''
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #EDEDED;font-size:12px;color:#222">${cxBadge}<span>${n}</span></div>`
+    }).join('')}</div>`:''}
+
+    <div class="p-stitle">Investimento</div>
+    ${descPct>0?`<div class="desc-banner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Desconto especial de ${descPct}% aplicado — economia de ${brlF(descVal)}.</div>`:''}
+    ${bonus?`<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#166534;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;font-weight:700">Bônus incluído</div><div style="font-size:12px;color:#166534;font-weight:500">${bonus}</div></div></div>`:''}
+    ${sessoes>0?`<div class="p-inv-row"><span class="p-inv-l">${sessoes}× sessão ${pkg} — ${dur} cada</span><span class="p-inv-r">${brlF(valSessao*sessoes)}</span></div>`:''}
+    ${descPct>0?`<div class="p-inv-row"><span class="p-inv-l">Desconto (${descPct}%)</span><span class="p-inv-r desc">− ${brlF(descVal)}</span></div>`:''}
+    <div class="p-total-bar"><div class="p-total-inner">
+      <span class="p-total-l">INVESTIMENTO TOTAL</span>
+      <div>${descPct>0?`<div class="p-total-orig">${brlF(bruto)}</div>`:''}
+      <div class="p-total-val">${brlF(final)}</div></div>
+    </div></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#778082;padding:6px 12px;background:#fafafa;margin-bottom:${prazoEntrega?'6':'18'}px">${pkg} · ${sessoes} sessão${sessoes!==1?'ões':''} · 100% remoto</div>
+    ${prazoEntrega?`<div style="background:#e9f2ff;border:1px solid #bfdbfe;border-radius:7px;padding:8px 12px;margin-bottom:18px;font-size:11px;color:#034C8B"><strong>Prazo estimado de entrega:</strong> ${prazoEntrega}</div>`:''}
+
+    <div class="p-stitle">Condições Comerciais</div>
+    <div class="p-cond">Proposta válida por 15 dias a partir da data de emissão.</div>
+    <div class="p-cond">Condições válidas mediante aceite e assinatura de contrato entre as partes.</div>
+    <div class="p-cond"><strong>Formas de pagamento:</strong> à vista (com desconto conforme proposta) ou parcelado em até 5x via cartão de crédito. Parcelas em até 2x sem acréscimo. De 3x a 5x, os encargos da operadora são de responsabilidade do contratante.</div>
+    <div class="p-cond">O pagamento deve ser quitado antes do início do trabalho. Em caso de parcelamento, a primeira parcela equivale ao sinal de início.</div>
+    <div class="p-cond">Sessões têm validade dentro do período contratado e não são cumulativas entre períodos.</div>
+    <div class="p-cond">No-show ou cancelamento com menos de 24h de antecedência contabiliza a sessão como realizada.</div>
+    <div class="p-cond">Remarcações devem ser solicitadas com mínimo de 24h de antecedência.</div>
+    <div class="p-cond">A Azumi RH segue as diretrizes da LGPD, garantindo confidencialidade de todas as informações tratadas.</div>
+
+    <div class="p-nao">
+      <div class="p-nao-title">Não inclui nesta contratação</div>
+      <div class="p-nao-body">
+        Garantia de promoção, aumento salarial, recolocação ou qualquer resultado que dependa de fatores externos à atuação da Azumi RH.<br>
+        Execução feita pela Azumi no ambiente do cliente — a execução é sempre responsabilidade do cliente.<br>
+        Atendimento clínico, terapêutico ou de saúde mental.
+      </div>
+    </div>
+
+    <div class="p-stitle">Próximos Passos</div>
+    <div class="p-step"><div class="p-step-n">01</div><div><div class="p-step-t">Aprovação do investimento</div><div class="p-step-d">Confirmação desta proposta e alinhamento das condições e escopo.</div></div></div>
+    <div class="p-step"><div class="p-step-n">02</div><div><div class="p-step-t">Assinatura do contrato</div><div class="p-step-d">Formalização com definição das condições operacionais, prazos e formas de pagamento.</div></div></div>
+    <div class="p-step"><div class="p-step-n">03</div><div><div class="p-step-t">Pagamento e briefing</div><div class="p-step-d">Quitação e coleta das informações necessárias para início do trabalho.</div></div></div>
+    <div class="p-step"><div class="p-step-n">04</div><div><div class="p-step-t">Início da execução</div><div class="p-step-d">Início das sessões e entregas conforme cronograma acordado com o cliente.</div></div></div>
+
+    <div class="p-sig"><div class="p-sig-inner">
+      <div class="p-sig-txt">Proposta exclusiva para ${nome}.</div>
+      <div class="p-sig-sub">Elaborada com base nas informações fornecidas. Reprodução proibida. Direitos autorais reservados — Azumi RH.</div>
+      <div class="p-sig-det">Equipe Azumi RH · contato@azumirh.com.br · azumirh.com.br · +55 41 98835-0743</div>
+      <div class="p-sig-det" style="margin-top:3px">Proposta válida por 15 dias · Emissão: ${dataHoje()}</div>
+    </div></div>
+  </div>
+</div>
+</body></html>`
 }
 </script>
 </body>
