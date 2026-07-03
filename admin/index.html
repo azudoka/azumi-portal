@@ -397,6 +397,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 #prop-view .pkg-card-sub{color:#778082}
 #prop-view .status-pill.pill-rascunho{background:rgba(120,120,120,.12);color:#555}
 #prop-view .result-lbl{color:rgba(255,255,255,.7)}
+/* ── PROP-HRAAS-VIEW LIGHT THEME ── */
+#prop-hraas-view .nr1-card-w{background:#fff;border:1px solid #EDEDED;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(3,29,56,.05)}
+#prop-hraas-view .nr1-tab-content{background:#fff;border-radius:0 0 14px 14px;padding:18px;min-height:280px;box-shadow:0 4px 16px rgba(3,29,56,.07);margin-bottom:12px}
+#prop-hraas-view .nr1-text-input,#prop-hraas-view .nr1-text-area,#prop-hraas-view .nr1-sel{background:#fff;border:1.5px solid #EDEDED;color:#222}
+#prop-hraas-view .nr1-text-input:focus,#prop-hraas-view .nr1-text-area:focus,#prop-hraas-view .nr1-sel:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
 </style>
 </head>
 <body>
@@ -505,6 +510,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="nav-tab" onclick="abaAtiva('impulso',this)">Impulso</button>
     <button class="nav-tab" onclick="abaAtiva('diagorg',this)">Diag. Org.</button>
     <button class="nav-tab" onclick="abaAtiva('lideres',this)">Prog. Lideres</button>
+    <button class="nav-tab" onclick="abaAtiva('indicacao',this)">Indicações</button>
     <button class="nav-tab" onclick="abaAtiva('relatorios',this)">Relatorios</button>
     <button class="nav-tab" onclick="abaAtiva('analytics',this)">Analytics</button>
   </div>
@@ -548,6 +554,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div id="tab-lideres" class="tab-content">
       <div class="tab-header"><div class="tab-title">Programa de Lideres</div><div class="tab-count" id="count-lideres">0</div></div>
       <div id="cards-lideres" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
+    </div>
+    <div id="tab-indicacao" class="tab-content">
+      <div class="tab-header"><div class="tab-title">Indicações de Parceiros</div><div class="tab-count" id="count-indicacao">0</div></div>
+      <div id="cards-indicacao" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-relatorios" class="tab-content">
       <div class="tab-header"><div class="tab-title">Relatorios de Vagas</div></div>
@@ -1187,6 +1197,218 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
+<!-- HRAAS PROPOSTA VIEW -->
+<div id="prop-hraas-view" style="display:none;position:fixed;inset:0;background:#f0f2f7;z-index:50;overflow-y:auto">
+
+  <!-- BARRA SUPERIOR -->
+  <div style="background:#031D38;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.08)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-prop-action btn-back" onclick="voltarHraas()">← Voltar</button>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7);letter-spacing:.06em;text-transform:uppercase">CALCULADORA HRaaS · USO INTERNO</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-prop-action btn-back" onclick="limparHraas()">Limpar</button>
+      <button class="btn-prop-action btn-save" onclick="salvarHraasRascunho()">Salvar Rascunho</button>
+      <button class="btn-prop-action btn-approve" onclick="hraas_gerarProposta()">📄 Gerar Proposta</button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO DA CALCULADORA -->
+  <div style="background:#f0f2f7;padding:20px;min-height:calc(100vh - 60px)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1100px;margin:0 auto">
+
+      <!-- COLUNA ESQUERDA -->
+      <div>
+        <!-- ABAS -->
+        <div class="nr1-tabs">
+          <button class="nr1-tab active" id="hraas-tab-empresa" onclick="hraas_setTab('empresa')">EMPRESA</button>
+          <button class="nr1-tab" id="hraas-tab-frentes" onclick="hraas_setTab('frentes')">FRENTES</button>
+          <button class="nr1-tab" id="hraas-tab-contrato" onclick="hraas_setTab('contrato')">CONTRATO</button>
+        </div>
+        <div class="nr1-tab-content">
+
+          <!-- ABA EMPRESA -->
+          <div id="hraas-aba-empresa">
+            <div class="nr1-section-bar-wrap"><div class="nr1-section-bar"></div><div class="nr1-card-title">IDENTIFICAÇÃO</div></div>
+            <input class="nr1-text-input" id="hraas-empresa" placeholder="Nome da empresa" oninput="hraas_calcular()"/>
+            <input class="nr1-text-input" id="hraas-decisor" placeholder="Nome do decisor" oninput="hraas_calcular()"/>
+            <textarea class="nr1-text-area" id="hraas-obs" placeholder="Observações para a proposta..." oninput="hraas_calcular()"></textarea>
+
+            <div class="nr1-sec-title">DADOS DA EMPRESA</div>
+            <div class="nr1-sl-row">
+              <div class="nr1-sl-top"><span class="nr1-sl-lbl">Colaboradores</span><span class="nr1-sl-val" id="hraas-v-colab">30</span></div>
+              <input class="nr1-slider" type="range" id="hraas-sl-colab" min="10" max="300" value="30" oninput="hraas_calcular()"/>
+              <div class="nr1-sl-mm"><span>10</span><span>300</span></div>
+            </div>
+            <div class="nr1-sl-row">
+              <div class="nr1-sl-top"><span class="nr1-sl-lbl">Unidades / filiais</span><span class="nr1-sl-val" id="hraas-v-unid">1</span></div>
+              <input class="nr1-slider" type="range" id="hraas-sl-unid" min="1" max="6" value="1" oninput="hraas_calcular()"/>
+              <div class="nr1-sl-mm"><span>1</span><span>6</span></div>
+            </div>
+            <div class="nr1-sl-row">
+              <div class="nr1-sl-top"><span class="nr1-sl-lbl">Vagas por mês</span><span class="nr1-sl-val" id="hraas-v-vagas">1</span></div>
+              <input class="nr1-slider" type="range" id="hraas-sl-vagas" min="0" max="6" value="1" oninput="hraas_calcular()"/>
+              <div class="nr1-sl-mm"><span>0</span><span>6</span></div>
+            </div>
+
+            <span class="nr1-sel-lbl">Estado</span>
+            <select class="nr1-sel" id="hraas-estado" onchange="hraas_onEstado()"></select>
+            <span class="nr1-sel-lbl">Cidade</span>
+            <select class="nr1-sel" id="hraas-cidade" onchange="hraas_calcular()"></select>
+            <div id="hraas-mult-badge" style="display:none;font-family:'JetBrains Mono',monospace;font-size:9px;color:#3B82F6;background:#eff6ff;border-radius:6px;padding:4px 8px;margin-bottom:10px"></div>
+
+            <div class="nr1-sec-title">ADICIONAIS</div>
+            <div class="nr1-sl-row">
+              <div class="nr1-sl-top"><span class="nr1-sl-lbl">Vagas extras além do pacote</span><span class="nr1-sl-val" id="hraas-v-vagasX">0</span></div>
+              <input class="nr1-slider" type="range" id="hraas-sl-vagasX" min="0" max="5" value="0" oninput="hraas_calcular()"/>
+              <div class="nr1-sl-mm"><span>0</span><span>5</span></div>
+            </div>
+
+            <span class="nr1-sel-lbl">Visita presencial</span>
+            <select class="nr1-sel" id="hraas-visita" onchange="hraas_calcular()">
+              <option value="nenhuma">Sem visita presencial — remoto</option>
+              <option value="consultora_1x">Consultora — 1x/mês</option>
+              <option value="consultora_2x">Consultora — 2x/mês</option>
+              <option value="patricia_1x">Patrícia (fundadora) — 1x/mês</option>
+              <option value="patricia_2x">Patrícia (fundadora) — 2x/mês</option>
+            </select>
+
+            <div class="nr1-tog-row" onclick="hraas_togTog('treino')">
+              <span class="nr1-tog-lbl">Treinamento avulso no mês</span>
+              <div class="nr1-tog-track" id="hraas-tog-treino"><div class="nr1-tog-thumb"></div></div>
+            </div>
+
+            <div class="nr1-sec-title">RH INTERNO DO CLIENTE</div>
+            <div class="nr1-tog-row" onclick="hraas_togRhInterno()">
+              <span class="nr1-tog-lbl">Cliente tem RH interno?</span>
+              <div class="nr1-tog-track" id="hraas-tog-rh"><div class="nr1-tog-thumb"></div></div>
+            </div>
+            <div id="hraas-bloco-rh" style="display:none;margin-top:10px">
+              <span class="nr1-sel-lbl">Senioridade do RH</span>
+              <select class="nr1-sel" id="hraas-rh-sen" onchange="hraas_calcular()">
+                <option value="">Selecione</option>
+                <option value="assistente_junior">Assistente / Auxiliar — júnior</option>
+                <option value="analista_pleno">Analista pleno</option>
+                <option value="analista_senior">Analista sênior</option>
+                <option value="coord_gerente">Coordenador / Gerente</option>
+              </select>
+              <span class="nr1-sel-lbl">Como a Azumi vai atuar?</span>
+              <select class="nr1-sel" id="hraas-rh-atu" onchange="hraas_calcular()">
+                <option value="">Selecione</option>
+                <option value="gestao_direta">Demanda intensa — gestão de pessoas e tempo</option>
+                <option value="mentoria_dev">Mentoria / desenvolvimento</option>
+                <option value="parceria_estrategica">Co-construção estratégica</option>
+                <option value="supervisao">Supervisão e alinhamento estratégico</option>
+              </select>
+              <span class="nr1-sel-lbl">Abertura à parceria</span>
+              <select class="nr1-sel" id="hraas-rh-ab" onchange="hraas_calcular()">
+                <option value="">Selecione</option>
+                <option value="entusiasmada">Entusiasmada — quer crescer junto</option>
+                <option value="neutra">Neutra — ainda avaliando</option>
+                <option value="resistencia_leve">Resistência leve</option>
+                <option value="nao_sabe">Não sabe / não conversou</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ABA FRENTES -->
+          <div id="hraas-aba-frentes" style="display:none">
+            <div class="nr1-section-bar-wrap"><div class="nr1-section-bar"></div><div class="nr1-card-title">FRENTES DE ATUAÇÃO</div></div>
+            <p style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#778082;margin-bottom:14px;line-height:1.6">Selecione as frentes ativas para este cliente.</p>
+            <div id="hraas-fr-list" style="display:flex;flex-direction:column;gap:7px"></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#778082;margin-top:6px">C1 baixa · C2 média · C3 alta complexidade</div>
+          </div>
+
+          <!-- ABA CONTRATO -->
+          <div id="hraas-aba-contrato" style="display:none">
+            <div class="nr1-section-bar-wrap"><div class="nr1-section-bar"></div><div class="nr1-card-title">CONDIÇÕES DO CONTRATO</div></div>
+            <span class="nr1-sel-lbl">Prazo mínimo</span>
+            <div style="display:flex;gap:6px;margin-bottom:14px" id="hraas-btns-meses"></div>
+            <span class="nr1-sel-lbl">Implantação</span>
+            <div style="display:flex;gap:6px;margin-bottom:14px" id="hraas-btns-impl"></div>
+            <div class="nr1-tog-row" onclick="hraas_togTog('compliance')">
+              <div><span class="nr1-tog-lbl">Compliance / NRs obrigatórias</span><span style="font-size:10px;color:#778082;display:block">+R$1.800 na implantação</span></div>
+              <div class="nr1-tog-track" id="hraas-tog-compliance"><div class="nr1-tog-thumb"></div></div>
+            </div>
+            <div class="nr1-tog-row" onclick="hraas_togTog('historico')">
+              <div><span class="nr1-tog-lbl">Histórico desorganizado</span><span style="font-size:10px;color:#778082;display:block">+15% sobre implantação</span></div>
+              <div class="nr1-tog-track" id="hraas-tog-historico"><div class="nr1-tog-thumb"></div></div>
+            </div>
+            <div class="nr1-desc-box" style="margin-top:12px">
+              <div class="nr1-desc-title">🎁 Desconto especial</div>
+              <div class="nr1-desc-row">
+                <input class="nr1-desc-inp" type="number" id="hraas-desc" value="0" min="0" max="50" step="1" oninput="hraas_calcular()"/>
+                <span style="font-size:12px;color:#166534;font-family:'Space Grotesk',sans-serif">% sobre o total</span>
+              </div>
+              <div class="nr1-desc-note" id="hraas-desc-note"></div>
+            </div>
+            <div style="margin-top:12px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#778082;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;display:block">PACOTE MANUAL</span>
+              <div style="display:flex;gap:6px" id="hraas-btns-pkg"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA -->
+      <div>
+        <!-- BADGE DO PACOTE -->
+        <div class="nr1-res-box" id="hraas-pkg-badge" style="margin-bottom:12px;border-radius:12px;padding:16px 18px">
+          <div style="position:relative">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff" id="hraas-pkg-name">START</span>
+              <span id="hraas-pill-auto" style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(255,255,255,.18);color:#fff;border-radius:100px;padding:2px 8px">AUTO</span>
+              <span id="hraas-pill-destaque" style="display:none;font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(255,255,255,.25);color:#fff;border-radius:100px;padding:2px 8px">MAIS ESCOLHIDO</span>
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:rgba(255,255,255,.85)" id="hraas-pkg-info"></div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:rgba(255,255,255,.65);margin-top:3px" id="hraas-pkg-desc"></div>
+          </div>
+        </div>
+
+        <!-- ENQUADRAMENTO -->
+        <div class="nr1-card-w">
+          <div class="nr1-section-bar-wrap"><div class="nr1-section-bar"></div><div class="nr1-card-title">ENQUADRAMENTO</div></div>
+          <div id="hraas-checks"></div>
+        </div>
+
+        <!-- COMPOSIÇÃO -->
+        <div class="nr1-card-w">
+          <div class="nr1-section-bar-wrap"><div class="nr1-section-bar"></div><div class="nr1-card-title">COMPOSIÇÃO DO VALOR</div></div>
+          <div id="hraas-comp"></div>
+          <div class="nr1-total-sep">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#222">MENSALIDADE</span>
+              <span style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(135deg,#034C8B 0%,#3B82F6 50%,#8B5CF6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="hraas-t-mensal">R$ 0</span>
+            </div>
+            <div id="hraas-t-desc-row" style="display:none;justify-content:space-between">
+              <span style="font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:#92400e" id="hraas-t-desc-lbl"></span>
+              <span style="font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:#92400e" id="hraas-t-desc-val"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESUMO / PDF -->
+        <div class="nr1-res-box">
+          <div class="nr1-res-box-inner">
+            <div class="nr1-res-hdr">RESUMO DA PROPOSTA</div>
+            <div id="hraas-res-rows"></div>
+            <div class="nr1-res-total">
+              <span class="nr1-res-tl">MENSALIDADE</span>
+              <div>
+                <div class="nr1-res-orig" id="hraas-res-orig" style="display:none"></div>
+                <span class="nr1-res-tv" id="hraas-res-final">R$ 0</span>
+              </div>
+            </div>
+            <div class="nr1-res-note" id="hraas-res-note">Preencha os dados da empresa.</div>
+            <button class="nr1-btn-gerar" onclick="hraas_gerarProposta()">📄 VISUALIZAR E IMPRIMIR PROPOSTA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /prop-hraas-view -->
+
 <script>
 const SUPA_URL='https://yxtirmonrjmlasnrqwwl.supabase.co'
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4dGlybW9ucmptbGFzbnJxd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzAxNjAsImV4cCI6MjA4Njk0NjE2MH0.3jEvmlcjrOGLOf1kxjy3TURE2SQ6UMbiCUlDN_HAXb0'
@@ -1233,7 +1455,7 @@ function abaAtiva(aba,btn){
   document.getElementById('tab-'+aba).classList.add('active');btn.classList.add('active')
   if(aba==='analytics')carregarAnalytics()
 }
-async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico();carregarCultura();carregarGtm();carregarImpulso();carregarDiagOrg();carregarLideres()}
+async function carregarTudo(){carregarCareer();carregarVaga();carregarNr1();carregarTreinamento();carregarDiagnostico();carregarCultura();carregarGtm();carregarImpulso();carregarDiagOrg();carregarLideres();carregarIndicacoes()}
 function dt(s){return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
 
 // ── HELPERS ──────────────────────────────────────────────
@@ -1413,6 +1635,44 @@ async function carregarLideres(){
   )
 }
 
+// ── INDICAÇÕES ──────────────────────────────────────────────
+async function carregarIndicacoes(){
+  const cont=document.getElementById('cards-indicacao')
+  const {data,error}=await sb.from('indicacoes_parceiros').select('*').order('created_at',{ascending:false})
+  if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
+  document.getElementById('count-indicacao').textContent=data.length
+  if(!data.length){cont.innerHTML='<div class="empty">Nenhuma indicação.</div>';return}
+  cont.innerHTML=`
+    <div class="req-table-wrap">
+      <table class="req-table">
+        <thead><tr>
+          <th>Parceiro</th>
+          <th>Protocolo</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th>Indicado</th>
+          <th>Tipo</th>
+          <th>Serviços</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(r=>`
+            <tr onclick="abrirModal('indicacao',${JSON.stringify(r).replace(/"/g,'&quot;')})">
+              <td>
+                <div class="req-table-nome">${r.nome_parceiro||'—'}</div>
+                <div class="req-table-sub">${r.email_parceiro||''}</div>
+              </td>
+              <td><div class="req-table-proto">${r.protocolo||'—'}</div></td>
+              <td><div class="req-table-data">${r.created_at?new Date(r.created_at).toLocaleDateString('pt-BR'):'—'}</div></td>
+              <td><span class="chip ${STS_CLS[r.status]||'chip-novo'}">${STS_LBL[r.status]||r.status||'novo'}</span></td>
+              <td>${r.nome_indicado||'—'}<br><span style="font-size:10px;color:var(--ts)">${r.email_indicado||''}</span></td>
+              <td>${r.tipo_indicacao||'—'}</td>
+              <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${r.servicos||'—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`
+}
+
 // ── MODAL ──────────────────────────────────────────────
 let modalCtx={}
 
@@ -1449,18 +1709,19 @@ function renderModalBody(tipo,r){
   if(tipo==='impulso')return modalImpulso(r)
   if(tipo==='diagorg')return modalDiagOrg(r)
   if(tipo==='lideres')return modalLideres(r)
+  if(tipo==='indicacao')return modalIndicacao(r)
   return''
 }
 
 function renderModalFooter(tipo,r){
   const rid=r.id||''
-  const tbl={career:'career_plan_requests',vaga:'job_requests',nr1:'nr1_requests',treinamento:'training_requests',diagnostico:'diagnostico_requests',cultura:'cultura_requests',gtm:'gtm_requests',impulso:'impulso_requests',diagorg:'diag_org_requests',lideres:'lideres_requests'}
+  const tbl={career:'career_plan_requests',vaga:'job_requests',nr1:'nr1_requests',treinamento:'training_requests',diagnostico:'diagnostico_requests',cultura:'cultura_requests',gtm:'gtm_requests',impulso:'impulso_requests',diagorg:'diag_org_requests',lideres:'lideres_requests',indicacao:'indicacoes_parceiros'}
   const tabela=tbl[tipo]||''
   const nome=(r.empresa_nome||r.nome_empresa||r.empresa||r.nome||'').replace(/'/g,'')
   const wa=(r.whatsapp||'').toString().replace(/\D/g,'')
   return`${wa?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55${wa}')">WhatsApp</button>`:''}
     <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
-    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
+    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:tipo==='diagnostico'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirHraasProposta(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
     <select class="status-sel" onchange="atualizarStatusModal('${tabela}','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
     ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
     <button class="btn-sm btn-del" style="margin-left:auto" onclick="excluirModal('${tabela}','${rid}','${nome}','${tipo}')">Excluir</button>`
@@ -1470,7 +1731,7 @@ async function atualizarStatusModal(tabela,id,status,sel){
   if(!status)return;sel.value=''
   await sb.from(tabela).update({status}).eq('id',id);toast('Status atualizado')
   fecharModal(null,true)
-  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres}
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres,indicacoes_parceiros:carregarIndicacoes}
   if(m[tabela])m[tabela]()
 }
 
@@ -1478,7 +1739,7 @@ async function excluirModal(tabela,id,nome,tipo){
   if(!confirm('Excluir "'+nome+'"?'))return
   await sb.from(tabela).delete().eq('id',id);toast('Excluido')
   fecharModal(null,true)
-  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres}
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres,indicacoes_parceiros:carregarIndicacoes}
   if(m[tabela])m[tabela]()
 }
 
@@ -1911,11 +2172,39 @@ function modalLideres(r){
     </div>`
 }
 
+function modalIndicacao(r){
+  return`
+    <div class="modal-section-title">Dados do Parceiro</div>
+    <div class="modal-fields-grid">
+      ${campo('Nome',r.nome_parceiro)}
+      ${campo('E-mail',r.email_parceiro)}
+      ${campo('WhatsApp',r.whatsapp_parceiro)}
+      ${campo('Tipo',r.tipo_pessoa)}
+      ${campo('CPF/CNPJ',r.cpf_cnpj)}
+      ${campo('Razão Social',r.razao_social)}
+      ${campo('Dados Bancários',r.dados_bancarios,true)}
+    </div>
+    <div class="modal-section-title">Dados da Indicação</div>
+    <div class="modal-fields-grid">
+      ${campo('Tipo de indicação',r.tipo_indicacao)}
+      ${campo('Nome indicado',r.nome_indicado)}
+      ${campo('Contato na empresa',r.contato_empresa)}
+      ${campo('E-mail indicado',r.email_indicado)}
+      ${campo('WhatsApp indicado',r.whatsapp_indicado)}
+      ${campo('Serviços de interesse',r.servicos,true)}
+    </div>
+    <div class="modal-section-title">Informações Adicionais</div>
+    <div class="modal-fields-grid">
+      ${campo('Observações',r.observacoes,true)}
+      ${campo('Protocolo',r.protocolo)}
+    </div>`
+}
+
 // ── STATUS / DELETE ──────────────────────────────────────────────
 async function atualizarStatus(tabela,id,status,sel){
   if(!status)return;sel.value=''
   await sb.from(tabela).update({status}).eq('id',id);toast('Status atualizado')
-  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres}
+  const m={career_plan_requests:carregarCareer,job_requests:carregarVaga,nr1_requests:carregarNr1,training_requests:carregarTreinamento,diagnostico_requests:carregarDiagnostico,cultura_requests:carregarCultura,gtm_requests:carregarGtm,impulso_requests:carregarImpulso,diag_org_requests:carregarDiagOrg,lideres_requests:carregarLideres,indicacoes_parceiros:carregarIndicacoes}
   if(m[tabela])m[tabela]()
 }
 async function excluir(tabela,id,nome,reload){
@@ -3984,6 +4273,502 @@ body{font-family:'Space Grotesk',sans-serif;background:#f0f2f7;color:#222;font-s
   const win = window.open(url,'_blank')
   if(!win){ const w=window.open('','_blank'); w.document.write(html); w.document.close(); setTimeout(()=>w.print(),800) }
   setTimeout(()=>URL.revokeObjectURL(url),120000)
+}
+
+// ── HRAAS PROPOSTA ─────────────────────────────────────────────
+const HRAAS_PKGS={
+  START: {horas:15,maxColab:50,maxUnid:1,maxVagas:1,maxFrentes:2,sla:'48h úteis',reunioes:'1 reunião/mês',desc:'Para empresas iniciando a estruturação de RH.'},
+  ONGOING:{horas:25,maxColab:150,maxUnid:2,maxVagas:2,maxFrentes:3,sla:'24h úteis',reunioes:'2 reuniões/mês',desc:'Para empresas com demandas recorrentes de RH.',destaque:true},
+  GROWTH: {horas:40,maxColab:300,maxUnid:4,maxVagas:3,maxFrentes:5,sla:'12h úteis',reunioes:'Semanal com liderança',desc:'Para empresas em crescimento acelerado.'},
+};
+const HRAAS_FRENTES=[
+  {id:1,nome:'Recrutamento Estratégico',cx:'C2',peso:1.15,min:'START'},
+  {id:2,nome:'Onboarding Personalizado',cx:'C1',peso:1.00,min:'START'},
+  {id:3,nome:'Cultura Organizacional',cx:'C3',peso:1.30,min:'ONGOING'},
+  {id:4,nome:'Processos de RH',cx:'C2',peso:1.15,min:'START'},
+  {id:5,nome:'People Analytics',cx:'C2',peso:1.15,min:'ONGOING'},
+  {id:6,nome:'Clima e Engajamento',cx:'C2',peso:1.10,min:'ONGOING'},
+  {id:7,nome:'Ciclos de Performance',cx:'C3',peso:1.25,min:'ONGOING'},
+  {id:8,nome:'Compliance Trabalhista',cx:'C2',peso:1.15,min:'START'},
+];
+const HRAAS_PKG_ORDER={START:0,ONGOING:1,GROWTH:2};
+const HRAAS_REGIOES={
+  PR:{n:'Paraná',c:{'Curitiba':1.00,'S.J. Pinhais':0.97,'Maringá':0.95,'Londrina':0.95,'Ponta Grossa':0.90,'Cascavel':0.90,'Outras PR':0.88}},
+  SP:{n:'São Paulo',c:{'São Paulo (capital)':1.40,'Campinas':1.20,'Santos':1.15,'São José dos Campos':1.12,'Ribeirão Preto':1.10,'Outras SP':1.05}},
+  RJ:{n:'Rio de Janeiro',c:{'Rio de Janeiro (capital)':1.35,'Niterói':1.20,'Outras RJ':1.05}},
+  MG:{n:'Minas Gerais',c:{'Belo Horizonte':1.25,'Uberlândia':1.12,'Outras MG':1.00}},
+  SC:{n:'Santa Catarina',c:{'Florianópolis':1.10,'Joinville':1.05,'Outras SC':0.95}},
+  RS:{n:'Rio Grande do Sul',c:{'Porto Alegre':1.15,'Outras RS':0.92}},
+  DF:{n:'Distrito Federal',c:{'Brasília':1.30}},
+  GO:{n:'Goiás',c:{'Goiânia':1.10,'Outras GO':0.90}},
+  BA:{n:'Bahia',c:{'Salvador':1.10,'Outras BA':0.88}},
+  PE:{n:'Pernambuco',c:{'Recife':1.12,'Outras PE':0.88}},
+  CE:{n:'Ceará',c:{'Fortaleza':1.08,'Outras CE':0.88}},
+  ES:{n:'Espírito Santo',c:{'Vitória':1.10,'Outras ES':0.92}},
+  MT:{n:'Mato Grosso',c:{'Cuiabá':1.05,'Outras MT':0.88}},
+  MS:{n:'Mato Grosso do Sul',c:{'Campo Grande':1.05,'Outras MS':0.88}},
+  PA:{n:'Pará',c:{'Belém':1.05,'Outras PA':0.85}},
+  AM:{n:'Amazonas',c:{'Manaus':1.08,'Outras AM':0.85}},
+};
+
+let hraas_fSel=[1,2];
+let hraas_meses=5;
+let hraas_implRate=25;
+let hraas_forcado=null;
+let hraas_togs={treino:false,compliance:false,historico:false};
+let hraas_rhInterno=false;
+
+function hraas_brl(v){return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function hraas_r50(v){return Math.round(v/50)*50;}
+function hraas_gv(id){const el=document.getElementById(id);return el?el.value:'';}
+function hraas_num(id){return Number(hraas_gv(id))||0;}
+function hraas_autoPkg(c,u,v){return c<=50&&u<=1&&v<=1?'START':c<=150&&u<=2&&v<=2?'ONGOING':'GROWTH';}
+function hraas_multT(c,pk){
+  if(pk==='START')return 1+((c-10)/40)*0.30;
+  if(pk==='ONGOING')return 1+((c-51)/99)*0.35;
+  return 1+((c-151)/149)*0.45;
+}
+function hraas_multF(fs){return !fs.length?1:parseFloat(Math.max(1,fs.reduce((s,f)=>s+f.peso,0)/fs.length).toFixed(2));}
+function hraas_multR(){
+  const e=hraas_gv('hraas-estado'),c=hraas_gv('hraas-cidade');
+  return e&&c&&HRAAS_REGIOES[e]&&HRAAS_REGIOES[e].c[c]?HRAAS_REGIOES[e].c[c]:1.0;
+}
+function hraas_qtdVisitas(sel){if(!sel||sel==='nenhuma')return 0;return sel.includes('2x')?2:1;}
+function hraas_valorVisita(sel){if(!sel||sel==='nenhuma')return 0;return sel.includes('patricia')?480:380;}
+function hraas_labelVisita(sel){
+  if(!sel||sel==='nenhuma')return null;
+  const tipo=sel.includes('patricia')?'Patrícia (fundadora)':'Consultora de conta';
+  const freq=sel.includes('2x')?'2x/mês':'1x/mês';
+  return 'Visita presencial — '+tipo+' · '+freq;
+}
+function hraas_classeDesl(estado,cidade){
+  if(!estado||!cidade)return 'free';
+  if(estado!=='PR')return 'ext';
+  return['Curitiba','S.J. Pinhais','Pinhais'].includes(cidade)?'free':'paid';
+}
+
+function hraas_buildFrentes(){
+  const pkgKey=hraas_forcado||hraas_autoPkg(hraas_num('hraas-sl-colab'),hraas_num('hraas-sl-unid'),hraas_num('hraas-sl-vagas'));
+  const container=document.getElementById('hraas-fr-list');
+  if(!container)return;
+  container.innerHTML='';
+  HRAAS_FRENTES.forEach(f=>{
+    const avail=HRAAS_PKG_ORDER[f.min]<=HRAAS_PKG_ORDER[pkgKey];
+    const sel=hraas_fSel.includes(f.id);
+    const d=document.createElement('div');
+    d.style.cssText='border:1.5px solid '+(sel?'#034C8B':'#EDEDED')+';border-radius:10px;padding:9px 12px;cursor:pointer;background:'+(sel?'#e8f0fb':'#fff')+(avail?'':'opacity:.45;pointer-events:none;')+';transition:all .15s';
+    if(!avail)d.style.opacity='0.45';
+    d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:600;color:'+(sel?'#034C8B':'#222')+'">'+f.nome+'</span><span style="font-size:9px;font-weight:700;color:#fff;border-radius:100px;padding:2px 8px;background:'+(f.cx==='C1'?'#22c55e':f.cx==='C2'?'#f59e0b':'#ef4444')+'">'+f.cx+'</span></div>';
+    if(avail){d.onclick=()=>{if(hraas_fSel.includes(f.id)){hraas_fSel=hraas_fSel.filter(x=>x!==f.id);}else{hraas_fSel.push(f.id);}hraas_buildFrentes();hraas_calcular();};}
+    container.appendChild(d);
+  });
+}
+
+function hraas_setTab(t){
+  ['empresa','frentes','contrato'].forEach(x=>{
+    const aba=document.getElementById('hraas-aba-'+x);
+    const tab=document.getElementById('hraas-tab-'+x);
+    if(aba)aba.style.display=x===t?'block':'none';
+    if(tab)tab.className='nr1-tab'+(x===t?' active':'');
+  });
+  if(t==='frentes')hraas_buildFrentes();
+}
+
+function hraas_togTog(name){
+  hraas_togs[name]=!hraas_togs[name];
+  const el=document.getElementById('hraas-tog-'+name);
+  if(el){el.className='nr1-tog-track'+(hraas_togs[name]?' on':'');el.querySelector('.nr1-tog-thumb').style.left=hraas_togs[name]?'20px':'2px';}
+  hraas_calcular();
+}
+
+function hraas_togRhInterno(){
+  hraas_rhInterno=!hraas_rhInterno;
+  const track=document.getElementById('hraas-tog-rh');
+  const bloco=document.getElementById('hraas-bloco-rh');
+  if(track){track.className='nr1-tog-track'+(hraas_rhInterno?' on':'');track.querySelector('.nr1-tog-thumb').style.left=hraas_rhInterno?'20px':'2px';}
+  if(bloco)bloco.style.display=hraas_rhInterno?'block':'none';
+  hraas_calcular();
+}
+
+function hraas_onEstado(){
+  const e=hraas_gv('hraas-estado');
+  const sel=document.getElementById('hraas-cidade');
+  if(!sel)return;
+  sel.innerHTML='<option value="">Selecione a cidade</option>';
+  if(e&&HRAAS_REGIOES[e]){
+    Object.keys(HRAAS_REGIOES[e].c).forEach(c=>{
+      const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);
+    });
+  }
+  hraas_calcular();
+}
+
+function hraas_calcular(){
+  const colab=hraas_num('hraas-sl-colab'),unid=hraas_num('hraas-sl-unid'),vagas=hraas_num('hraas-sl-vagas'),vagasX=hraas_num('hraas-sl-vagasX');
+  const vColab=document.getElementById('hraas-v-colab');if(vColab)vColab.textContent=colab+' pessoas';
+  const vUnid=document.getElementById('hraas-v-unid');if(vUnid)vUnid.textContent=unid+' un.';
+  const vVagas=document.getElementById('hraas-v-vagas');if(vVagas)vVagas.textContent=vagas+' vagas';
+  const vVagasX=document.getElementById('hraas-v-vagasX');if(vVagasX)vVagasX.textContent=vagasX+' vagas';
+
+  const pkgKey=hraas_forcado||hraas_autoPkg(colab,unid,vagas);
+  const pk=HRAAS_PKGS[pkgKey];
+  const mR=hraas_multR();
+  const cidade=hraas_gv('hraas-cidade'),estado=hraas_gv('hraas-estado');
+  const mb=document.getElementById('hraas-mult-badge');
+  if(mb&&cidade){mb.style.display='inline-block';mb.textContent='Multiplicador regional: '+mR.toFixed(2)+'x';}
+  else if(mb)mb.style.display='none';
+
+  const pn=document.getElementById('hraas-pkg-name');if(pn)pn.textContent=pkgKey;
+  const pd=document.getElementById('hraas-pill-destaque');if(pd)pd.style.display=pk.destaque?'inline':'none';
+  const pa=document.getElementById('hraas-pill-auto');if(pa)pa.style.display=hraas_forcado?'none':'inline';
+  const pi=document.getElementById('hraas-pkg-info');if(pi)pi.textContent=pk.horas+'h/mês · SLA '+pk.sla+' · '+pk.reunioes;
+  const pdesc=document.getElementById('hraas-pkg-desc');if(pdesc)pdesc.textContent=pk.desc;
+
+  const fObj=hraas_fSel.map(id=>HRAAS_FRENTES.find(f=>f.id===id)).filter(Boolean).filter(f=>HRAAS_PKG_ORDER[f.min]<=HRAAS_PKG_ORDER[pkgKey]);
+  const mT=hraas_multT(colab,pkgKey);
+  const mF=hraas_multF(fObj);
+
+  const BASE_PKGS={START:2800,ONGOING:5200,GROWTH:9500};
+  const base=BASE_PKGS[pkgKey];
+  const mensal=hraas_r50(base*mT*mR*mF);
+
+  const selVisita=hraas_gv('hraas-visita');
+  const nVisitas=hraas_qtdVisitas(selVisita);
+  const vVisita=hraas_valorVisita(selVisita);
+  const classeDesl=hraas_classeDesl(estado,cidade);
+  const totalVisita=nVisitas*vVisita;
+  const totalDesl=classeDesl==='paid'?nVisitas*80:0;
+  const vagaExtraVal=vagasX*420;
+  const treinoVal=hraas_togs.treino?1400:0;
+  const totalExtras=totalVisita+totalDesl+vagaExtraVal+treinoVal;
+  const totalMensal=mensal+totalExtras;
+
+  const totalContrato=totalMensal*hraas_meses;
+  const implBase=hraas_implRate>0?hraas_r50(totalContrato*hraas_implRate/100):0;
+  const implHistorico=hraas_togs.historico&&hraas_implRate>0?hraas_r50(implBase*0.15):0;
+  const implCompliance=hraas_togs.compliance?1800:0;
+  const implantacao=implBase+implHistorico+implCompliance;
+  const totalGeral=totalContrato+implantacao;
+
+  const desconto=Math.min(50,Math.max(0,hraas_num('hraas-desc')));
+  const vD=desconto>0?{
+    mensal:hraas_r50(totalMensal*(1-desconto/100)),
+    contrato:hraas_r50(totalContrato*(1-desconto/100)),
+    impl:hraas_implRate>0?hraas_r50(implantacao*(1-desconto/100)):0,
+    total:hraas_r50(totalGeral*(1-desconto/100))
+  }:{mensal:totalMensal,contrato:totalContrato,impl:implantacao,total:totalGeral};
+
+  const dn=document.getElementById('hraas-desc-note');
+  if(dn){if(desconto>0){dn.textContent='Economia: '+hraas_brl(hraas_r50(totalGeral*desconto/100));}else dn.textContent='';}
+
+  const chks=document.getElementById('hraas-checks');
+  if(chks)chks.innerHTML=[
+    {l:'Colaboradores',cur:colab,lim:'até '+pk.maxColab,ok:colab<=pk.maxColab},
+    {l:'Unidades',cur:unid,lim:'até '+pk.maxUnid,ok:unid<=pk.maxUnid},
+    {l:'Vagas/mês',cur:vagas,lim:'até '+pk.maxVagas,ok:vagas<=pk.maxVagas},
+    {l:'Frentes ativas',cur:fObj.length,lim:'até '+pk.maxFrentes,ok:fObj.length<=pk.maxFrentes},
+  ].map(c=>'<div class="nr1-chk-row"><span class="nr1-chk-lbl">'+c.l+'</span><div style="display:flex;gap:6px;align-items:center"><span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:#ccc">'+c.lim+'</span><span>'+(c.ok?'✅':'⚠️')+'</span><span style="font-family:\'Sora\',sans-serif;font-size:12px;font-weight:700;color:'+(c.ok?'#034C8B':'#ef4444')+'">'+c.cur+'</span></div></div>').join('');
+
+  const compEl=document.getElementById('hraas-comp');
+  if(compEl)compEl.innerHTML=[
+    {l:'Base do pacote',v:hraas_brl(base)},
+    {l:'× tamanho ('+colab+' pessoas)',v:mT.toFixed(2)+'x',c:'#034C8B'},
+    {l:'× região ('+(cidade||estado||'—')+')',v:mR.toFixed(2)+'x',c:'#034C8B'},
+    {l:'× frentes',v:mF+'x',c:'#034C8B'},
+    ...(totalVisita>0?[{l:'+ Visita ('+hraas_labelVisita(selVisita)+')',v:hraas_brl(totalVisita),c:'#778082'}]:[]),
+    ...(totalDesl>0?[{l:'+ Deslocamento',v:hraas_brl(totalDesl),c:'#778082'}]:[]),
+    ...(vagaExtraVal>0?[{l:'+ '+vagasX+' vaga(s) extra',v:hraas_brl(vagaExtraVal),c:'#778082'}]:[]),
+    ...(treinoVal>0?[{l:'+ Treinamento avulso',v:hraas_brl(treinoVal),c:'#778082'}]:[]),
+  ].map(r=>'<div class="nr1-comp-row"><span class="nr1-comp-l">'+r.l+'</span><span class="nr1-comp-v" style="color:'+(r.c||'#222')+'">'+r.v+'</span></div>').join('');
+
+  const tMensal=document.getElementById('hraas-t-mensal');if(tMensal)tMensal.textContent=hraas_brl(totalMensal);
+  const tdr=document.getElementById('hraas-t-desc-row');
+  if(tdr){if(desconto>0){tdr.style.display='flex';const tl=document.getElementById('hraas-t-desc-lbl');const tv=document.getElementById('hraas-t-desc-val');if(tl)tl.textContent='COM '+desconto+'% DESCONTO';if(tv)tv.textContent=hraas_brl(vD.mensal);}else tdr.style.display='none';}
+
+  const resRows=document.getElementById('hraas-res-rows');
+  if(resRows)resRows.innerHTML=[
+    {l:'Total geral ('+hraas_meses+'x'+(hraas_implRate>0?' + impl.':'')+')',v:hraas_brl(totalGeral),d:desconto>0?hraas_brl(vD.total):null},
+    {l:'Total contrato ('+hraas_meses+' meses)',v:hraas_brl(totalContrato),d:desconto>0?hraas_brl(vD.contrato):null},
+    ...(hraas_implRate>0?[{l:'Implantação (base '+hraas_implRate+'%)',v:hraas_brl(implBase),d:null}]:[]),
+    ...(hraas_togs.historico&&hraas_implRate>0?[{l:'  + Histórico desorg.',v:hraas_brl(implHistorico),d:null}]:[]),
+    ...(hraas_togs.compliance?[{l:'  + Compliance/NRs',v:hraas_brl(implCompliance),d:null}]:[]),
+  ].map(r=>'<div class="nr1-res-row"><span class="nr1-res-lbl">'+r.l+'</span><div class="nr1-res-val">'+(r.d?'<div class="nr1-res-orig">'+r.v+'</div>':'')+' '+(r.d||r.v)+'</div></div>').join('');
+
+  const ro=document.getElementById('hraas-res-orig');if(ro){if(desconto>0){ro.style.display='block';ro.textContent=hraas_brl(totalMensal);}else ro.style.display='none';}
+  const rf=document.getElementById('hraas-res-final');if(rf)rf.textContent=hraas_brl(vD.mensal);
+  const rn=document.getElementById('hraas-res-note');if(rn)rn.textContent=hraas_implRate>0?'Assinatura: '+hraas_brl(vD.impl)+' · '+hraas_meses+'x '+hraas_brl(vD.mensal)+'/mês':hraas_meses+'x '+hraas_brl(vD.mensal)+'/mês · Sem implantação';
+
+  window._hraas={pkgKey,pk,colab,unid,vagas,cidade,estado,fObj,
+    totalMensal,totalContrato,implantacao,implBase,implHistorico,implCompliance,
+    totalGeral,hraas_meses,hraas_implRate,desconto,vD,
+    empresa:hraas_gv('hraas-empresa'),decisor:hraas_gv('hraas-decisor'),obs:hraas_gv('hraas-obs'),
+    mT,mR,mF,base,selVisita,nVisitas,totalVisita,totalDesl,classeDesl};
+}
+
+function abrirHraasProposta(r){
+  if(typeof r==='string')r=JSON.parse(r.replace(/&quot;/g,'"'));
+  hraas_fSel=[1,2];hraas_meses=5;hraas_implRate=25;hraas_forcado=null;
+  hraas_togs={treino:false,compliance:false,historico:false};hraas_rhInterno=false;
+
+  const emp=document.getElementById('hraas-empresa');if(emp)emp.value=r.empresa_nome||r.empresa||'';
+  const dec=document.getElementById('hraas-decisor');if(dec)dec.value=r.decisor_nome||r.responsavel||'';
+  const obs=document.getElementById('hraas-obs');if(obs)obs.value=r.observacoes||'';
+
+  const colab=parseInt(r.num_colaboradores)||25;
+  const slColab=document.getElementById('hraas-sl-colab');if(slColab)slColab.value=Math.min(300,Math.max(10,colab));
+
+  const unid=parseInt(r.num_unidades)||1;
+  const slUnid=document.getElementById('hraas-sl-unid');if(slUnid)slUnid.value=Math.min(6,Math.max(1,unid));
+
+  const vagas=parseInt(r.vagas_mes)||1;
+  const slVagas=document.getElementById('hraas-sl-vagas');if(slVagas)slVagas.value=Math.min(6,Math.max(0,vagas));
+
+  const selEstado=document.getElementById('hraas-estado');
+  if(selEstado&&!selEstado.options.length){
+    Object.entries(HRAAS_REGIOES).sort((a,b)=>a[1].n.localeCompare(b[1].n)).forEach(([k,v])=>{
+      const o=document.createElement('option');o.value=k;o.textContent=v.n;selEstado.appendChild(o);
+    });
+  }
+  if(selEstado&&r.estado&&HRAAS_REGIOES[r.estado]){
+    selEstado.value=r.estado;hraas_onEstado();
+    setTimeout(()=>{
+      const selCidade=document.getElementById('hraas-cidade');
+      if(selCidade&&r.cidade){
+        Array.from(selCidade.options).forEach(o=>{if(o.text.toLowerCase().includes((r.cidade||'').toLowerCase()))selCidade.value=o.value;});
+      }
+      hraas_calcular();
+    },50);
+  } else {
+    if(selEstado){selEstado.value='PR';hraas_onEstado();}
+    setTimeout(()=>{
+      const selCidade=document.getElementById('hraas-cidade');
+      if(selCidade)selCidade.value='Curitiba';
+      hraas_calcular();
+    },50);
+  }
+
+  if(r.frentes){
+    const frentesStr=r.frentes.toLowerCase();
+    hraas_fSel=[];
+    HRAAS_FRENTES.forEach(f=>{if(frentesStr.includes(f.nome.toLowerCase().split(' ')[0].toLowerCase()))hraas_fSel.push(f.id);});
+    if(!hraas_fSel.length)hraas_fSel=[1,2];
+  }
+
+  if(r.rh_atual){
+    hraas_rhInterno=true;
+    const track=document.getElementById('hraas-tog-rh');
+    const bloco=document.getElementById('hraas-bloco-rh');
+    if(track){track.className='nr1-tog-track on';track.querySelector('.nr1-tog-thumb').style.left='20px';}
+    if(bloco)bloco.style.display='block';
+    if(r.rh_senioridade){const el=document.getElementById('hraas-rh-sen');if(el)el.value=r.rh_senioridade;}
+    if(r.rh_necessidade){const el=document.getElementById('hraas-rh-atu');if(el)el.value=r.rh_necessidade||'';}
+    if(r.rh_abertura){const el=document.getElementById('hraas-rh-ab');if(el)el.value=r.rh_abertura||'';}
+  }
+
+  const bm=document.getElementById('hraas-btns-meses');
+  if(bm&&!bm.children.length){
+    [5,6,12].forEach(m=>{
+      const b=document.createElement('button');
+      b.style.cssText='flex:1;padding:8px 4px;font-size:10px;font-weight:600;border:1.5px solid #EDEDED;border-radius:100px;cursor:pointer;background:'+(m===5?'linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)':'#fff')+';color:'+(m===5?'#fff':'#778082')+';font-family:\'Space Grotesk\',sans-serif;margin-right:4px';
+      b.textContent=m+'m'+(m===5?' ★':'');
+      b.onclick=()=>{hraas_meses=m;bm.querySelectorAll('button').forEach(x=>{x.style.background='#fff';x.style.color='#778082';});b.style.background='linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)';b.style.color='#fff';hraas_calcular();};
+      bm.appendChild(b);
+    });
+  }
+  const bi=document.getElementById('hraas-btns-impl');
+  if(bi&&!bi.children.length){
+    [{label:'S/ IMPL',rate:0},{label:'20%',rate:20},{label:'25% ★',rate:25},{label:'30%',rate:30}].forEach(op=>{
+      const b=document.createElement('button');
+      b.style.cssText='flex:1;padding:8px 4px;font-size:10px;font-weight:600;border:1.5px solid #EDEDED;border-radius:100px;cursor:pointer;background:'+(op.rate===25?'linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)':'#fff')+';color:'+(op.rate===25?'#fff':'#778082')+';font-family:\'Space Grotesk\',sans-serif;margin-right:4px';
+      b.textContent=op.label;
+      b.onclick=()=>{hraas_implRate=op.rate;bi.querySelectorAll('button').forEach(x=>{x.style.background='#fff';x.style.color='#778082';});b.style.background='linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)';b.style.color='#fff';hraas_calcular();};
+      bi.appendChild(b);
+    });
+  }
+  const bp=document.getElementById('hraas-btns-pkg');
+  if(bp&&!bp.children.length){
+    [null,'START','ONGOING','GROWTH'].forEach(op=>{
+      const b=document.createElement('button');
+      b.style.cssText='flex:1;padding:6px 2px;font-size:9px;font-weight:600;border:1.5px solid #EDEDED;border-radius:100px;cursor:pointer;background:'+(op===null?'linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)':'#fff')+';color:'+(op===null?'#fff':'#778082')+';font-family:\'JetBrains Mono\',monospace;margin-right:4px';
+      b.textContent=op||'AUTO';
+      b.onclick=()=>{hraas_forcado=op;bp.querySelectorAll('button').forEach(x=>{x.style.background='#fff';x.style.color='#778082';});b.style.background='linear-gradient(135deg,#034C8B,#3B82F6,#8B5CF6)';b.style.color='#fff';hraas_calcular();};
+      bp.appendChild(b);
+    });
+  }
+
+  document.getElementById('admin-page').style.display='none';
+  document.getElementById('prop-hraas-view').style.display='block';
+  window.scrollTo(0,0);
+  hraas_buildFrentes();
+  hraas_calcular();
+}
+
+function voltarHraas(){
+  document.getElementById('prop-hraas-view').style.display='none';
+  document.getElementById('admin-page').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function limparHraas(){
+  hraas_fSel=[1,2];hraas_meses=5;hraas_implRate=25;hraas_forcado=null;
+  hraas_togs={treino:false,compliance:false,historico:false};hraas_rhInterno=false;
+  ['hraas-empresa','hraas-decisor','hraas-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['hraas-sl-colab','hraas-sl-unid','hraas-sl-vagas','hraas-sl-vagasX'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.value=[30,1,1,0][i];});
+  ['treino','compliance','historico'].forEach(n=>{const el=document.getElementById('hraas-tog-'+n);if(el){el.className='nr1-tog-track';el.querySelector('.nr1-tog-thumb').style.left='2px';}});
+  const togRh=document.getElementById('hraas-tog-rh');if(togRh){togRh.className='nr1-tog-track';togRh.querySelector('.nr1-tog-thumb').style.left='2px';}
+  const blocoRh=document.getElementById('hraas-bloco-rh');if(blocoRh)blocoRh.style.display='none';
+  const desc=document.getElementById('hraas-desc');if(desc)desc.value=0;
+  hraas_buildFrentes();
+  hraas_calcular();
+  toast('Calculadora limpa');
+}
+
+async function salvarHraasRascunho(){
+  hraas_calcular();
+  const s=window._hraas;if(!s)return;
+  const proto='PROP-HRAAS-'+Date.now().toString().slice(-6);
+  const dados={
+    protocolo:proto,empresa:s.empresa,decisor:s.decisor,
+    pacote:s.pkgKey,num_colaboradores:s.colab,num_unidades:s.unid,
+    vagas_mes:s.vagas,regiao:s.cidade?s.cidade+'/'+s.estado:'',
+    frentes:s.fObj.map(f=>f.nome).join(' | '),
+    valor_mensal:s.vD.mensal,implantacao:s.vD.impl,
+    total_contrato:s.vD.contrato,total_geral:s.vD.total,
+    desconto_pct:s.desconto,meses:s.hraas_meses||hraas_meses,
+    obs:s.obs,status:'rascunho',emitido_por:sessao?sessao.nome:'—'
+  };
+  const {error}=await sb.from('hraas_proposals').insert(dados);
+  if(error){console.error(error);toast('Erro ao salvar — verifique a tabela hraas_proposals');return;}
+  toast('Rascunho salvo! Protocolo: '+proto);
+}
+
+function hraas_gerarProposta(){
+  hraas_calcular();
+  const s=window._hraas;if(!s)return;
+  const{pkgKey,pk,colab,unid,vagas,cidade,estado,fObj,
+    totalMensal,totalContrato,implantacao,implBase,implHistorico,implCompliance,
+    totalGeral,desconto,vD,empresa,decisor,obs,selVisita,nVisitas,classeDesl}=s;
+  const meses=hraas_meses,implRate=hraas_implRate;
+  const dataHoje=()=>new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const data15=()=>{const d=new Date();d.setDate(d.getDate()+15);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});};
+
+  const gi=[
+    empresa?['Empresa',empresa]:null,
+    decisor?['Responsável',decisor]:null,
+    ['Pacote',pkgKey],['Horas mensais',pk.horas+'h/mês'],
+    ['Colaboradores',colab+' pessoas'],['Unidades',unid+' unidade(s)'],
+    ['Vagas/mês',vagas+' vaga(s)'],['SLA',pk.sla],['Reuniões',pk.reunioes],
+    ['Região',cidade?cidade+' — '+estado:estado||'—'],['Prazo mínimo',meses+' meses'],
+    nVisitas>0?['Visita presencial',hraas_labelVisita(selVisita)]:null,
+    classeDesl==='ext'?['Deslocamento','Custos por conta da empresa']:null,
+  ].filter(Boolean);
+
+  const payTxt=implRate>0
+    ?'Na assinatura: '+hraas_brl(vD.impl)+' · '+meses+'x mensais de '+hraas_brl(vD.mensal)+'. Renovação automática após prazo mínimo.'
+    :meses+'x mensais de '+hraas_brl(vD.mensal)+'. Sem implantação. Renovação automática.';
+
+  const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
+<title>Proposta HRaaS${empresa?' — '+empresa:''} · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;1,400&family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--blue:#034C8B;--gm:linear-gradient(135deg,#034C8B 0%,#3B82F6 50%,#8B5CF6 100%);--gh:linear-gradient(135deg,#031D38 0%,#034C8B 40%,#3B82F6 75%,#8B5CF6 100%);--light:#EDEDED;--gray:#778082}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#f0f2f7;color:#222;font-size:13px}
+.no-print{max-width:860px;margin:0 auto 14px;background:var(--gh);border-radius:12px;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden}
+.no-print::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.np-inner{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%}
+.np-brand{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;color:#fff}
+.np-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.btn-print{background:#fff;color:var(--blue);border:none;border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.15);overflow:hidden}
+.p-hdr{background:var(--gh);padding:28px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;position:relative;overflow:hidden}
+.p-hdr::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90% 50%,rgba(139,92,246,.25) 0%,transparent 60%);pointer-events:none}
+.p-hdr-inner{position:relative;display:flex;justify-content:space-between;align-items:flex-start;width:100%}
+.p-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:3px}
+.p-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.8);letter-spacing:.1em;text-transform:uppercase}
+.p-logo{display:flex;align-items:center;gap:6px;font-family:'Poppins',sans-serif;font-weight:600;font-size:22px;color:#fff}
+.p-logo-rh{font-style:italic;font-weight:400;color:#93C5FD}
+.greet{background:#031D38;padding:18px 40px 16px;position:relative;overflow:hidden}
+.greet::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 80% at 90%,rgba(139,92,246,.15) 0%,transparent 60%);pointer-events:none}
+.gn{position:relative;font-family:'Sora',sans-serif;font-size:26px;font-weight:800;color:rgba(255,255,255,.92)}
+.gn span{color:#93C5FD}
+.gc{position:relative;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.6);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.p-body{padding:22px 40px 32px}
+.vb{background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:7px 12px;margin-bottom:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:10px;color:#7c6200}
+.p-st{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);border-bottom:2px solid;border-image:var(--gm) 1;padding-bottom:5px;margin:20px 0 10px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:14px}
+.pgi{padding:6px 9px;border-radius:6px;background:#fafafa;border:1px solid var(--light)}
+.pgl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--gray);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.pgv{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;color:#222}
+.fr-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--light)}
+.cx{font-size:9px;font-weight:700;color:#fff;border-radius:100px;padding:2px 8px;font-family:'JetBrains Mono',monospace}
+.cx-C1{background:#22c55e}.cx-C2{background:#f59e0b}.cx-C3{background:#ef4444}
+.inv-row{display:flex;justify-content:space-between;padding:7px 10px;border-bottom:1px solid var(--light);background:#fafafa}
+.inv-l{font-family:'Space Grotesk',sans-serif;font-size:11px;color:#222}
+.inv-r{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:#222;text-align:right}
+.inv-r.desc{color:var(--blue)}
+.total-bar{background:var(--gh);padding:11px 14px;position:relative;overflow:hidden}
+.total-bar::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 90%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.total-inner{position:relative;display:flex;justify-content:space-between;align-items:center}
+.total-l{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:#fff}
+.total-v{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff}
+.p-cond{font-family:'Space Grotesk',sans-serif;font-size:10.5px;color:#333;padding:6px 0 6px 16px;border-bottom:1px solid var(--light);position:relative;line-height:1.65}
+.p-cond::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:900;font-size:14px;top:4px}
+.p-sig{margin-top:22px;background:#031D38;border-radius:10px;padding:18px 22px;position:relative;overflow:hidden}
+.p-sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 90% 30%,rgba(139,92,246,.2) 0%,transparent 60%);pointer-events:none}
+.p-sig-name{position:relative;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.p-sig-det{position:relative;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(147,197,253,.7);letter-spacing:.04em}
+@media print{body{background:#fff!important}.no-print{display:none!important}.page{box-shadow:none!important;margin:0!important;width:100%!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}@page{size:A4;margin:8mm}}
+<\/style><\/head><body>
+<div class="no-print"><div class="np-inner">
+  <div class="np-brand">azumi <span class="np-rh">RH<\/span><\/div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(147,197,253,.7)">Ative "Gráficos de fundo" no Ctrl+P<\/span>
+    <button class="btn-print" onclick="window.print()">Salvar como PDF<\/button>
+  <\/div>
+<\/div><\/div>
+<div class="page">
+  <div class="p-hdr"><div class="p-hdr-inner">
+    <div><div class="p-title">Proposta Comercial<\/div><div class="p-sub">HR AS A SERVICE · PACOTE ${pkgKey}<\/div><\/div>
+    <div class="p-logo">azumi <span class="p-logo-rh">RH<\/span><\/div>
+  <\/div><\/div>
+  ${(empresa||decisor)?`<div class="greet"><div class="gn">Olá, <span>${decisor||empresa}<\/span>!<\/div>${empresa&&decisor?`<div class="gc">${empresa}<\/div>`:''}<\/div>`:''}
+  <div class="p-body">
+    <div class="vb"><span>📅 Emissão: <strong>${dataHoje()}<\/strong><\/span><span>⏳ Válida até: <strong>${data15()}<\/strong><\/span><\/div>
+    ${obs?`<div style="background:#f8f9fb;border-left:3px solid #3B82F6;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#034C8B;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Observações<\/div><div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#333;line-height:1.75">${obs.replace(/\n/g,'<br>')}<\/div><\/div>`:''}
+    <div class="p-st">Detalhes da Proposta<\/div>
+    <div class="pg">${gi.map((gi2,i)=>`<div class="pgi" style="background:${i%2===0?'#fafafa':'#fff'}"><div class="pgl">${gi2[0]}<\/div><div class="pgv">${gi2[1]}<\/div><\/div>`).join('')}<\/div>
+    ${fObj.length?`<div class="p-st">Frentes de Atuação<\/div>${fObj.map(f=>`<div class="fr-row"><span style="font-size:12px;color:#222">${f.nome}<\/span><span class="cx cx-${f.cx}">${f.cx}<\/span><\/div>`).join('')}`:''}
+    <div class="p-st">Investimento<\/div>
+    ${desconto>0?`<div style="background:#fef9f0;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;font-weight:700;color:#92400e">🎁 Desconto especial de ${desconto}% aplicado nesta proposta.<\/div>`:''}
+    <div class="inv-row"><div class="inv-l">Total contrato (${meses} meses)<\/div><div class="inv-r${desconto>0?' desc':''}">${hraas_brl(desconto>0?vD.contrato:totalContrato)}<\/div><\/div>
+    ${implRate>0?`<div class="inv-row"><div class="inv-l">Implantação (base ${implRate}%)<\/div><div class="inv-r">${hraas_brl(implBase)}<\/div><\/div>`:''}
+    ${hraas_togs.historico&&implRate>0?`<div class="inv-row"><div class="inv-l">  + Histórico desorganizado (+15%)<\/div><div class="inv-r">${hraas_brl(implHistorico)}<\/div><\/div>`:''}
+    ${hraas_togs.compliance?`<div class="inv-row"><div class="inv-l">  + Compliance \/ NRs obrigatórias<\/div><div class="inv-r">${hraas_brl(implCompliance)}<\/div><\/div>`:''}
+    ${implRate>0?`<div class="inv-row"><div class="inv-l">Total implantação<\/div><div class="inv-r${desconto>0?' desc':''}">${hraas_brl(desconto>0?vD.impl:implantacao)}<\/div><\/div>`:''}
+    <div class="inv-row"><div class="inv-l">Total geral<\/div><div class="inv-r${desconto>0?' desc':''}">${hraas_brl(desconto>0?vD.total:totalGeral)}<\/div><\/div>
+    <div class="total-bar"><div class="total-inner"><span class="total-l">MENSALIDADE<\/span><span class="total-v">${hraas_brl(vD.mensal)}<\/span><\/div><\/div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gray);padding:5px 10px;background:#fafafa;margin-bottom:16px">${payTxt}<\/div>
+    <div class="p-st">Condições Gerais<\/div>
+    <div class="p-cond">Renovação automática após prazo mínimo.<\/div>
+    <div class="p-cond">Rescisão antecipada: multa de 20% do valor remanescente + 30 dias de aviso prévio.<\/div>
+    <div class="p-cond">Atraso no pagamento: multa de 2% + juros de 1% ao mês.<\/div>
+    <div class="p-cond">Atraso superior a 20 dias: suspensão das entregas até regularização.<\/div>
+    <div class="p-cond">O valor de implantação não é reembolsável — cobre integração, estruturação de processos e configurações iniciais.<\/div>
+    <div class="p-cond">Horas e vagas são recursos mensais — não são cumulativos entre períodos.<\/div>
+    <div class="p-cond">Não inclui: folha de pagamento, eSocial, contencioso trabalhista.<\/div>
+    <div class="p-cond">Informações tratadas conforme a LGPD (Lei 13.709\/2018).<\/div>
+    <div class="p-sig"><div class="p-sig-name">Equipe Azumi RH<\/div><div class="p-sig-det">contato@azumirh.com.br · azumirh.com.br · +55 41 98835-0743<\/div><\/div>
+  <\/div>
+<\/div>
+<script>window.onload=function(){setTimeout(()=>window.print(),800)}<\/script>
+<\/body><\/html>`;
+
+  const blob2=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url2=URL.createObjectURL(blob2);
+  const win2=window.open(url2,'_blank');
+  if(!win2){const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),800);}
+  setTimeout(()=>URL.revokeObjectURL(url2),120000);
 }
 </script>
 </body>
