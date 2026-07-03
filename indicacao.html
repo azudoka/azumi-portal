@@ -49,9 +49,9 @@ main{position:relative;z-index:1;padding-top:64px}
 .field label{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:6px}
 .req{color:#ef4444;margin-left:2px;font-size:11px}
 .opt{color:rgba(255,255,255,.3);font-size:11px;margin-left:4px}
-.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.field input,.field select,.field textarea{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--tp);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.04)}
-.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6;white-space:pre-wrap}
 .field select option{background:#0a2540}
 .field.err input,.field.err select,.field.err textarea{border-color:rgba(239,68,68,.5)}
 .err-msg{font-size:11px;color:#ef4444;margin-top:4px;display:none}
@@ -494,7 +494,7 @@ async function enviar(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
-        subject:'['+protocolo+'] Nova Indicação — '+payload.nome_indicado,
+        subject:'['+protocolo+'] Nova Indicação — '+payload.nome_parceiro+' → '+payload.nome_indicado,
         html:'<h2>Nova Indicação — Programa de Indicações Azumi RH</h2>'
           +'<p><b>Protocolo:</b> '+protocolo+'</p>'
           +'<hr>'
@@ -521,6 +521,8 @@ async function enviar(){
     document.getElementById('accWrap').style.display='none'
     document.getElementById('progWrap').style.display='none'
     document.getElementById('submitWrap').style.display='none'
+    const heroEl=document.querySelector('.hero');if(heroEl)heroEl.style.display='none'
+    const infoBoxWrap=document.querySelector('.info-box-indicacao');if(infoBoxWrap&&infoBoxWrap.parentElement)infoBoxWrap.parentElement.style.display='none'
     const sEl=g('success');sEl.style.display='block';sEl.classList.add('active')
     const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
     g('ty-proto').textContent=protocolo
