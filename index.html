@@ -47,8 +47,12 @@ main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:108px 24p
 .card:hover .card-cta svg{transform:translateX(3px)}
 footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
 .social-icons{display:flex;justify-content:center;gap:16px;margin-top:18px}
-.social-icon{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:rgba(147,197,253,.6);text-decoration:none;transition:all .2s ease}
+.social-icon{position:relative;width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:rgba(147,197,253,.6);text-decoration:none;transition:all .2s ease}
 .social-icon:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#93C5FD;transform:translateY(-2px)}
+.social-icon::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(3,29,56,.95);color:#93C5FD;font-family:'JetBrains Mono',monospace;font-size:10px;white-space:nowrap;padding:5px 10px;border-radius:6px;border:1px solid rgba(59,130,246,.25);opacity:0;pointer-events:none;transition:opacity .2s}
+.social-icon:hover::after{opacity:1}
+.btn-indicacao{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:9px 20px;border:1px solid rgba(59,130,246,.35);border-radius:100px;background:rgba(59,130,246,.08);color:#93C5FD;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s}
+.btn-indicacao:hover{background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.6)}
 .bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .bg-icon{position:absolute;opacity:0;animation:floatIcon linear infinite;will-change:transform,opacity;color:rgba(59,130,246,.12)}
 @keyframes floatIcon{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(.8)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-120px) rotate(15deg) scale(1.05)}}
@@ -80,19 +84,23 @@ footer{text-align:center;padding:28px 24px;font-family:'JetBrains Mono',monospac
     <h1>Como podemos<br><span>te ajudar?</span></h1>
     <p>Selecione o serviço e preencha o formulário. Nossa equipe retorna em até 24 horas.</p>
     <div class="social-icons">
-      <a href="https://azumirh.com.br" target="_blank" class="social-icon" aria-label="Site Azumi RH">
+      <a href="https://azumirh.com.br" target="_blank" class="social-icon" aria-label="Site Azumi RH" data-tooltip="azumirh.com.br">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </a>
-      <a href="https://linkedin.com/company/azumirh" target="_blank" class="social-icon" aria-label="LinkedIn Azumi RH">
+      <a href="https://linkedin.com/company/azumirh" target="_blank" class="social-icon" aria-label="LinkedIn Azumi RH" data-tooltip="LinkedIn Azumi RH">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
       </a>
-      <a href="https://instagram.com/azumirh" target="_blank" class="social-icon" aria-label="Instagram Azumi RH">
+      <a href="https://instagram.com/azumirh" target="_blank" class="social-icon" aria-label="Instagram Azumi RH" data-tooltip="@azumirh">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <a href="https://wa.me/5541988350743" target="_blank" class="social-icon" aria-label="WhatsApp Azumi RH">
+      <a href="https://wa.me/5541988350743" target="_blank" class="social-icon" aria-label="WhatsApp Azumi RH" data-tooltip="(41) 98835-0743">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       </a>
     </div>
+    <a href="/indicacao" class="btn-indicacao">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Indique a Azumi e ganhe
+    </a>
   </div>
 
   <div class="section-label">Serviços B2B — Empresas</div>

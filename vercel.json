@@ -12,6 +12,7 @@
     { "source": "/gtm", "destination": "/gtm.html" },
     { "source": "/raiox", "destination": "/raiox.html" },
     { "source": "/admin", "destination": "/admin/index.html" },
-    { "source": "/politica-de-privacidade", "destination": "/politica-de-privacidade.html" }
+    { "source": "/politica-de-privacidade", "destination": "/politica-de-privacidade.html" },
+    { "source": "/indicacao", "destination": "/indicacao.html" }
   ]
 }
