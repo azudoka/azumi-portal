@@ -103,6 +103,12 @@ main{position:relative;z-index:1;padding-top:64px}
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(239,68,68,.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 20px;border-radius:8px;z-index:999;display:none;max-width:90vw;text-align:center}
 footer{text-align:center;padding:24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.05em;border-top:1px solid var(--border);position:relative;z-index:1}
+.info-box-indicacao{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:18px 22px;margin-bottom:24px;max-width:720px;width:100%}
+.info-box-indicacao .info-box-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#93C5FD;margin-bottom:12px}
+.info-box-indicacao ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.info-box-indicacao ul li{font-size:13px;color:rgba(255,255,255,.7);line-height:1.55;padding-left:14px;position:relative}
+.info-box-indicacao ul li::before{content:'·';position:absolute;left:0;color:#93C5FD;font-weight:700}
+.info-box-indicacao ul li strong{color:rgba(255,255,255,.9)}
 </style>
 <script src="/azumi-analytics.js"></script>
 <script src="/cookie-banner.js"></script>
@@ -130,8 +136,21 @@ footer{text-align:center;padding:24px;font-family:'JetBrains Mono',monospace;fon
 <main>
   <div class="hero">
     <div class="hero-badge">Parceiros · Indicações</div>
-    <h1><span>Programa de Indicações</span></h1>
-    <p>Indique empresas ou profissionais para a Azumi RH e ganhe por cada contrato fechado.</p>
+    <h1><span>Indique a Azumi e Ganhe</span></h1>
+    <p>Indique empresas ou profissionais. A Azumi fecha. Você GANHA!</p>
+    <p>Este é o canal oficial para registrar suas indicações à Azumi RH. Cada indicação enviada será avaliada com base nos critérios do programa. Caso a indicação feche contrato conosco, você recebe uma bonificação de acordo com o tipo e o valor do projeto!</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;padding:0 24px">
+  <div class="info-box-indicacao">
+    <div class="info-box-title">Informações Importantes</div>
+    <ul>
+      <li><strong>Validade:</strong> Só serão consideradas indicações feitas antes do primeiro contato da Azumi com a pessoa/empresa indicada.</li>
+      <li><strong>Quem pode indicar:</strong> Pessoas Jurídicas (mediante emissão de Nota Fiscal) e Pessoas Físicas (mediante emissão de Recibo de Pagamento Autônomo).</li>
+      <li><strong>Comissão:</strong> O valor da comissão varia conforme o tipo de contrato (projeto único ou recorrente).</li>
+      <li><strong>Acompanhamento:</strong> Você será informado por e-mail sobre a validação e o status da indicação.</li>
+    </ul>
+  </div>
   </div>
 
   <div class="prog-wrap" id="progWrap">
@@ -294,7 +313,7 @@ footer{text-align:center;padding:24px;font-family:'JetBrains Mono',monospace;fon
             <div class="lgpd-box" id="lgpd-box">
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none" id="lgpd-svg" style="display:none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <p>Li e concordo com as regras do Programa de Indicações da Azumi RH. <strong style="color:rgba(255,255,255,.75)">*</strong></p>
+            <p>Li e concordo com as regras do Programa de Indicações da Azumi RH. Declaro estar ciente de que: (1) meus dados serão usados exclusivamente para fins administrativos e de pagamento de bonificação; (2) só são válidas indicações registradas antes do primeiro contato comercial da Azumi com o indicado; (3) o pagamento ocorre em até 30 dias após assinatura do contrato pelo cliente indicado, mediante emissão de NF (PJ) ou RPA (PF); (4) a Azumi reserva-se o direito de recusar indicações em caso de conflito de interesses ou má-fé.</p>
           </div>
           <div class="err-msg" id="err-lgpd">Aceite os termos para enviar</div>
         </div>
