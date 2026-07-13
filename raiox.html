@@ -364,30 +364,41 @@ async function submeter(){
   const btn=document.getElementById('btn-sub')
   btn.disabled=true;btn.textContent='Enviando...'
   const protocolo=genProt()
-  const payload={
-    protocolo,empresa,responsavel,cargo:gv('cargo'),email,whatsapp:gv('whatsapp'),
-    segmento:gv('segmento'),cidade:gv('cidade'),estado:gv('estado'),
-    num_colaboradores:gv('num_colaboradores'),tem_rh:gv('tem_rh'),
-    score_lideranca:scaleVals['sc-lideranca']||null,
-    score_processos:scaleVals['sc-processos']||null,
-    score_clima:scaleVals['sc-clima']||null,
-    problemas:getChecked('problemas-grid'),
-    principal_desafio:gv('principal_desafio'),
-    momento_empresa:gv('momento_empresa'),
-    prazo:gv('prazo'),expectativa:gv('expectativa'),lgpd:true
+  const payloadFinal={
+    protocolo,
+    nome_responsavel:responsavel,
+    empresa,
+    cargo:gv('cargo'),
+    email,
+    whatsapp:gv('whatsapp'),
+    status:'novo',
+    payload:{
+      segmento:gv('segmento'),
+      cidade:gv('cidade'),estado:gv('estado'),
+      num_colaboradores:gv('num_colaboradores'),
+      tem_rh:gv('tem_rh'),
+      score_lideranca:scaleVals['sc-lideranca']||null,
+      score_processos:scaleVals['sc-processos']||null,
+      score_clima:scaleVals['sc-clima']||null,
+      problemas:getChecked('problemas-grid'),
+      principal_desafio:gv('principal_desafio'),
+      momento_empresa:gv('momento_empresa'),
+      prazo:gv('prazo'),expectativa:gv('expectativa'),
+    }
   }
+  const rp=payloadFinal.payload
   try{
-    await sb.from('raiox_requests').insert([payload])
+    await sb.from('raiox_requests').insert([payloadFinal])
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'[AZ-RAIOX] '+empresa+' — '+responsavel,html:`<h2>Novo Raio-X de Maturidade</h2>
 <p><b>Protocolo:</b> ${protocolo}</p>
-<p><b>Empresa:</b> ${empresa} | <b>Responsável:</b> ${responsavel} (${payload.cargo||'—'}) — ${email} / ${payload.whatsapp||'—'}</p>
-<p><b>Segmento:</b> ${payload.segmento||'—'} | <b>Cidade/UF:</b> ${payload.cidade||'—'}/${payload.estado||'—'}</p>
-<p><b>Colaboradores:</b> ${payload.num_colaboradores||'—'} | <b>Tem RH:</b> ${payload.tem_rh||'—'}</p>
-<p><b>Scores — Liderança:</b> ${payload.score_lideranca||'—'} | <b>Processos:</b> ${payload.score_processos||'—'} | <b>Clima:</b> ${payload.score_clima||'—'}</p>
-<p><b>Problemas:</b> ${(payload.problemas||[]).join(', ')||'—'}</p>
-<p><b>Principal desafio:</b> ${payload.principal_desafio||'—'}</p>
-<p><b>Momento da empresa:</b> ${payload.momento_empresa||'—'}</p>
-<p><b>Prazo:</b> ${payload.prazo||'—'} | <b>Expectativa:</b> ${payload.expectativa||'—'}</p>`})})
+<p><b>Empresa:</b> ${empresa} | <b>Responsável:</b> ${responsavel} (${payloadFinal.cargo||'—'}) — ${email} / ${payloadFinal.whatsapp||'—'}</p>
+<p><b>Segmento:</b> ${rp.segmento||'—'} | <b>Cidade/UF:</b> ${rp.cidade||'—'}/${rp.estado||'—'}</p>
+<p><b>Colaboradores:</b> ${rp.num_colaboradores||'—'} | <b>Tem RH:</b> ${rp.tem_rh||'—'}</p>
+<p><b>Scores — Liderança:</b> ${rp.score_lideranca||'—'} | <b>Processos:</b> ${rp.score_processos||'—'} | <b>Clima:</b> ${rp.score_clima||'—'}</p>
+<p><b>Problemas:</b> ${(rp.problemas||[]).join(', ')||'—'}</p>
+<p><b>Principal desafio:</b> ${rp.principal_desafio||'—'}</p>
+<p><b>Momento da empresa:</b> ${rp.momento_empresa||'—'}</p>
+<p><b>Prazo:</b> ${rp.prazo||'—'} | <b>Expectativa:</b> ${rp.expectativa||'—'}</p>`})})
   }catch(e){console.error(e)}
   document.getElementById('accWrap').style.display='none'
   document.querySelector('.prog-wrap').style.display='none'

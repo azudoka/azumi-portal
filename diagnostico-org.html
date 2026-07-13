@@ -586,46 +586,55 @@ async function enviar(){
   const btn=g('btn-sub');btn.disabled=true;btn.textContent='Enviando...'
   const protocolo=gerarProtocolo()
   const dados={
-    protocolo,empresa:g('empresa').value.trim(),responsavel:g('responsavel').value.trim(),cargo:g('cargo').value.trim(),
-    email:g('email').value.trim(),whatsapp:g('whatsapp').value.trim(),segmento:g('segmento').value,
-    cidade:g('cidade').value.trim(),estado:g('estado').value,
-    num_colaboradores:Number(g('num_colaboradores').value)||null,
-    num_unidades:Number(g('num_unidades').value)||1,
-    tem_rh_interno:!!toggleVals['rh'],rh_pessoas:g('rh_pessoas').value,rh_senioridade:g('rh_senioridade').value,
-    people_scores:{p1:scaleVals.p1,p2:scaleVals.p2,p3:scaleVals.p3,p4:scaleVals.p4},
-    people_problemas:checkVals('checks-people'),people_critico:g('people_critico').value.trim(),
-    process_existente:checkVals('checks-process'),process_maturidade:parseInt(g('process_maturidade').value)||null,
-    process_retrabalho:g('process_retrabalho').value.trim(),
-    performance_indicadores:checkVals('checks-perf'),performance_satisfacao:scaleVals.perf||null,
-    performance_trabalhistas:g('performance_trabalhistas').value,performance_transformar:g('performance_transformar').value.trim(),
-    momento_empresa:g('momento_empresa').value,motivacao:g('motivacao').value,prazo:g('prazo').value,budget:g('budget').value,
-    visita_presencial:!!toggleVals['visita'],
-    melhor_parceiro:g('melhor_parceiro').value.trim(),info_adicional:g('info_adicional').value.trim(),status:'novo'
+    protocolo,
+    empresa:g('empresa').value.trim(),
+    responsavel:g('responsavel').value.trim(),
+    cargo:g('cargo').value.trim(),
+    email:g('email').value.trim(),
+    telefone:g('whatsapp').value.trim(),
+    status:'novo',
+    payload:{
+      segmento:g('segmento').value,
+      cidade:g('cidade').value.trim(),estado:g('estado').value,
+      num_colaboradores:Number(g('num_colaboradores').value)||null,
+      num_unidades:Number(g('num_unidades').value)||1,
+      tem_rh_interno:!!toggleVals['rh'],rh_pessoas:g('rh_pessoas').value,rh_senioridade:g('rh_senioridade').value,
+      people_scores:{p1:scaleVals.p1,p2:scaleVals.p2,p3:scaleVals.p3,p4:scaleVals.p4},
+      people_problemas:checkVals('checks-people'),people_critico:g('people_critico').value.trim(),
+      process_existente:checkVals('checks-process'),process_maturidade:parseInt(g('process_maturidade').value)||null,
+      process_retrabalho:g('process_retrabalho').value.trim(),
+      performance_indicadores:checkVals('checks-perf'),performance_satisfacao:scaleVals.perf||null,
+      performance_trabalhistas:g('performance_trabalhistas').value,performance_transformar:g('performance_transformar').value.trim(),
+      momento_empresa:g('momento_empresa').value,motivacao:g('motivacao').value,prazo:g('prazo').value,budget:g('budget').value,
+      visita_presencial:!!toggleVals['visita'],
+      melhor_parceiro:g('melhor_parceiro').value.trim(),info_adicional:g('info_adicional').value.trim(),
+    }
   }
   const {error}=await sb.from('diag_org_requests').insert(dados)
   if(error){btn.disabled=false;btn.textContent='Solicitar diagnóstico organizacional';alert('Erro ao enviar. Tente novamente.');console.error(error);return}
+  const p=dados.payload
   try{
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'['+protocolo+'] Diagnóstico Organizacional — '+dados.empresa,
         html:'<h2>Novo Diagnóstico Organizacional</h2>'
           +'<p><b>Protocolo:</b> '+protocolo+'</p>'
-          +'<p><b>Empresa:</b> '+dados.empresa+' | <b>Responsável:</b> '+dados.responsavel+' ('+dados.cargo+') — '+dados.email+' / '+(dados.whatsapp||'—')+'</p>'
-          +'<p><b>Segmento:</b> '+(dados.segmento||'—')+' | <b>Cidade/UF:</b> '+(dados.cidade||'—')+'/'+(dados.estado||'—')+'</p>'
-          +'<p><b>Colaboradores:</b> '+(dados.num_colaboradores||'—')+' | <b>Unidades:</b> '+(dados.num_unidades||'—')+'</p>'
-          +'<p><b>Tem RH interno:</b> '+(dados.tem_rh_interno?'Sim':'Não')+' | <b>Pessoas no RH:</b> '+(dados.rh_pessoas||'—')+' | <b>Senioridade:</b> '+(dados.rh_senioridade||'—')+'</p>'
-          +'<p><b>People — scores:</b> '+(dados.people_scores?JSON.stringify(dados.people_scores):'—')+'</p>'
-          +'<p><b>People — problemas:</b> '+((dados.people_problemas||[]).join(', ')||'—')+'</p>'
-          +'<p><b>People — crítico:</b> '+(dados.people_critico||'—')+'</p>'
-          +'<p><b>Processos existentes:</b> '+((dados.process_existente||[]).join(', ')||'—')+'</p>'
-          +'<p><b>Maturidade de processo:</b> '+(dados.process_maturidade||'—')+' | <b>Retrabalho:</b> '+(dados.process_retrabalho||'—')+'</p>'
-          +'<p><b>Indicadores de performance:</b> '+((dados.performance_indicadores||[]).join(', ')||'—')+' | <b>Satisfação:</b> '+(dados.performance_satisfacao||'—')+'</p>'
-          +'<p><b>Trabalhistas:</b> '+(dados.performance_trabalhistas||'—')+' | <b>Transformar:</b> '+(dados.performance_transformar||'—')+'</p>'
-          +'<p><b>Momento da empresa:</b> '+(dados.momento_empresa||'—')+' | <b>Motivação:</b> '+(dados.motivacao||'—')+'</p>'
-          +'<p><b>Prazo:</b> '+(dados.prazo||'—')+' | <b>Budget:</b> '+(dados.budget||'—')+'</p>'
-          +'<p><b>Visita presencial:</b> '+(dados.visita_presencial?'Sim':'Não')+'</p>'
-          +'<p><b>Melhor parceiro seria:</b> '+(dados.melhor_parceiro||'—')+'</p>'
-          +'<p><b>Info adicional:</b> '+(dados.info_adicional||'—')+'</p>'
+          +'<p><b>Empresa:</b> '+dados.empresa+' | <b>Responsável:</b> '+dados.responsavel+' ('+dados.cargo+') — '+dados.email+' / '+(dados.telefone||'—')+'</p>'
+          +'<p><b>Segmento:</b> '+(p.segmento||'—')+' | <b>Cidade/UF:</b> '+(p.cidade||'—')+'/'+(p.estado||'—')+'</p>'
+          +'<p><b>Colaboradores:</b> '+(p.num_colaboradores||'—')+' | <b>Unidades:</b> '+(p.num_unidades||'—')+'</p>'
+          +'<p><b>Tem RH interno:</b> '+(p.tem_rh_interno?'Sim':'Não')+' | <b>Pessoas no RH:</b> '+(p.rh_pessoas||'—')+' | <b>Senioridade:</b> '+(p.rh_senioridade||'—')+'</p>'
+          +'<p><b>People — scores:</b> '+(p.people_scores?JSON.stringify(p.people_scores):'—')+'</p>'
+          +'<p><b>People — problemas:</b> '+((p.people_problemas||[]).join(', ')||'—')+'</p>'
+          +'<p><b>People — crítico:</b> '+(p.people_critico||'—')+'</p>'
+          +'<p><b>Processos existentes:</b> '+((p.process_existente||[]).join(', ')||'—')+'</p>'
+          +'<p><b>Maturidade de processo:</b> '+(p.process_maturidade||'—')+' | <b>Retrabalho:</b> '+(p.process_retrabalho||'—')+'</p>'
+          +'<p><b>Indicadores de performance:</b> '+((p.performance_indicadores||[]).join(', ')||'—')+' | <b>Satisfação:</b> '+(p.performance_satisfacao||'—')+'</p>'
+          +'<p><b>Trabalhistas:</b> '+(p.performance_trabalhistas||'—')+' | <b>Transformar:</b> '+(p.performance_transformar||'—')+'</p>'
+          +'<p><b>Momento da empresa:</b> '+(p.momento_empresa||'—')+' | <b>Motivação:</b> '+(p.motivacao||'—')+'</p>'
+          +'<p><b>Prazo:</b> '+(p.prazo||'—')+' | <b>Budget:</b> '+(p.budget||'—')+'</p>'
+          +'<p><b>Visita presencial:</b> '+(p.visita_presencial?'Sim':'Não')+'</p>'
+          +'<p><b>Melhor parceiro seria:</b> '+(p.melhor_parceiro||'—')+'</p>'
+          +'<p><b>Info adicional:</b> '+(p.info_adicional||'—')+'</p>'
         })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}
