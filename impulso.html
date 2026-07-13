@@ -547,7 +547,22 @@ async function enviar(){
 
   try{
     await sb.from('impulso_requests').insert([payload]);
-    const emailHtml=`<h2>Nova solicitação — Programa Impulso</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Nome:</b> ${payload.nome}</p><p><b>E-mail:</b> ${payload.email}</p><p><b>WhatsApp:</b> ${payload.whatsapp}</p><p><b>Cidade:</b> ${payload.cidade}/${payload.estado}</p><p><b>Tempo em RH:</b> ${payload.tempo_rh}</p><p><b>Momento:</b> ${payload.momento_desc}</p><p><b>Competências:</b> ${payload.competencias.join(', ')}</p><p><b>Nível:</b> ${payload.nivel_programa}</p><p><b>Por que agora:</b> ${payload.porque_agora}</p><p><b>Resultado esperado:</b> ${payload.resultado_esperado}</p>`;
+    const emailHtml=`<h2>Nova solicitação — Programa Impulso</h2>
+<p><b>Protocolo:</b> ${protocolo}</p>
+<p><b>Nome:</b> ${payload.nome} | <b>E-mail:</b> ${payload.email} | <b>WhatsApp:</b> ${payload.whatsapp||'—'}</p>
+<p><b>Cidade/UF:</b> ${payload.cidade||'—'}/${payload.estado||'—'} | <b>LinkedIn:</b> ${payload.linkedin||'—'}</p>
+<p><b>Tempo em RH:</b> ${payload.tempo_rh||'—'} | <b>Momento de carreira:</b> ${payload.momento_carreira||'—'}</p>
+<p><b>Empresa atual:</b> ${payload.empresa_atual||'—'} | <b>Cargo atual:</b> ${payload.cargo_atual||'—'}</p>
+<p><b>Momento descrito:</b> ${payload.momento_desc||'—'}</p>
+<p><b>Competências a desenvolver:</b> ${(payload.competencias||[]).join(', ')||'—'}</p>
+<p><b>Satisfação na carreira:</b> ${payload.satisfacao_carreira||'—'}</p>
+<p><b>Desafio de carreira:</b> ${payload.desafio_carreira||'—'}</p>
+<p><b>Nível do programa:</b> ${payload.nivel_programa||'—'}</p>
+<p><b>Modalidade:</b> ${payload.modalidade||'—'} | <b>Formato:</b> ${payload.formato||'—'} | <b>Frequência:</b> ${payload.frequencia||'—'} | <b>Duração:</b> ${payload.duracao||'—'}</p>
+<p><b>Patrocinado pela empresa:</b> ${payload.patrocinado?'Sim':'Não'}${payload.patrocinado?' | Empresa patrocinadora: '+(payload.empresa_patroc||'—')+' | Contato: '+(payload.contato_patroc||'—'):''}</p>
+<p><b>Por que agora:</b> ${payload.porque_agora||'—'}</p>
+<p><b>Resultado esperado:</b> ${payload.resultado_esperado||'—'}</p>
+<p><b>Como conheceu:</b> ${payload.como_conheceu||'—'}</p>`;
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:`[AZ-IMP] ${payload.nome} — ${payload.nivel_programa}`,html:emailHtml})});
   }catch(e){console.error(e);}
 

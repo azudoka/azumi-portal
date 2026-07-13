@@ -904,7 +904,27 @@ async function enviar(){
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
         subject:'['+protocolo+'] Nova solicitacao de vaga — '+dados.nome_vaga,
-        html:'<h2>Nova Solicitacao de Vaga</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Vaga:</b> '+dados.nome_vaga+'</p><p><b>Tipo:</b> '+tipoSolic+' / '+dados.tipo_recrutamento+'</p><p><b>Solicitante:</b> '+dados.nome_responsavel+' — '+dados.email+'</p>'
+        html:'<h2>Nova Solicitacao de Vaga</h2>'
+          +'<p><b>Protocolo:</b> '+protocolo+'</p>'
+          +'<p><b>Empresa:</b> '+dados.nome_empresa+(dados.filial?' | Filial: '+dados.filial:'')+'</p>'
+          +'<p><b>Solicitante:</b> '+dados.nome_responsavel+' ('+dados.cargo_responsavel+') — '+dados.email+' / '+(dados.whatsapp||'—')+'</p>'
+          +'<p><b>Tipo:</b> '+tipoSolic+' / '+dados.tipo_recrutamento+'</p>'
+          +'<p><b>Vaga:</b> '+dados.nome_vaga+' | <b>Nível:</b> '+(dados.nivel_vaga||'—')+' | <b>Senioridade:</b> '+(dados.senioridade||'—')+' | <b>Vagas:</b> '+(dados.num_vagas||1)+'</p>'
+          +'<p><b>Contrato:</b> '+(dados.contrato||'—')+' | <b>Jornada:</b> '+(dados.jornada||'—')+' | <b>Salário:</b> '+(dados.salario||'—')+' | <b>Carga horária:</b> '+(dados.carga_horaria||'—')+'</p>'
+          +'<p><b>Local:</b> '+(dados.local||'—')+'</p>'
+          +'<p><b>Benefícios:</b> '+(dados.beneficios||'—')+(dados.beneficios_outros?' + '+dados.beneficios_outros:'')+'</p>'
+          +'<p><b>Urgência:</b> '+(dados.urgencia||'—')+'</p>'
+          +'<p><b>Requisitos:</b> '+(dados.requisitos||'—')+'</p>'
+          +(dados.genero?'<p><b>Gênero:</b> '+dados.genero+'</p>':'')
+          +(dados.etapa_tecnica?'<p><b>Etapas técnicas:</b> '+dados.etapa_tecnica+'</p>':'')
+          +(dados.adicionais?'<p><b>Adicionais:</b> '+dados.adicionais+'</p>':'')
+          +(dados.entrevistador_nome?'<p><b>Entrevistador:</b> '+dados.entrevistador_nome+' — '+dados.entrevistador_email+' / '+dados.entrevistador_whatsapp+'</p>':'')
+          +(dados.agenda?'<p><b>Agenda:</b> '+dados.agenda+'</p>':'')
+          +(dados.segmento_hunting?'<p><b>Segmento hunting:</b> '+dados.segmento_hunting+' | Prazo: '+(dados.prazo_hunting||'—')+'</p>':'')
+          +(dados.empresas_referencia?'<p><b>Empresas de referência:</b> '+dados.empresas_referencia+'</p>':'')
+          +(dados.remuneracao_variavel?'<p><b>Remuneração variável:</b> '+dados.remuneracao_variavel+'</p>':'')
+          +(dados.confidencialidade?'<p><b>Confidencialidade:</b> '+dados.confidencialidade+'</p>':'')
+          +(dados.observacoes?'<p><b>Observações:</b> '+dados.observacoes+'</p>':'')
       })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}

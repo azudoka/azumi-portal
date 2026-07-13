@@ -793,6 +793,9 @@ async function enviar(){
           +'<hr>'
           +'<p><b>Frentes de interesse:</b> '+dados.frentes+'</p>'
           +'<p><b>Processos existentes:</b> '+(processos.length?processos.join(', '):'Nenhum selecionado')+'</p>'
+          +'<p><b>Maturidade de liderança:</b> '+(dados.maturidade_lideranca||'—')+'</p>'
+          +'<p><b>Clima da equipe:</b> '+(dados.clima_equipe||'—')+'</p>'
+          +'<p><b>Abertura para parceria:</b> '+(dados.rh_abertura||'—')+'</p>'
           +'<hr>'
           +(dados.visitas_mes?'<p><b>Visita presencial:</b> Sim — '+(dados.tipo_consultora||'—')+' / '+(dados.localizacao_visita||'—')+'</p>':'<p><b>Visita presencial:</b> Não</p>')
           +'<hr>'

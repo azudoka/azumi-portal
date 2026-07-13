@@ -501,7 +501,22 @@ async function enviar(){
 
   try{
     await sb.from('gtm_requests').insert([payload]);
-    const emailHtml=`<h2>Nova solicitação — Go-to-Market Pessoal</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Nome:</b> ${payload.nome}</p><p><b>E-mail:</b> ${payload.email}</p><p><b>WhatsApp:</b> ${payload.whatsapp}</p><p><b>Área:</b> ${payload.area_atuacao}</p><p><b>Formato jurídico:</b> ${payload.formato_juridico}</p><p><b>Cidade:</b> ${payload.cidade}/${payload.estado}</p><p><b>Desafios:</b> ${payload.desafios.join(', ')}</p><p><b>Estruturar:</b> ${payload.estruturar.join(', ')}</p><p><b>Budget:</b> ${payload.budget} | Prazo: ${payload.prazo}</p>`;
+    const emailHtml=`<h2>Nova solicitação — Go-to-Market Pessoal</h2>
+<p><b>Protocolo:</b> ${protocolo}</p>
+<p><b>Nome:</b> ${payload.nome} | <b>E-mail:</b> ${payload.email} | <b>WhatsApp:</b> ${payload.whatsapp||'—'}</p>
+<p><b>Área de atuação:</b> ${payload.area_atuacao||'—'} | <b>Formato jurídico:</b> ${payload.formato_juridico||'—'}</p>
+<p><b>Tempo como autônomo:</b> ${payload.tempo_autonomo||'—'} | <b>Cidade/UF:</b> ${payload.cidade||'—'}/${payload.estado||'—'}</p>
+<p><b>LinkedIn:</b> ${payload.linkedin||'—'} | <b>Instagram:</b> ${payload.instagram||'—'} | <b>Site:</b> ${payload.site||'—'}</p>
+<p><b>Descrição do serviço:</b> ${payload.descricao_servico||'—'}</p>
+<p><b>Como consegue clientes hoje:</b> ${payload.como_clientes||'—'}</p>
+<p><b>Scores GTM:</b> ${payload.gtm_scores?JSON.stringify(payload.gtm_scores):'—'}</p>
+<p><b>Desafios:</b> ${(payload.desafios||[]).join(', ')||'—'}</p>
+<p><b>Principal impedimento:</b> ${payload.impedimento||'—'}</p>
+<p><b>O que quer estruturar:</b> ${(payload.estruturar||[]).join(', ')||'—'}</p>
+<p><b>Visão para 1 ano:</b> ${payload.visao_1ano||'—'}</p>
+<p><b>Budget:</b> ${payload.budget||'—'} | <b>Prazo:</b> ${payload.prazo||'—'}</p>
+<p><b>História / contexto:</b> ${payload.historia||'—'}</p>
+<p><b>Como conheceu:</b> ${payload.como_conheceu||'—'}</p>`;
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:`[AZ-GTM] ${payload.nome} — ${payload.area_atuacao}`,html:emailHtml})});
   }catch(e){console.error(e);}
 

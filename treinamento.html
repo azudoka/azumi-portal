@@ -692,7 +692,25 @@ async function enviar(){
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
         subject:'['+protocolo+'] Treinamento In Company — '+dados.empresa,
-        html:'<h2>Nova Solicitacao de Treinamento</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.empresa+'</p><p><b>Tema:</b> '+dados.temas+'</p><p><b>Pacote:</b> '+dados.pacote_solicitado+'</p><p><b>Participantes:</b> '+dados.participantes_estimado+'</p><p><b>Responsavel:</b> '+dados.responsavel+' — '+dados.email+'</p>'
+        html:'<h2>Nova Solicitacao de Treinamento</h2>'
+          +'<p><b>Protocolo:</b> '+protocolo+'</p>'
+          +'<p><b>Empresa:</b> '+dados.empresa+' | <b>Responsável:</b> '+dados.responsavel+' ('+dados.cargo+') — '+dados.email+' / '+(dados.whatsapp||'—')+'</p>'
+          +'<p><b>Tema principal:</b> '+(dados.temas||'—')+'</p>'
+          +'<p><b>Público-alvo:</b> '+(dados.publico_alvo||'—')+'</p>'
+          +'<p><b>Motivação / objetivo:</b> '+(dados.motivo||'—')+'</p>'
+          +'<p><b>Pacote solicitado:</b> '+(dados.pacote_solicitado||'—')+'</p>'
+          +'<p><b>Encontros desejados:</b> '+(dados.encontros_desejados||'—')+' | <b>Participantes estimados:</b> '+(dados.participantes_estimado||'—')+'</p>'
+          +'<p><b>Formato:</b> '+(dados.formato||'—')+'</p>'
+          +'<p><b>Local / espaço:</b> '+(dados.local_treinamento||'—')+'</p>'
+          +'<p><b>Infraestrutura:</b>'
+            +(dados.infra_projetor?' Projetor':'')
+            +(dados.infra_som?' Som/Microfone':'')
+            +(dados.infra_wifi?' Wi-Fi':'')
+            +(!dados.infra_projetor&&!dados.infra_som&&!dados.infra_wifi?' —':'')
+          +'</p>'
+          +'<p><b>Cidade:</b> '+(dados.cidade||'—')+' | <b>Data desejada:</b> '+(dados.janela||'—')+'</p>'
+          +'<p><b>Budget:</b> '+(dados.budget||'—')+'</p>'
+          +(dados.obs?'<p><b>Observações / extras:</b><br>'+dados.obs.replace(/\n/g,'<br>')+'</p>':'')
       })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}

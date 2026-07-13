@@ -576,7 +576,23 @@ async function enviar(){
 
   try{
     await sb.from('cultura_requests').insert([payload]);
-    const emailHtml=`<h2>Nova solicitação — Cultura e Endomarketing</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Empresa:</b> ${payload.empresa}</p><p><b>Nome:</b> ${payload.nome} — ${payload.cargo}</p><p><b>E-mail:</b> ${payload.email}</p><p><b>WhatsApp:</b> ${payload.whatsapp}</p><p><b>Tamanho equipe:</b> ${payload.tamanho_equipe}</p><p><b>Problemas:</b> ${payload.problemas_culturais.join(', ')}</p><p><b>Palavra cultura:</b> ${payload.palavra_cultura}</p><p><b>Serviços:</b> ${payload.servicos_interesse.join(', ')}</p><p><b>Formato:</b> ${payload.formato} | Prazo: ${payload.prazo} | Budget: ${payload.budget}</p>`;
+    const emailHtml=`<h2>Nova solicitação — Cultura e Endomarketing</h2>
+<p><b>Protocolo:</b> ${protocolo}</p>
+<p><b>Empresa:</b> ${payload.empresa} | <b>Setor:</b> ${payload.setor||'—'}</p>
+<p><b>Nome:</b> ${payload.nome} — ${payload.cargo} | <b>E-mail:</b> ${payload.email} | <b>WhatsApp:</b> ${payload.whatsapp||'—'}</p>
+<p><b>Tamanho da equipe:</b> ${payload.tamanho_equipe||'—'} | <b>Modelo de trabalho:</b> ${payload.modelo_trabalho||'—'}</p>
+<p><b>Nível de colaboração:</b> ${payload.colaboracao_nivel||'—'} | <b>Identidade cultural existente:</b> ${payload.identidade_cultural_existente?'Sim':'Não'}</p>
+<p><b>Scores de cultura:</b> ${payload.cultura_scores?JSON.stringify(payload.cultura_scores):'—'}</p>
+<p><b>Problemas culturais:</b> ${(payload.problemas_culturais||[]).join(', ')||'—'}</p>
+<p><b>Palavra que representa a cultura:</b> ${payload.palavra_cultura||'—'}</p>
+<p><b>Desafio cultural:</b> ${payload.desafio_cultural||'—'}</p>
+<p><b>Serviços de interesse:</b> ${(payload.servicos_interesse||[]).join(', ')||'—'}</p>
+<p><b>Cultura ideal:</b> ${payload.cultura_ideal||'—'}</p>
+<p><b>Interesse em marca empregadora:</b> ${payload.interesse_marca_empregadora?'Sim':'Não'}</p>
+<p><b>Formato:</b> ${payload.formato||'—'} | <b>Prazo:</b> ${payload.prazo||'—'} | <b>Budget:</b> ${payload.budget||'—'}</p>
+<p><b>Entregas / formato desejado:</b> ${payload.entregas_formato||'—'}</p>
+<p><b>História da empresa:</b> ${payload.historia_empresa||'—'}</p>
+<p><b>Como conheceu:</b> ${payload.como_conheceu||'—'}</p>`;
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:`[AZ-CULT] ${payload.empresa} — ${payload.nome}`,html:emailHtml})});
   }catch(e){console.error(e);}
 

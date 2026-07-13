@@ -378,7 +378,16 @@ async function submeter(){
   }
   try{
     await sb.from('raiox_requests').insert([payload])
-    await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'[AZ-RAIOX] '+empresa+' — '+responsavel,html:`<h2>Novo Raio-X de Maturidade</h2><p><b>Protocolo:</b> ${protocolo}</p><p><b>Empresa:</b> ${empresa}</p><p><b>Responsavel:</b> ${responsavel} — ${email}</p><p><b>Colaboradores:</b> ${payload.num_colaboradores}</p><p><b>Scores:</b> Lideranca ${payload.score_lideranca} / Processos ${payload.score_processos} / Clima ${payload.score_clima}</p><p><b>Problemas:</b> ${payload.problemas.join(', ')}</p><p><b>Desafio:</b> ${payload.principal_desafio}</p><p><b>Prazo:</b> ${payload.prazo}</p>`})})
+    await fetch('https://azumi-email-api.vercel.app/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'[AZ-RAIOX] '+empresa+' — '+responsavel,html:`<h2>Novo Raio-X de Maturidade</h2>
+<p><b>Protocolo:</b> ${protocolo}</p>
+<p><b>Empresa:</b> ${empresa} | <b>Responsável:</b> ${responsavel} (${payload.cargo||'—'}) — ${email} / ${payload.whatsapp||'—'}</p>
+<p><b>Segmento:</b> ${payload.segmento||'—'} | <b>Cidade/UF:</b> ${payload.cidade||'—'}/${payload.estado||'—'}</p>
+<p><b>Colaboradores:</b> ${payload.num_colaboradores||'—'} | <b>Tem RH:</b> ${payload.tem_rh||'—'}</p>
+<p><b>Scores — Liderança:</b> ${payload.score_lideranca||'—'} | <b>Processos:</b> ${payload.score_processos||'—'} | <b>Clima:</b> ${payload.score_clima||'—'}</p>
+<p><b>Problemas:</b> ${(payload.problemas||[]).join(', ')||'—'}</p>
+<p><b>Principal desafio:</b> ${payload.principal_desafio||'—'}</p>
+<p><b>Momento da empresa:</b> ${payload.momento_empresa||'—'}</p>
+<p><b>Prazo:</b> ${payload.prazo||'—'} | <b>Expectativa:</b> ${payload.expectativa||'—'}</p>`})})
   }catch(e){console.error(e)}
   document.getElementById('accWrap').style.display='none'
   document.querySelector('.prog-wrap').style.display='none'

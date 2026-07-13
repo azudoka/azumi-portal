@@ -527,7 +527,22 @@ async function enviar(){
     await fetch('https://azumi-email-api.vercel.app/api/send-email',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({to:'patricia@azumirh.com.br',subject:'['+protocolo+'] Programa de Líderes — '+dados.empresa,
-        html:'<h2>Novo Programa de Líderes</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.empresa+'</p><p><b>Responsável:</b> '+dados.responsavel+' — '+dados.email+'</p><p><b>Líderes:</b> '+dados.num_lideres+'</p><p><b>Níveis:</b> '+dados.niveis_lideranca.join(', ')+'</p><p><b>Budget:</b> '+dados.budget+'</p>'})
+        html:'<h2>Novo Programa de Líderes</h2>'
+          +'<p><b>Protocolo:</b> '+protocolo+'</p>'
+          +'<p><b>Empresa:</b> '+dados.empresa+' | <b>Responsável:</b> '+dados.responsavel+' ('+dados.cargo+') — '+dados.email+' / '+(dados.whatsapp||'—')+'</p>'
+          +'<p><b>Segmento:</b> '+(dados.segmento||'—')+' | <b>Cidade/UF:</b> '+(dados.cidade||'—')+'/'+(dados.estado||'—')+'</p>'
+          +'<p><b>Colaboradores:</b> '+(dados.num_colaboradores||'—')+' | <b>Líderes:</b> '+(dados.num_lideres||'—')+'</p>'
+          +'<p><b>Níveis de liderança:</b> '+((dados.niveis_lideranca||[]).join(', ')||'—')+'</p>'
+          +'<p><b>Maturidade dos líderes:</b> '+(dados.maturidade_lideres||'—')+'</p>'
+          +'<p><b>Comportamentos desejados:</b> '+((dados.comportamentos_desejados||[]).join(', ')||'—')+'</p>'
+          +'<p><b>Gap principal:</b> '+(dados.gap_principal||'—')+'</p>'
+          +'<p><b>Formato:</b> '+(dados.formato||'—')+' | <b>Frequência:</b> '+(dados.frequencia||'—')+' | <b>Duração:</b> '+(dados.duracao||'—')+'</p>'
+          +'<p><b>Entregáveis:</b> '+((dados.entregaveis||[]).join(', ')||'—')+'</p>'
+          +'<p><b>Avaliação 360:</b> '+(dados.avaliacao_360?'Sim':'Não')+' | <b>Avaliação DISC:</b> '+(dados.avaliacao_disc?'Sim':'Não')+'</p>'
+          +'<p><b>Motivação:</b> '+(dados.motivacao||'—')+' | <b>Prazo:</b> '+(dados.prazo||'—')+' | <b>Budget:</b> '+(dados.budget||'—')+'</p>'
+          +'<p><b>Resultado esperado:</b> '+(dados.resultado_esperado||'—')+'</p>'
+          +'<p><b>Contexto:</b> '+(dados.contexto||'—')+'</p>'
+        })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}
   g('accWrap').style.display='none';g('submitWrap').style.display='none'
