@@ -637,32 +637,43 @@ async function enviar(){
   btn.disabled=true;btn.textContent='Enviando...'
   const protocolo=gerarProtocolo()
 
+  const equipStr=chipVals('chips-equip')
+
+  // Campos sem coluna própria → concatenar em obs
+  const extrasObs=[
+    g('filial').value.trim()?'Filial: '+g('filial').value.trim():'',
+    g('tema_outro').value.trim()?'Tema específico: '+g('tema_outro').value.trim():'',
+    g('num_turmas').value?'Turmas: '+g('num_turmas').value:'',
+    g('horario').value?'Horário: '+g('horario').value:'',
+    g('como_conheceu').value?'Como conheceu: '+g('como_conheceu').value:'',
+    g('contexto').value.trim()?'Contexto: '+g('contexto').value.trim():'',
+  ].filter(Boolean).join(' | ')
+  const obsTexto=g('observacoes').value.trim()
+  const obsCompleto=[extrasObs,obsTexto].filter(Boolean).join('\n\n')||null
+
   const dados={
     protocolo,
-    nome_empresa:g('empresa').value.trim(),
-    filial:g('filial').value.trim(),
-    nome_responsavel:g('responsavel').value.trim(),
-    cargo_responsavel:g('cargo').value.trim(),
+    empresa:g('empresa').value.trim(),
+    responsavel:g('responsavel').value.trim(),
+    cargo:g('cargo').value.trim(),
     email:g('email').value.trim(),
     whatsapp:g('whatsapp').value.trim(),
-    tema_principal:temaSel,
-    tema_especifico:g('tema_outro').value.trim(),
+    temas:temaSel,
     publico_alvo:chipVals('chips-publico'),
-    objetivo:g('objetivo').value.trim(),
-    pacote:pacoteSel,
-    num_encontros:Number(g('num_encontros').value)||null,
-    num_participantes:Number(g('num_participantes').value)||20,
-    num_turmas:Number(g('num_turmas').value)||1,
+    motivo:g('objetivo').value.trim(),
+    pacote_solicitado:pacoteSel,
+    encontros_desejados:Number(g('num_encontros').value)||null,
+    participantes_estimado:Number(g('num_participantes').value)||20,
     formato:formatoSel,
-    espaco_fisico:chipVals('chips-espaco'),
-    equipamentos:chipVals('chips-equip'),
-    cidade:g('cidade').value.trim(),
-    data_desejada:g('data_desejada').value||null,
-    horario:g('horario').value,
-    contexto:g('contexto').value.trim(),
+    local_treinamento:chipVals('chips-espaco')||null,
+    infra_sala:false,
+    infra_projetor:equipStr.includes('Projetor'),
+    infra_som:equipStr.includes('Som / Microfone'),
+    infra_wifi:equipStr.includes('Wi-Fi'),
+    cidade:g('cidade').value.trim()||null,
+    janela:g('data_desejada').value||null,
     budget:g('budget').value,
-    como_conheceu:g('como_conheceu').value,
-    observacoes:g('observacoes').value.trim(),
+    obs:obsCompleto,
     status:'novo'
   }
 
@@ -680,8 +691,8 @@ async function enviar(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         to:'patricia@azumirh.com.br',
-        subject:'['+protocolo+'] Treinamento In Company — '+dados.nome_empresa,
-        html:'<h2>Nova Solicitacao de Treinamento</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.nome_empresa+'</p><p><b>Tema:</b> '+dados.tema_principal+'</p><p><b>Pacote:</b> '+dados.pacote+'</p><p><b>Participantes:</b> '+dados.num_participantes+'</p><p><b>Responsavel:</b> '+dados.nome_responsavel+' — '+dados.email+'</p>'
+        subject:'['+protocolo+'] Treinamento In Company — '+dados.empresa,
+        html:'<h2>Nova Solicitacao de Treinamento</h2><p><b>Protocolo:</b> '+protocolo+'</p><p><b>Empresa:</b> '+dados.empresa+'</p><p><b>Tema:</b> '+dados.temas+'</p><p><b>Pacote:</b> '+dados.pacote_solicitado+'</p><p><b>Participantes:</b> '+dados.participantes_estimado+'</p><p><b>Responsavel:</b> '+dados.responsavel+' — '+dados.email+'</p>'
       })
     })
   }catch(e){console.error('Erro ao enviar email:',e)}
