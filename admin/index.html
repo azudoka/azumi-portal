@@ -78,8 +78,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* DRAWER OVERLAY */
 .drawer-overlay{position:fixed;inset:0;background:rgba(3,29,56,.4);z-index:50;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
 .drawer-overlay.open{opacity:1;pointer-events:all}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:560px;background:#fff;border-left:1px solid var(--border);z-index:51;transform:translateX(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;overflow:hidden;box-shadow:-8px 0 32px rgba(3,29,56,.1)}
-.drawer.open{transform:translateX(0)}
+.drawer{position:fixed;top:50%;left:50%;bottom:auto;right:auto;width:100%;max-width:640px;max-height:88vh;background:#fff;border:1px solid var(--border);border-radius:18px;z-index:51;transform:translate(-50%,-50%) scale(.97);opacity:0;transition:transform .25s,opacity .25s;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(3,29,56,.18)}
+.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
 .drawer-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fff}
 .drawer-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
 .drawer-subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ts);margin-top:2px}
@@ -487,47 +487,47 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
   <div class="admin-body">
     <div id="tab-career" class="tab-content active">
-      <div class="tab-header"><div class="tab-title">Career Plan</div><div class="tab-count" id="count-career">0</div></div>
+      <div class="tab-header"><div class="tab-title">Career Plan</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('career')">Exportar tudo (CSV)</button><div class="tab-count" id="count-career">0</div></div></div>
       <div id="cards-career" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-vaga" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Solicitacao de Vaga</div><div class="tab-count" id="count-vaga">0</div></div>
+      <div class="tab-header"><div class="tab-title">Solicitacao de Vaga</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('vaga')">Exportar tudo (CSV)</button><div class="tab-count" id="count-vaga">0</div></div></div>
       <div id="cards-vaga" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-nr1" class="tab-content">
-      <div class="tab-header"><div class="tab-title">NR-1</div><div class="tab-count" id="count-nr1">0</div></div>
+      <div class="tab-header"><div class="tab-title">NR-1</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('nr1')">Exportar tudo (CSV)</button><div class="tab-count" id="count-nr1">0</div></div></div>
       <div id="cards-nr1" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-treinamento" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Treinamento In Company</div><div class="tab-count" id="count-treinamento">0</div></div>
+      <div class="tab-header"><div class="tab-title">Treinamento In Company</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('treinamento')">Exportar tudo (CSV)</button><div class="tab-count" id="count-treinamento">0</div></div></div>
       <div id="cards-treinamento" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-diagnostico" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Diagnostico HRaaS</div><div class="tab-count" id="count-diagnostico">0</div></div>
+      <div class="tab-header"><div class="tab-title">Diagnostico HRaaS</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('diagnostico')">Exportar tudo (CSV)</button><div class="tab-count" id="count-diagnostico">0</div></div></div>
       <div id="cards-diagnostico" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-cultura" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Cultura e Endomarketing</div><div class="tab-count" id="count-cultura">0</div></div>
+      <div class="tab-header"><div class="tab-title">Cultura e Endomarketing</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('cultura')">Exportar tudo (CSV)</button><div class="tab-count" id="count-cultura">0</div></div></div>
       <div id="cards-cultura" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-gtm" class="tab-content">
-      <div class="tab-header"><div class="tab-title">GTM Pessoal</div><div class="tab-count" id="count-gtm">0</div></div>
+      <div class="tab-header"><div class="tab-title">GTM Pessoal</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('gtm')">Exportar tudo (CSV)</button><div class="tab-count" id="count-gtm">0</div></div></div>
       <div id="cards-gtm" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-impulso" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Programa Impulso</div><div class="tab-count" id="count-impulso">0</div></div>
+      <div class="tab-header"><div class="tab-title">Programa Impulso</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('impulso')">Exportar tudo (CSV)</button><div class="tab-count" id="count-impulso">0</div></div></div>
       <div id="cards-impulso" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-diagorg" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Diagnostico Organizacional</div><div class="tab-count" id="count-diagorg">0</div></div>
+      <div class="tab-header"><div class="tab-title">Diagnostico Organizacional</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('diagorg')">Exportar tudo (CSV)</button><div class="tab-count" id="count-diagorg">0</div></div></div>
       <div id="cards-diagorg" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-lideres" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Programa de Lideres</div><div class="tab-count" id="count-lideres">0</div></div>
+      <div class="tab-header"><div class="tab-title">Programa de Lideres</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('lideres')">Exportar tudo (CSV)</button><div class="tab-count" id="count-lideres">0</div></div></div>
       <div id="cards-lideres" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-indicacao" class="tab-content">
-      <div class="tab-header"><div class="tab-title">Indicações de Parceiros</div><div class="tab-count" id="count-indicacao">0</div></div>
+      <div class="tab-header"><div class="tab-title">Indicações de Parceiros</div><div style="display:flex;align-items:center;gap:10px"><button class="btn-sm btn-back" onclick="exportarTudoCSV('indicacao')">Exportar tudo (CSV)</button><div class="tab-count" id="count-indicacao">0</div></div></div>
       <div id="cards-indicacao" style="overflow-x:auto;width:100%"><div class="loading">Carregando...</div></div>
     </div>
     <div id="tab-relatorios" class="tab-content">
@@ -1470,6 +1470,7 @@ async function carregarCareer(){
   const {data,error}=await sb.from('career_plan_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-career').textContent=data.length
+  lastLoaded['career']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'career',
     r=>r.nome||'—',
@@ -1486,6 +1487,7 @@ async function carregarVaga(){
   const {data,error}=await sb.from('job_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-vaga').textContent=data.length
+  lastLoaded['vaga']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'vaga',
     r=>r.nome_empresa||'—',
@@ -1500,6 +1502,7 @@ async function carregarNr1(){
   const {data,error}=await sb.from('nr1_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-nr1').textContent=data.length
+  lastLoaded['nr1']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'nr1',
     r=>r.nome_empresa||r.empresa_nome||'—',
@@ -1514,6 +1517,7 @@ async function carregarTreinamento(){
   const {data,error}=await sb.from('training_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-treinamento').textContent=data.length
+  lastLoaded['treinamento']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'treinamento',
     r=>r.nome_empresa||'—',
@@ -1528,6 +1532,7 @@ async function carregarDiagnostico(){
   const {data,error}=await sb.from('diagnostico_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-diagnostico').textContent=data.length
+  lastLoaded['diagnostico']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'diagnostico',
     r=>r.empresa_nome||'—',
@@ -1542,6 +1547,7 @@ async function carregarCultura(){
   const {data,error}=await sb.from('cultura_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-cultura').textContent=data.length
+  lastLoaded['cultura']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'cultura',
     r=>r.empresa||'—',
@@ -1556,6 +1562,7 @@ async function carregarGtm(){
   const {data,error}=await sb.from('gtm_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-gtm').textContent=data.length
+  lastLoaded['gtm']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'gtm',
     r=>r.nome||'—',
@@ -1570,6 +1577,7 @@ async function carregarImpulso(){
   const {data,error}=await sb.from('impulso_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-impulso').textContent=data.length
+  lastLoaded['impulso']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'impulso',
     r=>r.nome||'—',
@@ -1584,10 +1592,11 @@ async function carregarDiagOrg(){
   const {data,error}=await sb.from('diag_org_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-diagorg').textContent=data.length
+  lastLoaded['diagorg']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'diagorg',
     r=>r.empresa||'—',
-    r=>[r.responsavel,r.segmento].filter(Boolean).join(' · '),
+    r=>[r.responsavel,(r.payload&&r.payload.segmento)||''].filter(Boolean).join(' · '),
     r=>r.email||'—'
   )
 }
@@ -1598,10 +1607,11 @@ async function carregarLideres(){
   const {data,error}=await sb.from('lideres_requests').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-lideres').textContent=data.length
+  lastLoaded['lideres']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'lideres',
     r=>r.empresa||'—',
-    r=>[r.responsavel,r.num_lideres?r.num_lideres+' lideres':''].filter(Boolean).join(' · '),
+    r=>[r.responsavel,(r.payload&&r.payload.num_lideres)?r.payload.num_lideres+' lideres':''].filter(Boolean).join(' · '),
     r=>r.email||'—'
   )
 }
@@ -1612,6 +1622,7 @@ async function carregarIndicacoes(){
   const {data,error}=await sb.from('indicacoes_parceiros').select('*').order('created_at',{ascending:false})
   if(error||!data){cont.innerHTML='<div class="empty">Erro ao carregar.</div>';return}
   document.getElementById('count-indicacao').textContent=data.length
+  lastLoaded['indicacao']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma indicação.</div>';return}
   cont.innerHTML=`
     <div class="req-table-wrap">
@@ -1646,6 +1657,7 @@ async function carregarIndicacoes(){
 
 // ── MODAL ──────────────────────────────────────────────
 let modalCtx={}
+let lastLoaded={}
 
 function abrirModal(tipo,r){
   if(typeof r==='string')r=JSON.parse(r.replace(/&quot;/g,'"'))
@@ -1662,6 +1674,135 @@ function abrirModal(tipo,r){
 function fecharModal(e,force){
   if(e&&!force&&e.target!==document.getElementById('modalOverlay'))return
   document.getElementById('modalOverlay').classList.remove('open')
+}
+
+const TABLE_MAP={career:'career_plan_requests',vaga:'job_requests',nr1:'nr1_requests',treinamento:'training_requests',diagnostico:'diagnostico_requests',cultura:'cultura_requests',gtm:'gtm_requests',impulso:'impulso_requests',diagorg:'diag_org_requests',lideres:'lideres_requests',indicacao:'indicacoes_parceiros'}
+const RELOAD_MAP={career:()=>carregarCareer(),vaga:()=>carregarVaga(),nr1:()=>carregarNr1(),treinamento:()=>carregarTreinamento(),diagnostico:()=>carregarDiagnostico(),cultura:()=>carregarCultura(),gtm:()=>carregarGtm(),impulso:()=>carregarImpulso(),diagorg:()=>carregarDiagOrg(),lideres:()=>carregarLideres(),indicacao:()=>carregarIndicacoes()}
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+// ── CSV ──────────────────────────────────────────────
+function flattenRegistro(r){
+  const flat={}
+  function add(obj){
+    Object.keys(obj).forEach(k=>{
+      if(k==='payload'&&obj[k]&&typeof obj[k]==='object'&&!Array.isArray(obj[k])){add(obj[k]);return}
+      let v=obj[k]
+      if(v===null||v===undefined)v=''
+      else if(Array.isArray(v))v=v.join('; ')
+      else if(typeof v==='object')v=JSON.stringify(v)
+      else if(typeof v==='boolean')v=v?'Sim':'Não'
+      flat[k]=v
+    })
+  }
+  add(r)
+  return flat
+}
+
+function csvEscape(s){return '"'+String(s).replace(/"/g,'""')+'"'}
+
+function baixarCSV(filename,headers,rows){
+  const linhas=[headers.map(csvEscape).join(',')]
+  rows.forEach(row=>linhas.push(headers.map(h=>csvEscape(row[h]!==undefined?row[h]:'')).join(',')))
+  const csv='﻿'+linhas.join('\r\n')
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'})
+  const url=URL.createObjectURL(blob)
+  const a=document.createElement('a')
+  a.href=url;a.download=filename
+  document.body.appendChild(a);a.click();document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
+function exportarCSV(tipo,r){
+  const flat=flattenRegistro(r)
+  const headers=Object.keys(flat)
+  const nome=(r.empresa_nome||r.nome_empresa||r.empresa||r.nome||'solicitacao').toString().replace(/[^a-zA-Z0-9]+/g,'_')
+  baixarCSV(tipo+'_'+nome+'_'+(r.protocolo||'')+'.csv',headers,[flat])
+  toast('CSV exportado')
+}
+
+function exportarTudoCSV(tipo){
+  const dados=lastLoaded[tipo]
+  if(!dados||!dados.length){toast('Nada pra exportar nesta aba');return}
+  const flats=dados.map(flattenRegistro)
+  const headers=[];const seen=new Set()
+  flats.forEach(f=>Object.keys(f).forEach(k=>{if(!seen.has(k)){seen.add(k);headers.push(k)}}))
+  baixarCSV(tipo+'_todos_'+new Date().toISOString().slice(0,10)+'.csv',headers,flats)
+  toast(dados.length+' registros exportados')
+}
+
+// ── EDITAR ──────────────────────────────────────────────
+let editMeta=[]
+const CAMPOS_NAO_EDITAVEIS=['id','status','created_at','emitido_por','protocolo']
+
+function camposEditaveisMeta(r){
+  const metas=[]
+  function walk(obj,fromPayload){
+    Object.keys(obj).forEach(k=>{
+      if(CAMPOS_NAO_EDITAVEIS.includes(k))return
+      const v=obj[k]
+      if(k==='payload'&&v&&typeof v==='object'&&!Array.isArray(v)){walk(v,true);return}
+      let type='text',display=v
+      if(Array.isArray(v)){type='array';display=v.join(', ')}
+      else if(typeof v==='boolean'){type='bool';display=!!v}
+      else if(v&&typeof v==='object'){type='json';display=JSON.stringify(v)}
+      else{display=(v==null?'':v)}
+      metas.push({key:k,type,display,fromPayload:!!fromPayload})
+    })
+  }
+  walk(r,false)
+  return metas
+}
+
+function editarModal(tipo,r){
+  editMeta=camposEditaveisMeta(r)
+  const html=editMeta.map((m,i)=>{
+    const id='edit-'+i
+    if(m.type==='bool'){
+      return `<div class="modal-field"><div class="modal-field-lbl">${esc(m.key)}</div><select class="cfg-inp" id="${id}" style="width:100%"><option value="true"${m.display?' selected':''}>Sim</option><option value="false"${!m.display?' selected':''}>Não</option></select></div>`
+    }
+    const isLong=m.type==='json'||m.type==='array'||String(m.display).length>50
+    if(isLong){
+      return `<div class="modal-field modal-field-full"><div class="modal-field-lbl">${esc(m.key)}${m.type==='array'?' (separado por vírgula)':m.type==='json'?' (JSON — mantenha o formato)':''}</div><textarea class="cfg-inp" id="${id}" rows="2" style="width:100%;resize:vertical">${esc(String(m.display))}</textarea></div>`
+    }
+    return `<div class="modal-field"><div class="modal-field-lbl">${esc(m.key)}</div><input class="cfg-inp" id="${id}" style="width:100%" value="${esc(String(m.display))}"/></div>`
+  }).join('')
+  document.getElementById('modal-body').innerHTML=`<div class="modal-note" style="margin-bottom:14px">Editando todos os campos capturados nesta solicitação. Campos em lista devem continuar separados por vírgula, e campos JSON precisam manter o formato original.</div><div class="modal-fields-grid">${html}</div>`
+  document.getElementById('modal-footer').innerHTML=`
+    <button class="btn-sm btn-back" onclick='reabrirModal("${tipo}")'>Cancelar</button>
+    <button class="btn-sm btn-prop" style="margin-left:auto" onclick='salvarEdicaoModal("${tipo}")'>Salvar alterações</button>`
+}
+
+function reabrirModal(tipo){
+  abrirModal(tipo,modalCtx.dados)
+}
+
+async function salvarEdicaoModal(tipo){
+  const top={},payload={}
+  for(let i=0;i<editMeta.length;i++){
+    const m=editMeta[i]
+    const el=document.getElementById('edit-'+i)
+    let val=el.value,parsed
+    if(m.type==='bool'){parsed=val==='true'}
+    else if(m.type==='array'){parsed=val.split(',').map(s=>s.trim()).filter(Boolean)}
+    else if(m.type==='json'){
+      try{parsed=JSON.parse(val)}
+      catch(e){alert('Campo "'+m.key+'" tem JSON inválido. Corrija antes de salvar.');return}
+    }
+    else{parsed=val}
+    if(m.fromPayload)payload[m.key]=parsed
+    else top[m.key]=parsed
+  }
+  if(Object.keys(payload).length)top.payload=payload
+  const tabela=TABLE_MAP[tipo]
+  const id=modalCtx.dados.id
+  const {error}=await sb.from(tabela).update(top).eq('id',id)
+  if(error){alert('Erro ao salvar: '+error.message);return}
+  toast('Alterações salvas')
+  fecharModal(null,true)
+  if(RELOAD_MAP[tipo])RELOAD_MAP[tipo]()
 }
 
 function campo(lbl,val,full){
@@ -1686,12 +1827,13 @@ function renderModalBody(tipo,r){
 
 function renderModalFooter(tipo,r){
   const rid=r.id||''
-  const tbl={career:'career_plan_requests',vaga:'job_requests',nr1:'nr1_requests',treinamento:'training_requests',diagnostico:'diagnostico_requests',cultura:'cultura_requests',gtm:'gtm_requests',impulso:'impulso_requests',diagorg:'diag_org_requests',lideres:'lideres_requests',indicacao:'indicacoes_parceiros'}
-  const tabela=tbl[tipo]||''
+  const tabela=TABLE_MAP[tipo]||''
   const nome=(r.empresa_nome||r.nome_empresa||r.empresa||r.nome||'').replace(/'/g,'')
-  const wa=(r.whatsapp||'').toString().replace(/\D/g,'')
+  const wa=(r.whatsapp||r.telefone||'').toString().replace(/\D/g,'')
   return`${wa?`<button class="btn-sm btn-wa" onclick="window.open('https://wa.me/55${wa}')">WhatsApp</button>`:''}
     <button class="btn-sm btn-email" onclick="navigator.clipboard.writeText('${r.email||''}');toast('E-mail copiado')">Copiar e-mail</button>
+    <button class="btn-sm btn-back" onclick='exportarCSV("${tipo}",modalCtx.dados)'>Exportar CSV</button>
+    <button class="btn-sm btn-back" onclick='editarModal("${tipo}",modalCtx.dados)'>Editar</button>
     ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:tipo==='diagnostico'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirHraasProposta(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}
     <select class="status-sel" onchange="atualizarStatusModal('${tabela}','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
     ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
