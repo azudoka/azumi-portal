@@ -1522,8 +1522,8 @@ async function carregarTreinamento(){
   lastLoaded['treinamento']=data
   if(!data.length){cont.innerHTML='<div class="empty">Nenhuma solicitacao.</div>';return}
   cont.innerHTML=mkTable(data,'treinamento',
-    r=>r.nome_empresa||'—',
-    r=>[r.tema_principal,r.pacote].filter(Boolean).join(' · '),
+    r=>r.empresa||'—',
+    r=>[(Array.isArray(r.temas)?r.temas.join(', '):r.temas),r.pacote_solicitado].filter(Boolean).join(' · '),
     r=>r.email||'—'
   )
 }
@@ -2428,14 +2428,17 @@ function drawerNr1(r){
 }
 
 function drawerTreinamento(r){
-  const basePkg={SPARK:1800,TRAIL:3200,SHIFT:5500}
-  const base=basePkg[r.pacote]||2000
-  return infoBlock(r,[['nome_empresa','Empresa'],['tema_principal','Tema'],['pacote','Pacote'],['num_participantes','Participantes'],['formato','Formato'],['num_turmas','Turmas']])+`
+  const pkgBase={SPARK:1800,TRAIL:3200,SHIFT:5500}
+  const temas=Array.isArray(r.temas)?r.temas.join(', '):(r.temas||'—')
+  const pkgAtual=(r.pacote_solicitado||'TRAIL').toUpperCase()
+  const pkgVal=pkgBase[pkgAtual]?pkgAtual:'TRAIL'
+  return infoBlock(r,[['empresa','Empresa'],['motivo','Motivo/objetivo'],['pacote_solicitado','Pacote solicitado'],['participantes_estimado','Participantes (estimado)'],['formato','Formato'],['encontros_desejados','Encontros desejados']])+`
   <div class="calc-section">
     <div class="calc-section-title">Calculadora de Treinamento</div>
+    <div style="font-size:11px;color:var(--ts);margin:-4px 0 12px">Temas solicitados: ${temas}</div>
     <div class="calc-row">
-      ${calcSelect('t-pkg','Pacote',[['SPARK','SPARK — Workshop (R$1.800)'],['TRAIL','TRAIL — Jornada (R$3.200)'],['SHIFT','SHIFT — Transformacao (R$5.500)']],r.pacote||'TRAIL')}
-      ${calcField('t-turmas','Numero de turmas',r.num_turmas||1)}
+      ${calcSelect('t-pkg','Pacote',[['SPARK','SPARK — Workshop (R$1.800)'],['TRAIL','TRAIL — Jornada (R$3.200)'],['SHIFT','SHIFT — Transformacao (R$5.500)']],pkgVal)}
+      ${calcField('t-turmas','Numero de turmas',r.encontros_desejados||1)}
     </div>
     <div class="calc-row">
       ${calcSelect('t-pub','Publico',[['1','Operacional (x1.0)'],['1.15','Supervisores/Coord (x1.15)'],['1.3','Gerentes (x1.3)'],['1.5','Diretores+ (x1.5)']],1)}
@@ -2451,7 +2454,7 @@ function drawerTreinamento(r){
     <div class="calc-row" style="margin-top:12px">
       ${calcField('t-desc','Desconto (%)',0)}
     </div>
-    <div class="calc-field"><label>Observacoes</label><textarea id="t-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="t-obs" placeholder="Condicoes especificas, validade...">${r.obs?'Contexto do cliente: '+r.obs:''}</textarea></div>
   </div>
   ${resultBox('result-treinamento')}`
 }
@@ -2653,7 +2656,7 @@ function calcTreinamento(){
   const base=pkgBase[pkg]||2000
   const porTurma=base*pub*fmt_*part
   const subTurmas=porTurma*turmas
-  const p=proposalCtx.dados.num_participantes||20
+  const p=proposalCtx.dados.participantes_estimado||20
   const adicMaterial=document.getElementById('adic-material')?.classList.contains('on')?150*p:0
   const adicCoffee=document.getElementById('adic-coffee')?.classList.contains('on')?50*p:0
   const outrasAdics=Array.from(document.querySelectorAll('.adicional-item.on')).filter(el=>!el.id).reduce((s,el)=>s+(parseFloat(el.dataset.val)||0),0)
@@ -2779,7 +2782,9 @@ function calcImpulso(){
 }
 
 function drawerDiagOrg(r){
-  return infoBlock(r,[['empresa','Empresa'],['responsavel','Responsavel'],['segmento','Segmento'],['num_colaboradores','Colaboradores'],['momento_empresa','Momento'],['budget','Budget']])+`
+  const p=r.payload||{}
+  const merged={...p,...r}
+  return infoBlock(merged,[['empresa','Empresa'],['responsavel','Responsavel'],['segmento','Segmento'],['num_colaboradores','Colaboradores'],['num_unidades','Unidades'],['momento_empresa','Momento'],['budget','Budget']])+`
   <div class="calc-section">
     <div class="calc-section-title">Proposta Diagnostico Organizacional</div>
     ${calcSelect('do-pkg','Escopo',[['ESSENCIAL','ESSENCIAL — Diagnostico 3P (R$4.500)'],['COMPLETO','COMPLETO — Diag + Plano Acao (R$8.500)'],['PREMIUM','PREMIUM — Diag + Plano + Acompanhamento (R$14.000)']],'COMPLETO')}
@@ -2787,7 +2792,7 @@ function drawerDiagOrg(r){
       ${calcField('do-prazo','Duracao (semanas)',6)}
       ${calcField('do-desc','Desconto (%)',0)}
     </div>
-    <div class="calc-field"><label>Observacoes</label><textarea id="do-obs" placeholder="Escopo, condicoes, validade..."></textarea></div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="do-obs" placeholder="Escopo, condicoes, validade...">${p.info_adicional?'Info adicional do cliente: '+p.info_adicional:''}</textarea></div>
   </div>
   ${resultBox('result-diagorg')}`
 }
@@ -2807,19 +2812,21 @@ function calcDiagOrg(){
 }
 
 function drawerLideres(r){
-  return infoBlock(r,[['empresa','Empresa'],['responsavel','Responsavel'],['num_lideres','Lideres'],['formato','Formato'],['duracao','Duracao'],['budget','Budget']])+`
+  const p=r.payload||{}
+  const merged={...p,...r}
+  return infoBlock(merged,[['empresa','Empresa'],['responsavel','Responsavel'],['num_lideres','Lideres'],['formato','Formato'],['duracao','Duracao'],['budget','Budget']])+`
   <div class="calc-section">
     <div class="calc-section-title">Proposta Programa de Lideres</div>
     ${calcSelect('l-ciclo','Ciclo do programa',[['3','3 meses'],['6','6 meses'],['9','9 meses'],['12','12 meses']],'6')}
     <div class="calc-row">
-      ${calcField('l-lideres','Numero de lideres',r.num_lideres||10)}
+      ${calcField('l-lideres','Numero de lideres',p.num_lideres||10)}
       ${calcField('l-valor-lider','Valor por lider/ciclo (R$)',480)}
     </div>
     <div class="calc-row">
       ${calcSelect('l-fmt','Formato',[['1','Remoto (x1.0)'],['1.15','Hibrido (x1.15)'],['1.3','Presencial (x1.3)']],1)}
       ${calcField('l-desc','Desconto (%)',0)}
     </div>
-    <div class="calc-field"><label>Observacoes</label><textarea id="l-obs" placeholder="Condicoes especificas, validade..."></textarea></div>
+    <div class="calc-field"><label>Observacoes</label><textarea id="l-obs" placeholder="Condicoes especificas, validade...">${p.contexto?'Contexto do cliente: '+p.contexto:''}</textarea></div>
   </div>
   ${resultBox('result-lideres')}`
 }
@@ -2873,7 +2880,7 @@ function gerarPDF(){
   } else if(tipo==='nr1'){
     linhas=[['Colaboradores',r.num_colaboradores||'—'],['Mensalidade',fmtNum(v('n-mensal'))],['Implantacao',fmtNum(v('n-impl'))],['Prazo',v('n-prazo')+' meses'],res.descVal?['Desconto ('+v('n-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL CONTRATO',fmtNum(res.total||0),'total']]
   } else if(tipo==='treinamento'){
-    linhas=[['Tema',r.tema_principal||'—'],['Pacote',vstr('t-pkg')],['Participantes',r.num_participantes||'—'],['Turmas',v('t-turmas')],['Valor por turma',fmtNum(res.porTurma||0)],res.adics?['Adicionais',fmtNum(res.adics)]:null,res.descVal?['Desconto ('+v('t-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total']]
+    linhas=[['Temas',Array.isArray(r.temas)?r.temas.join(', '):(r.temas||'—')],['Pacote',vstr('t-pkg')],['Participantes (estimado)',r.participantes_estimado||'—'],['Turmas',v('t-turmas')],['Valor por turma',fmtNum(res.porTurma||0)],res.adics?['Adicionais',fmtNum(res.adics)]:null,res.descVal?['Desconto ('+v('t-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL',fmtNum(res.total||0),'total']]
   } else if(tipo==='diagnostico'){
     linhas=[['Pacote HRaaS',res.pkg||'—'],['Colaboradores',r.num_colaboradores||'—'],['Mensalidade',fmtNum(res.mensalTotal||0)],['Implantacao ('+v('d-impl-pct')+'%)',fmtNum(res.implVal||0)],['Prazo',v('d-prazo')+' meses'],res.descVal?['Desconto ('+v('d-desc')+'%)','-'+fmtNum(res.descVal)]:null,['TOTAL CONTRATO',fmtNum(res.totalFinal||0),'total']]
   } else if(tipo==='cultura'){
@@ -2972,7 +2979,7 @@ async function salvarProposta(){
     dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa||r.empresa_nome,decisor:r.nome_responsavel||r.decisor_nome,num_colaboradores:r.num_colaboradores,segmento:r.segmento,valor_mensal:v('n-mensal'),implantacao:v('n-impl'),prazo_impl:v('n-prazo'),desconto_pct:v('n-desc'),desconto_valor:res.descVal,valor_final:res.total,escopo:vstr('n-obs'),obs:vstr('n-obs'),status:'enviada',emitido_por:emitido}
   } else if(tipo==='treinamento'){
     tabela='training_proposals'
-    dados={protocolo:protProp,request_id:r.id,empresa:r.nome_empresa,responsavel:r.nome_responsavel,tema:r.tema_principal,pacote:vstr('t-pkg'),num_participantes:r.num_participantes,num_turmas:v('t-turmas'),total_final:res.total,desconto_pct:v('t-desc'),obs:vstr('t-obs'),status:'enviada',emitido_por:emitido}
+    dados={protocolo:protProp,request_id:r.id,empresa:r.empresa,responsavel:r.responsavel,tema:Array.isArray(r.temas)?r.temas.join(', '):r.temas,pacote:vstr('t-pkg'),num_participantes:r.participantes_estimado,num_turmas:v('t-turmas'),total_final:res.total,desconto_pct:v('t-desc'),obs:vstr('t-obs'),status:'enviada',emitido_por:emitido}
   } else if(tipo==='diagnostico'){
     tabela='diagnostico_proposals'
     dados={protocolo:protProp,request_id:r.id,empresa:r.empresa_nome,decisor:r.decisor_nome,pacote:res.pkg,colab:r.num_colaboradores,valor_mensal:res.mensalTotal,implantacao:res.implVal,meses:v('d-prazo'),desconto_pct:v('d-desc'),desconto_valor:res.descVal,valor_final:res.totalFinal,obs:vstr('d-obs'),status:'enviada',emitido_por:emitido}
