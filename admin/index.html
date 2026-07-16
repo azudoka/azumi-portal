@@ -200,8 +200,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .req-table-data{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:10px;color:var(--ts)}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(3,29,56,.45);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-overlay{position:fixed;inset:0;background:rgba(3,29,56,.45);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{opacity:1;pointer-events:all;backdrop-filter:blur(6px)}
 .modal-box{background:#fff;border:1px solid var(--border);border-radius:18px;width:100%;max-width:760px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.97);transition:transform .25s;box-shadow:0 24px 64px rgba(3,29,56,.18)}
 .modal-overlay.open .modal-box{transform:scale(1)}
 .modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0;background:#fff}
@@ -242,8 +242,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pkg-card-sub{font-size:10px;color:var(--ts)}
 .status-pill{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:10px;font-weight:600;padding:4px 12px;border-radius:100px;border:1px solid}
 .pill-rascunho{background:rgba(120,120,120,.1);color:#666;border-color:rgba(120,120,120,.3)}
+.pill-em_revisao{background:rgba(251,191,36,.1);color:#92400e;border-color:rgba(251,191,36,.3)}
 .pill-aprovada{background:rgba(16,185,129,.1);color:#047857;border-color:rgba(16,185,129,.3)}
 .pill-enviada{background:rgba(59,130,246,.1);color:#1d4ed8;border-color:rgba(59,130,246,.3)}
+.pill-fechada{background:rgba(139,92,246,.1);color:#6d28d9;border-color:rgba(139,92,246,.3)}
+.opt-row{display:grid;gap:7px;margin-top:4px}
+.opt-btn{padding:9px 14px;border:1px solid var(--border);border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;background:#f7f8fb;color:var(--ts);transition:all .15s;text-align:left;width:100%;font-family:'Space Grotesk',sans-serif}
+.opt-btn:hover{border-color:rgba(59,130,246,.4);color:var(--tp)}
+.opt-btn.sel{background:rgba(59,130,246,.12);color:#1d4ed8;border-color:#3B82F6;font-weight:600}
+.tog-dark{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.tog-dark-lbl{font-size:13px;color:var(--tp)}
+.tog-track{width:40px;height:22px;border-radius:100px;position:relative;transition:background .2s;flex-shrink:0;background:#dfe4ec}
+.tog-track.on{background:#3B82F6}
+.tog-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.tog-track.on .tog-thumb{left:21px}
+.aviso-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:10px 13px;font-size:12px;color:#991b1b;line-height:1.6;margin-top:8px}
 .prop-action-bar{display:flex;gap:8px;flex-wrap:wrap}
 .btn-prop-action{padding:10px 18px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s}
 .btn-save{background:rgba(59,130,246,.12);color:#1d4ed8;border:1px solid rgba(59,130,246,.3)}
@@ -730,6 +743,229 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 </div><!-- /prop-view -->
+
+<div id="prop-treinamento-view" style="display:none">
+<div class="prop-wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-prop-action btn-back" onclick="voltarAdminTreinamento()">← Voltar</button>
+      <div>
+        <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--tp)" id="tr-empresa-titulo">Nova Proposta</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--ts)" id="tr-proto-titulo"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="status-pill pill-rascunho" id="tr-status-pill">Rascunho</span>
+      <select class="admin-select" id="tr-status-sel" onchange="mudarStatusTreinamento(this.value)">
+        <option value="">Mudar status...</option>
+        <option value="rascunho">Rascunho</option>
+        <option value="em_revisao">Em revisão</option>
+        <option value="aprovada">Aprovada</option>
+        <option value="enviada">Enviada ao cliente</option>
+        <option value="fechada">Fechada</option>
+      </select>
+      <button class="btn-prop-action btn-save" onclick="salvarPropostaTreinamento()">Salvar</button>
+      <button class="btn-prop-action btn-print" onclick="imprimirPropostaTreinamento()">PDF</button>
+    </div>
+  </div>
+
+  <div class="prop-layout">
+    <div class="prop-left">
+
+      <div class="prop-card">
+        <div class="prop-card-title">Empresa & Contato</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">Empresa</div><input class="cfg-inp" id="tr-empresa" placeholder="Nome da empresa"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">Responsável</div><input class="cfg-inp" id="tr-responsavel" placeholder="Nome"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">E-mail</div><input class="cfg-inp" id="tr-email" placeholder="email@empresa.com"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">WhatsApp</div><input class="cfg-inp" id="tr-wa" placeholder="(41) 99999-0000"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">Cidade / Estado</div><input class="cfg-inp" id="tr-local" placeholder="Ex.: Curitiba / PR"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:4px">Segmento</div><input class="cfg-inp" id="tr-segmento" placeholder="Ex.: Varejo"/></div>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Pacote</div>
+        <div class="pkg-grid" id="tr-pkg-grid">
+          <div class="pkg-card sel" data-pkg="SPARK" onclick="selPkgTreinamento(this)">
+            <div class="pkg-card-name">SPARK</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--ts);margin-bottom:6px">1 encontro</div>
+            <div class="pkg-card-desc">Intervenção focada em tema específico, com aplicação prática orientada</div>
+          </div>
+          <div class="pkg-card" data-pkg="TRAIL" onclick="selPkgTreinamento(this)">
+            <div class="pkg-card-name">TRAIL</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--ts);margin-bottom:6px">Até 3 encontros</div>
+            <div class="pkg-card-desc">Aprofundamento progressivo com continuidade entre as etapas</div>
+          </div>
+          <div class="pkg-card" data-pkg="SHIFT" onclick="selPkgTreinamento(this)">
+            <div class="pkg-card-name">SHIFT</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--ts);margin-bottom:6px">6 ou mais encontros</div>
+            <div class="pkg-card-desc">Programa estruturado de desenvolvimento com acompanhamento contínuo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Público & Perfil</div>
+        <div style="margin-bottom:14px">
+          <div class="modal-field-lbl" style="margin-bottom:8px">Público-alvo</div>
+          <div class="opt-row" id="tr-publico-opts">
+            <button class="opt-btn" data-val="Liderança — C-level e diretores" data-peso="1.30" onclick="selOptTreinamento(this,'publico')">Liderança — C-level e diretores</button>
+            <button class="opt-btn" data-val="Time Tático — coordenadores e gerentes" data-peso="1.15" onclick="selOptTreinamento(this,'publico')">Time Tático — coordenadores e gerentes</button>
+            <button class="opt-btn" data-val="Novos Líderes" data-peso="1.10" onclick="selOptTreinamento(this,'publico')">Novos Líderes</button>
+            <button class="opt-btn" data-val="Time de People e RH" data-peso="1.10" onclick="selOptTreinamento(this,'publico')">Time de People e RH</button>
+            <button class="opt-btn" data-val="Time Operacional — base" data-peso="1.00" onclick="selOptTreinamento(this,'publico')">Time Operacional — base</button>
+            <button class="opt-btn" data-val="Misto" data-peso="1.12" onclick="selOptTreinamento(this,'publico')">Misto</button>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div class="modal-field-lbl" style="margin-bottom:8px">Senioridade predominante</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px" id="tr-senior-opts">
+            <button class="opt-btn" data-val="Júnior" data-peso="1.00" onclick="selOptTreinamento(this,'senior')">Júnior</button>
+            <button class="opt-btn" data-val="Pleno" data-peso="1.10" onclick="selOptTreinamento(this,'senior')">Pleno</button>
+            <button class="opt-btn" data-val="Sênior" data-peso="1.20" onclick="selOptTreinamento(this,'senior')">Sênior</button>
+          </div>
+        </div>
+        <div>
+          <div class="modal-field-lbl" style="margin-bottom:8px">Composição do grupo — briefing</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-size:11px;color:var(--ts);margin-bottom:4px">% mulheres</div><input class="cfg-inp" id="tr-mulheres" type="number" min="0" max="100" placeholder="Ex.: 60" oninput="calcularTreinamento()"/></div>
+            <div><div style="font-size:11px;color:var(--ts);margin-bottom:4px">% homens</div><input class="cfg-inp" id="tr-homens" type="number" min="0" max="100" placeholder="Ex.: 40" oninput="calcularTreinamento()"/></div>
+          </div>
+          <textarea class="cfg-inp" id="tr-comp-obs" placeholder="Obs. sobre o grupo para o briefing..." style="min-height:52px;margin-top:8px;resize:vertical" oninput="calcularTreinamento()"></textarea>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Logística</div>
+        <div style="margin-bottom:14px">
+          <div class="modal-field-lbl" style="margin-bottom:8px">Formato</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="tr-formato-opts">
+            <button class="opt-btn" data-val="Presencial" data-peso="1.00" onclick="selOptTreinamento(this,'formato');onFormatoTreinamento()">Presencial</button>
+            <button class="opt-btn" data-val="Remoto" data-peso="0.85" onclick="selOptTreinamento(this,'formato');onFormatoTreinamento()">Remoto</button>
+            <button class="opt-btn" data-val="Híbrido" data-peso="1.00" onclick="selOptTreinamento(this,'formato');onFormatoTreinamento()">Híbrido</button>
+            <button class="opt-btn" data-val="Sem preferência" data-peso="0.90" onclick="selOptTreinamento(this,'formato');onFormatoTreinamento()">Sem preferência</button>
+          </div>
+          <div class="aviso" id="tr-aviso-formato" style="display:none"></div>
+        </div>
+        <div id="tr-bloco-presencial" style="display:none;margin-bottom:14px">
+          <div class="modal-field-lbl" style="margin-bottom:8px">Infraestrutura — confirmada pelo cliente</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="tr-infra-sala" onchange="calcularTreinamento()"/> Sala ampla com cadeiras (formato U ou círculo)</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="tr-infra-projetor" onchange="calcularTreinamento()"/> Projetor ou TV</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="tr-infra-som" onchange="calcularTreinamento()"/> Sistema de som (turmas acima de 20 pessoas)</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tp);cursor:pointer"><input type="checkbox" id="tr-infra-wifi" onchange="calcularTreinamento()"/> Wi-Fi disponível</label>
+          </div>
+          <div style="font-size:11px;color:var(--ts);margin:10px 0 6px">Local do treinamento</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="tr-local-opts">
+            <button class="opt-btn" data-val="Sede da empresa" onclick="selOptLocalTreinamento(this)">Sede da empresa</button>
+            <button class="opt-btn" data-val="Espaço locado pelo cliente" onclick="selOptLocalTreinamento(this)">Espaço locado pelo cliente</button>
+            <button class="opt-btn" data-val="A definir" onclick="selOptLocalTreinamento(this)" style="grid-column:1/-1">A definir</button>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div class="modal-field-lbl" style="margin-bottom:8px">Deslocamento</div>
+          <div class="opt-row" id="tr-desl-opts">
+            <button class="opt-btn" data-val="nenhum" data-peso="0" onclick="selOptTreinamento(this,'desl');calcularTreinamento()">Curitiba e região metropolitana — sem custo adicional</button>
+            <button class="opt-btn" data-val="interior_pr" data-peso="0.05" onclick="selOptTreinamento(this,'desl');calcularTreinamento()">Interior do Paraná — deslocamento incluído no orçamento</button>
+            <button class="opt-btn" data-val="fora_pr" data-peso="0.15" onclick="selOptTreinamento(this,'desl');calcularTreinamento()">Fora do Paraná — deslocamento por conta do contratante</button>
+          </div>
+          <div class="aviso-red" id="tr-aviso-desl-fora" style="display:none">Deslocamento fora do Paraná: transporte, hospedagem e alimentação da equipe Azumi são responsabilidade da empresa contratante e não estão incluídos neste orçamento.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div><div class="modal-field-lbl" style="margin-bottom:6px">Participantes / turma</div><input class="cfg-inp" id="tr-participantes" type="number" min="1" max="200" value="20" oninput="calcularTreinamento()"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:6px">Nº de turmas</div><input class="cfg-inp" id="tr-turmas" type="number" min="1" max="20" value="1" oninput="calcularTreinamento()"/></div>
+          <div><div class="modal-field-lbl" style="margin-bottom:6px">Horas / encontro</div><input class="cfg-inp" id="tr-carga" type="number" min="1" max="8" value="3" oninput="calcularTreinamento()"/></div>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Adicionais</div>
+        <div class="tog-dark" onclick="togTreinamento('mat-impresso')">
+          <span class="tog-dark-lbl">Material impresso</span>
+          <div class="tog-track" id="tr-tog-mat-impresso"><div class="tog-thumb"></div></div>
+        </div>
+        <div id="tr-bloco-mat" style="display:none;padding:10px 0 4px">
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Valor adicional (R$)</div>
+          <input class="cfg-inp" id="tr-mat-valor" type="number" min="0" value="0" oninput="calcularTreinamento()" style="width:140px"/>
+        </div>
+        <div class="tog-dark" onclick="togTreinamento('parceiro')">
+          <span class="tog-dark-lbl">Parceiro externo necessário</span>
+          <div class="tog-track" id="tr-tog-parceiro"><div class="tog-thumb"></div></div>
+        </div>
+        <div id="tr-bloco-parceiro" style="display:none;padding:10px 0 4px">
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Custo do parceiro (R$)</div>
+          <input class="cfg-inp" id="tr-parceiro-valor" type="number" min="0" value="0" oninput="calcularTreinamento()" style="width:140px"/>
+          <textarea class="cfg-inp" id="tr-parceiro-obs" placeholder="Especialidade necessária..." style="min-height:52px;margin-top:8px;resize:vertical" oninput="calcularTreinamento()"></textarea>
+        </div>
+        <div style="margin-top:14px">
+          <div class="modal-field-lbl" style="margin-bottom:6px">Temas do treinamento</div>
+          <input class="cfg-inp" id="tr-temas" placeholder="Ex.: CNV, Liderança, Feedback..." oninput="calcularTreinamento()"/>
+        </div>
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div class="modal-field-lbl">O que está incluído (edite antes de gerar PDF)</div>
+            <button onclick="resetIncluidoTreinamento()" style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;color:var(--ts);background:none;cursor:pointer;padding:2px 6px;border-radius:4px;border:1px solid var(--border)">Restaurar</button>
+          </div>
+          <textarea class="cfg-inp" id="tr-incluido" placeholder="Um item por linha..." style="min-height:120px;resize:vertical;font-size:12px;line-height:1.7" oninput="calcularTreinamento()"></textarea>
+        </div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-card-title">Observações</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Contexto — aparece na proposta para o cliente</div>
+          <textarea class="cfg-inp" id="tr-obs-proposta" placeholder="Descreva o contexto e o objetivo do treinamento..." style="min-height:80px;resize:vertical" oninput="calcularTreinamento()"></textarea>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--ts);margin-bottom:6px">Notas internas — não aparecem na proposta</div>
+          <textarea class="cfg-inp" id="tr-obs-interna" placeholder="Histórico, negociação, pontos de atenção..." style="min-height:64px;resize:vertical" oninput="calcularTreinamento()"></textarea>
+        </div>
+      </div>
+
+      <div class="prop-action-bar">
+        <button class="btn-prop-action btn-save" onclick="salvarPropostaTreinamento()">Salvar rascunho</button>
+        <button class="btn-prop-action btn-approve" onclick="salvarPropostaTreinamento('aprovada')">Marcar como aprovada</button>
+        <button class="btn-prop-action btn-print" onclick="imprimirPropostaTreinamento()">Imprimir / PDF</button>
+      </div>
+    </div>
+
+    <div class="prop-right">
+      <div class="prop-card">
+        <div class="prop-card-title">Valores base por turma</div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">SPARK (R$)</div><input class="cfg-inp" id="tr-cfg-spark" type="number" value="4800" min="0" step="100" oninput="calcularTreinamento()"/></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">TRAIL (R$)</div><input class="cfg-inp" id="tr-cfg-trail" type="number" value="12000" min="0" step="100" oninput="calcularTreinamento()"/></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">SHIFT (R$)</div><input class="cfg-inp" id="tr-cfg-shift" type="number" value="22000" min="0" step="100" oninput="calcularTreinamento()"/></div>
+        <div><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Interior PR — adicional / visita (R$)</div><input class="cfg-inp" id="tr-cfg-desl-pr" type="number" value="400" min="0" step="50" oninput="calcularTreinamento()"/></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Composição do valor</div>
+        <div id="tr-peso-rows"></div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Orçamento referencial</div>
+        <div id="tr-result-rows"></div>
+        <div class="result-total">
+          <div class="result-total-lbl">TOTAL</div>
+          <div>
+            <div class="result-total-orig" id="tr-res-orig" style="display:none"></div>
+            <div class="result-total-val" id="tr-res-final">R$ 0,00</div>
+          </div>
+        </div>
+        <div class="result-note" id="tr-res-note"></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-card-title">Desconto</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <input class="cfg-inp" id="tr-desc-pct" type="number" min="0" max="50" value="0" step="1" oninput="calcularTreinamento()" style="width:80px"/>
+          <span style="font-size:13px;color:var(--ts)">% sobre o total</span>
+        </div>
+        <div class="aviso" id="tr-aviso-desc" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /prop-treinamento-view -->
 
 <div id="prop-vaga-view" style="display:none;position:fixed;inset:0;background:#f0f2f7;z-index:50;overflow-y:auto">
   <div style="background:#f0f2f7;min-height:100vh;padding:20px">
@@ -1808,7 +2044,7 @@ function renderModalFooter(tipo,r){
     <select class="status-sel" onchange="atualizarStatusModal('${tabela}','${rid}',this.value,this)"><option value="">Mudar status</option><option value="novo">Novo</option><option value="contato">Em contato</option><option value="proposta">Proposta enviada</option><option value="fechado">Fechado</option><option value="arquivado">Arquivado</option></select>
     ${r.emitido_por?`<span class="emitido-por">Proposta: ${r.emitido_por}</span>`:''}
     <button class="btn-sm btn-del" style="margin-left:auto" onclick="excluirModal('${tabela}','${rid}','${nome}','${tipo}')">Excluir</button>
-    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:tipo==='diagnostico'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirHraasProposta(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}`
+    ${tipo==='nr1'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirNr1Proposta(modalCtx.dados)">Gerar Proposta NR-1</button>`:tipo==='career'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='vaga'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaVaga(modalCtx.dados)">Gerar Proposta</button>`:tipo==='diagnostico'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirHraasProposta(modalCtx.dados)">Gerar Proposta</button>`:tipo==='treinamento'?`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaTreinamento(modalCtx.dados)">Gerar Proposta</button>`:`<button class="btn-sm btn-prop" onclick="fecharModal(null,true);abrirPropostaDrawer('${tipo}',modalCtx.dados)">Gerar Proposta</button>`}`
 }
 
 async function atualizarStatusModal(tabela,id,status,sel){
@@ -3152,6 +3388,514 @@ function atualizarPillProp(status){
   propState.status=status
 }
 
+function trR50(v){return Math.round(v/50)*50}
+let propStateTreinamento = {
+  id:null, requestId:null, requestProtocolo:null, status:'rascunho',
+  pkg:'SPARK', publico:null, publicoPeso:1.0,
+  senior:null, seniorPeso:1.0,
+  formato:null, formatoPeso:1.0,
+  desl:null, deslPeso:0,
+  togMat:false, togParceiro:false,
+}
+const TR_PKGS_INFO = {
+  SPARK:{enc:'1 encontro',desc:'Intervenção focada em tema específico, com aplicação prática orientada'},
+  TRAIL:{enc:'Até 3 encontros',desc:'Aprofundamento progressivo com continuidade entre as etapas'},
+  SHIFT:{enc:'6 ou mais encontros',desc:'Programa estruturado de desenvolvimento com acompanhamento contínuo'},
+}
+const TR_STATUS_LBL={rascunho:'Rascunho',em_revisao:'Em revisão',aprovada:'Aprovada',enviada:'Enviada ao cliente',fechada:'Fechada'}
+const TR_STATUS_CLS={rascunho:'pill-rascunho',em_revisao:'pill-em_revisao',aprovada:'pill-aprovada',enviada:'pill-enviada',fechada:'pill-fechada'}
+
+function trGetInclusoItens(pkg,fmt,matImpresso){
+  const base=[
+    'Alinhamento de escopo pré-treinamento',
+    'Customização do conteúdo por público e realidade da empresa',
+    'Condução pelo time Azumi RH',
+    'Materiais digitais personalizados (guias e exercícios práticos)',
+    'Pulse pós-treinamento — leitura rápida do que funcionou',
+  ]
+  const remoto=['Gravação da sessão','Transcrição do encontro']
+  const presencial=['Deslocamento incluso para Curitiba e região metropolitana','Checagem prévia de infraestrutura com o time da empresa']
+  const trailShift=['Progressão conectada entre os encontros','Ponto focal de governança com o RH']
+  const mat=['Material impresso personalizado (apostila/guia)']
+  let itens=[...base]
+  if(fmt==='Remoto')itens=[...itens,...remoto]
+  if(fmt==='Presencial'||fmt==='Híbrido')itens=[...itens,...presencial]
+  if(pkg==='TRAIL'||pkg==='SHIFT')itens=[...itens,...trailShift]
+  if(matImpresso)itens=[...itens,...mat]
+  return itens
+}
+
+function resetIncluidoTreinamento(){
+  const itens=trGetInclusoItens(propStateTreinamento.pkg,propStateTreinamento.formato,propStateTreinamento.togMat)
+  g('tr-incluido').value=itens.join('\n')
+  calcularTreinamento()
+}
+
+function selPkgTreinamento(el){
+  document.querySelectorAll('#tr-pkg-grid .pkg-card').forEach(c=>c.classList.remove('sel'))
+  el.classList.add('sel')
+  propStateTreinamento.pkg=el.dataset.pkg
+  calcularTreinamento()
+}
+
+function selOptTreinamento(el,grp){
+  el.closest('[id$="-opts"]')?.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('sel'))
+  el.classList.add('sel')
+  const peso=Number(el.dataset.peso)||1
+  if(grp==='publico'){propStateTreinamento.publico=el.dataset.val;propStateTreinamento.publicoPeso=peso}
+  else if(grp==='senior'){propStateTreinamento.senior=el.dataset.val;propStateTreinamento.seniorPeso=peso}
+  else if(grp==='formato'){propStateTreinamento.formato=el.dataset.val;propStateTreinamento.formatoPeso=peso}
+  else if(grp==='desl'){propStateTreinamento.desl=el.dataset.val;propStateTreinamento.deslPeso=Number(el.dataset.peso)||0}
+  calcularTreinamento()
+}
+
+function selOptLocalTreinamento(el){
+  document.querySelectorAll('#tr-local-opts .opt-btn').forEach(b=>b.classList.remove('sel'))
+  el.classList.add('sel')
+}
+
+function onFormatoTreinamento(){
+  const fmt=propStateTreinamento.formato
+  const av=g('tr-aviso-formato')
+  const bp=g('tr-bloco-presencial')
+  if(fmt==='Sem preferência'){
+    av.style.display='block'
+    av.textContent='Sem preferência definida: o formato será alinhado com a Azumi no diagnóstico. Considere definir antes de fechar a proposta.'
+    av.className='aviso'
+    bp.style.display='none'
+  }else if(fmt==='Presencial'||fmt==='Híbrido'){
+    av.style.display='block'
+    av.textContent='Treinamento '+fmt+': todos os custos de deslocamento, alimentação e estadia da equipe Azumi são responsabilidade da empresa contratante, exceto para Curitiba e região metropolitana.'
+    av.className='aviso aviso-red'
+    bp.style.display='block'
+  }else{
+    av.style.display='none'
+    bp.style.display='none'
+  }
+  calcularTreinamento()
+}
+
+function togTreinamento(id,forceOn){
+  const track=g('tr-tog-'+id)
+  const isOn=forceOn!==undefined?forceOn:!track.classList.contains('on')
+  track.className='tog-track'+(isOn?' on':'')
+  if(id==='mat-impresso'){propStateTreinamento.togMat=isOn;g('tr-bloco-mat').style.display=isOn?'block':'none'}
+  if(id==='parceiro'){propStateTreinamento.togParceiro=isOn;g('tr-bloco-parceiro').style.display=isOn?'block':'none'}
+  calcularTreinamento()
+}
+
+function calcularTreinamento(){
+  const pkg=propStateTreinamento.pkg
+  const baseValues={
+    SPARK:Number(g('tr-cfg-spark').value)||4800,
+    TRAIL:Number(g('tr-cfg-trail').value)||12000,
+    SHIFT:Number(g('tr-cfg-shift').value)||22000,
+  }
+  const base=baseValues[pkg]||4800
+  const pPub=propStateTreinamento.publicoPeso||1.0
+  const pSen=propStateTreinamento.seniorPeso||1.0
+  const pFmt=propStateTreinamento.formatoPeso||1.0
+  const nPart=Number(g('tr-participantes').value)||20
+  const pPart=nPart<=15?1.0:nPart<=30?1.15:nPart<=50?1.25:1.35
+  const deslTipo=propStateTreinamento.desl
+  const deslVal=deslTipo==='interior_pr'?(Number(g('tr-cfg-desl-pr').value)||400):0
+  g('tr-aviso-desl-fora').style.display=deslTipo==='fora_pr'?'block':'none'
+  const nTurmas=Number(g('tr-turmas').value)||1
+  const valorPorTurma=trR50(base*pPub*pSen*pFmt*pPart)
+  const valorTurmas=valorPorTurma*nTurmas
+  const valorDesl=deslVal*nTurmas
+  const matVal=propStateTreinamento.togMat?(Number(g('tr-mat-valor').value)||0):0
+  const parcVal=propStateTreinamento.togParceiro?(Number(g('tr-parceiro-valor').value)||0):0
+  const bruto=valorTurmas+valorDesl+matVal+parcVal
+  const descPct=Math.min(50,Math.max(0,Number(g('tr-desc-pct').value)||0))
+  const descVal=trR50(bruto*descPct/100)
+  const final=bruto-descVal
+
+  const av=g('tr-aviso-desc')
+  if(descPct>0){av.style.display='block';av.textContent=`Desconto de ${descPct}%: ${brl(descVal)} de economia. Total com desconto: ${brl(final)}.`}
+  else av.style.display='none'
+
+  const pesRows=[
+    {l:'Pacote '+pkg,v:brl(base)+'/turma'},
+    {l:'Público · '+(propStateTreinamento.publico||'a definir'),v:pPub.toFixed(2)+'×'},
+    {l:'Senioridade · '+(propStateTreinamento.senior||'a definir'),v:pSen.toFixed(2)+'×'},
+    {l:'Formato · '+(propStateTreinamento.formato||'a definir'),v:pFmt.toFixed(2)+'×'},
+    {l:'Participantes · '+nPart+' pessoas',v:pPart.toFixed(2)+'×'},
+    {l:'Valor/turma calculado',v:brl(valorPorTurma)},
+    {l:'× '+nTurmas+' turma(s)',v:brl(valorTurmas)},
+  ]
+  g('tr-peso-rows').innerHTML=pesRows.map(r=>`<div class="weight-row"><span class="weight-lbl">${r.l}</span><span class="weight-val">${r.v}</span></div>`).join('')
+
+  const resRows=[
+    {l:'Subtotal turmas',v:brl(valorTurmas)},
+    ...(valorDesl>0?[{l:'Deslocamento ('+nTurmas+'×)',v:brl(valorDesl)}]:[]),
+    ...(matVal>0?[{l:'Material impresso',v:brl(matVal)}]:[]),
+    ...(parcVal>0?[{l:'Parceiro externo',v:brl(parcVal)}]:[]),
+    ...(descPct>0?[{l:'Desconto ('+descPct+'%)',v:'− '+brl(descVal)}]:[]),
+  ]
+  g('tr-result-rows').innerHTML=resRows.map(r=>`<div class="result-row"><span>${r.l}</span><span>${r.v}</span></div>`).join('')
+
+  const orig=g('tr-res-orig'),fin=g('tr-res-final')
+  if(descPct>0){orig.style.display='block';orig.textContent=brl(bruto)}
+  else orig.style.display='none'
+  fin.textContent=brl(final)
+  g('tr-res-note').textContent=nTurmas+'× turma(s) · '+nPart+' participantes/turma · '+brl(valorPorTurma)+'/turma'
+
+  propStateTreinamento._bruto=bruto
+  propStateTreinamento._descVal=descVal
+  propStateTreinamento._final=final
+  propStateTreinamento._valorPorTurma=valorPorTurma
+}
+
+function atualizarPillTreinamento(status){
+  const pill=g('tr-status-pill')
+  pill.className='status-pill '+(TR_STATUS_CLS[status]||'pill-rascunho')
+  pill.textContent=TR_STATUS_LBL[status]||status
+  propStateTreinamento.status=status
+}
+
+function mudarStatusTreinamento(status){
+  if(!status)return
+  g('tr-status-sel').value=''
+  atualizarPillTreinamento(status)
+  if(propStateTreinamento.id)salvarPropostaTreinamento(status,true)
+}
+
+function voltarAdminTreinamento(){
+  g('prop-treinamento-view').style.display='none'
+  g('admin-page').style.display='block'
+  window.scrollTo(0,0)
+}
+
+function abrirPropostaTreinamento(r){
+  if(typeof r==='string')r=JSON.parse(r.replace(/&quot;/g,'"'))
+  propStateTreinamento={id:null,requestId:r.id,requestProtocolo:r.protocolo,status:'rascunho',
+    pkg:'SPARK',publico:null,publicoPeso:1.0,senior:null,seniorPeso:1.0,
+    formato:null,formatoPeso:1.0,desl:null,deslPeso:0,togMat:false,togParceiro:false}
+
+  g('tr-empresa').value=r.empresa||''
+  g('tr-responsavel').value=r.responsavel||''
+  g('tr-email').value=r.email||''
+  g('tr-wa').value=r.whatsapp||''
+  g('tr-local').value=(r.cidade?r.cidade+' / ':'')+(r.estado||'')
+  g('tr-segmento').value=r.segmento||''
+  g('tr-temas').value=Array.isArray(r.temas)?r.temas.join(', '):(r.temas||'')
+  g('tr-participantes').value=r.participantes_estimado||20
+  g('tr-turmas').value=1
+  g('tr-carga').value=3
+  g('tr-obs-proposta').value=r.motivo||''
+  g('tr-desc-pct').value=0
+  g('tr-mat-valor').value=0
+  g('tr-parceiro-valor').value=0
+  g('tr-parceiro-obs').value=''
+  g('tr-mulheres').value=''
+  g('tr-homens').value=''
+  g('tr-comp-obs').value=''
+  g('tr-obs-interna').value=''
+
+  document.querySelectorAll('#tr-publico-opts .opt-btn, #tr-senior-opts .opt-btn, #tr-formato-opts .opt-btn, #tr-desl-opts .opt-btn, #tr-local-opts .opt-btn').forEach(b=>b.classList.remove('sel'))
+  document.querySelectorAll('#tr-pkg-grid .pkg-card').forEach(c=>c.classList.remove('sel'))
+
+  if(r.pacote_solicitado&&['SPARK','TRAIL','SHIFT'].includes((r.pacote_solicitado||'').toUpperCase())){
+    propStateTreinamento.pkg=r.pacote_solicitado.toUpperCase()
+  }
+  const pkgEl=document.querySelector(`#tr-pkg-grid [data-pkg="${propStateTreinamento.pkg}"]`)
+  if(pkgEl)pkgEl.classList.add('sel')
+
+  if(r.formato){
+    const btn=[...document.querySelectorAll('#tr-formato-opts .opt-btn')].find(b=>b.dataset.val===r.formato)
+    if(btn){btn.classList.add('sel');propStateTreinamento.formato=r.formato;propStateTreinamento.formatoPeso=Number(btn.dataset.peso)||1;onFormatoTreinamento()}
+  }
+
+  g('tr-tog-mat-impresso').className='tog-track'
+  g('tr-tog-parceiro').className='tog-track'
+  g('tr-bloco-mat').style.display='none'
+  g('tr-bloco-parceiro').style.display='none'
+  if(!r.formato){g('tr-bloco-presencial').style.display='none';g('tr-aviso-formato').style.display='none'}
+  g('tr-aviso-desl-fora').style.display='none'
+
+  setTimeout(()=>{
+    const itens=trGetInclusoItens(propStateTreinamento.pkg,propStateTreinamento.formato,false)
+    g('tr-incluido').value=itens.join('\n')
+    calcularTreinamento()
+  },50)
+
+  atualizarPillTreinamento('rascunho')
+  g('tr-empresa-titulo').textContent=r.empresa||'Nova Proposta'
+  g('tr-proto-titulo').textContent='Sol.: '+(r.protocolo||'')
+
+  carregarPropostaTreinamentoExistente(r.id)
+
+  g('admin-page').style.display='none'
+  g('prop-treinamento-view').style.display='block'
+  window.scrollTo(0,0)
+  calcularTreinamento()
+}
+
+async function carregarPropostaTreinamentoExistente(requestId){
+  const {data,error}=await sb.from('training_proposals').select('*').eq('request_id',requestId).order('updated_at',{ascending:false}).limit(1)
+  if(!error&&Array.isArray(data)&&data[0]){
+    const p=data[0]
+    propStateTreinamento.id=p.id
+    propStateTreinamento.status=p.status
+    if(p.empresa)g('tr-empresa').value=p.empresa
+    if(p.responsavel)g('tr-responsavel').value=p.responsavel
+    if(p.email)g('tr-email').value=p.email
+    if(p.whatsapp)g('tr-wa').value=p.whatsapp
+    if(p.cidade||p.estado)g('tr-local').value=(p.cidade?p.cidade+' / ':'')+(p.estado||'')
+    if(p.segmento)g('tr-segmento').value=p.segmento
+    if(p.temas)g('tr-temas').value=p.temas
+    if(p.num_participantes)g('tr-participantes').value=p.num_participantes
+    if(p.num_turmas)g('tr-turmas').value=p.num_turmas
+    if(p.carga_horaria_encontro)g('tr-carga').value=p.carga_horaria_encontro
+    if(p.obs_proposta)g('tr-obs-proposta').value=p.obs_proposta
+    if(p.obs_interna)g('tr-obs-interna').value=p.obs_interna
+    if(p.desconto_pct)g('tr-desc-pct').value=p.desconto_pct
+    if(p.material_valor)g('tr-mat-valor').value=p.material_valor
+    if(p.parceiro_valor)g('tr-parceiro-valor').value=p.parceiro_valor
+    if(p.composicao_obs)g('tr-comp-obs').value=p.composicao_obs
+    if(p.pacote){
+      document.querySelectorAll('#tr-pkg-grid .pkg-card').forEach(c=>c.classList.remove('sel'))
+      const pc=document.querySelector(`#tr-pkg-grid [data-pkg="${p.pacote}"]`)
+      if(pc){pc.classList.add('sel');propStateTreinamento.pkg=p.pacote}
+    }
+    if(p.publico_alvo){
+      const btn=[...document.querySelectorAll('#tr-publico-opts .opt-btn')].find(b=>b.dataset.val===p.publico_alvo)
+      if(btn){btn.classList.add('sel');propStateTreinamento.publico=p.publico_alvo;propStateTreinamento.publicoPeso=Number(btn.dataset.peso)||1}
+    }
+    if(p.senioridade){
+      const btn=[...document.querySelectorAll('#tr-senior-opts .opt-btn')].find(b=>b.dataset.val===p.senioridade)
+      if(btn){btn.classList.add('sel');propStateTreinamento.senior=p.senioridade;propStateTreinamento.seniorPeso=Number(btn.dataset.peso)||1}
+    }
+    if(p.formato){
+      const btn=[...document.querySelectorAll('#tr-formato-opts .opt-btn')].find(b=>b.dataset.val===p.formato)
+      if(btn){btn.classList.add('sel');propStateTreinamento.formato=p.formato;propStateTreinamento.formatoPeso=Number(btn.dataset.peso)||1;onFormatoTreinamento()}
+    }
+    if(p.deslocamento_tipo){
+      const btn=[...document.querySelectorAll('#tr-desl-opts .opt-btn')].find(b=>b.dataset.val===p.deslocamento_tipo)
+      if(btn){btn.classList.add('sel');propStateTreinamento.desl=p.deslocamento_tipo;propStateTreinamento.deslPeso=Number(btn.dataset.peso)||0}
+    }
+    if(p.material_impresso)togTreinamento('mat-impresso',true)
+    if(p.parceiro_externo)togTreinamento('parceiro',true)
+    atualizarPillTreinamento(p.status)
+    g('tr-empresa-titulo').textContent=p.empresa||g('tr-empresa').value
+    g('tr-proto-titulo').textContent='Proposta: '+p.protocolo+(p.request_protocolo?' | Sol.: '+p.request_protocolo:'')
+    calcularTreinamento()
+  }
+}
+
+async function salvarPropostaTreinamento(forceStatus,silencioso){
+  const status=forceStatus||propStateTreinamento.status
+  const local=(g('tr-local').value||'').split('/')
+  const cidade=(local[0]||'').trim()
+  const estado=(local[1]||'').trim()
+  const payload={
+    request_id:propStateTreinamento.requestId,
+    request_protocolo:propStateTreinamento.requestProtocolo,
+    empresa:g('tr-empresa').value,
+    responsavel:g('tr-responsavel').value,
+    email:g('tr-email').value,
+    whatsapp:g('tr-wa').value,
+    cidade, estado,
+    segmento:g('tr-segmento').value,
+    pacote:propStateTreinamento.pkg,
+    formato:propStateTreinamento.formato,
+    publico_alvo:propStateTreinamento.publico,
+    senioridade:propStateTreinamento.senior,
+    num_participantes:Number(g('tr-participantes').value)||20,
+    num_turmas:Number(g('tr-turmas').value)||1,
+    carga_horaria_encontro:Number(g('tr-carga').value)||3,
+    temas:g('tr-temas').value,
+    deslocamento_tipo:propStateTreinamento.desl,
+    material_impresso:propStateTreinamento.togMat,
+    material_valor:Number(g('tr-mat-valor').value)||0,
+    parceiro_externo:propStateTreinamento.togParceiro,
+    parceiro_valor:Number(g('tr-parceiro-valor').value)||0,
+    valor_bruto:propStateTreinamento._bruto||0,
+    desconto_pct:Number(g('tr-desc-pct').value)||0,
+    desconto_valor:propStateTreinamento._descVal||0,
+    valor_final:propStateTreinamento._final||0,
+    composicao_obs:g('tr-comp-obs').value,
+    obs_interna:g('tr-obs-interna').value,
+    obs_proposta:g('tr-obs-proposta').value,
+    status,
+  }
+  if(propStateTreinamento.id){
+    await sb.from('training_proposals').update(payload).eq('id',propStateTreinamento.id)
+  }else{
+    const proto='AZ-TRP-'+(new Date().getFullYear())+String(new Date().getMonth()+1).padStart(2,'0')+'-'+Math.floor(Math.random()*90000+10000)
+    payload.protocolo=proto
+    const {data}=await sb.from('training_proposals').insert(payload).select()
+    if(Array.isArray(data)&&data[0]?.id){
+      propStateTreinamento.id=data[0].id
+      g('tr-proto-titulo').textContent='Proposta: '+proto+(propStateTreinamento.requestProtocolo?' | Sol.: '+propStateTreinamento.requestProtocolo:'')
+    }
+  }
+  atualizarPillTreinamento(status)
+  if(!silencioso)toast(status==='aprovada'?'Proposta aprovada e salva!':'Rascunho salvo com sucesso')
+}
+
+function imprimirPropostaTreinamento(){
+  salvarPropostaTreinamento(propStateTreinamento.status,true)
+  const html=gerarHTMLPropostaTreinamento()
+  const win=window.open('','_blank')
+  win.document.write(html)
+  win.document.close()
+}
+
+function gerarHTMLPropostaTreinamento(){
+  const empresa=g('tr-empresa').value||''
+  const responsavel=g('tr-responsavel').value||''
+  const local=g('tr-local').value||''
+  const segmento=g('tr-segmento').value||''
+  const temas=g('tr-temas').value||''
+  const obsProposta=g('tr-obs-proposta').value||''
+  const pkg=propStateTreinamento.pkg||'SPARK'
+  const publico=propStateTreinamento.publico||'—'
+  const senior=propStateTreinamento.senior||'—'
+  const formato=propStateTreinamento.formato||'—'
+  const desl=propStateTreinamento.desl||'nenhum'
+  const nPart=Number(g('tr-participantes').value)||20
+  const nTurmas=Number(g('tr-turmas').value)||1
+  const carga=Number(g('tr-carga').value)||3
+  const descPct=Number(g('tr-desc-pct').value)||0
+  const bruto=propStateTreinamento._bruto||0
+  const final=propStateTreinamento._final||0
+  const descVal=propStateTreinamento._descVal||0
+  const valPorTurma=propStateTreinamento._valorPorTurma||0
+  const matImpresso=propStateTreinamento.togMat
+  const matVal=matImpresso?(Number(g('tr-mat-valor').value)||0):0
+  const parceiro=propStateTreinamento.togParceiro
+  const parcVal=parceiro?(Number(g('tr-parceiro-valor').value)||0):0
+  const deslVal=desl==='interior_pr'?(Number(g('tr-cfg-desl-pr').value)||400)*nTurmas:0
+  const dataHoje=()=>new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})
+  const data15=()=>{const d=new Date();d.setDate(d.getDate()+15);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}
+  const deslTexto={nenhum:'Curitiba e região metropolitana',interior_pr:'Interior do Paraná — deslocamento incluído',fora_pr:'Fora do Paraná — deslocamento por conta da empresa contratante'}[desl]||'—'
+  const pkgInfo=TR_PKGS_INFO[pkg]||TR_PKGS_INFO.SPARK
+  const linhas=(g('tr-incluido')?.value||trGetInclusoItens(pkg,formato,matImpresso).join('\n')).split('\n').filter(l=>l.trim())
+
+  return `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"/>
+<title>Proposta de Treinamento · ${empresa} · Azumi RH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--blue:#034C8B;--blue2:#3B82F6;--gray:#778082;--light:#EDEDED;
+  --gm:linear-gradient(135deg,#034C8B 0%,#0a5fa8 100%);
+  --gh:linear-gradient(135deg,#031D38 0%,#052E5A 50%,#031D38 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',Arial,sans-serif;background:#f0f2f7;color:#222;font-size:13px}
+.page{max-width:720px;margin:0 auto;padding:40px 32px 60px;background:#fff;min-height:100vh}
+.header{background:var(--gh);border-radius:12px;padding:28px 28px 24px;margin-bottom:28px}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.logo-text{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#fff}
+.logo-text span{font-style:italic;font-weight:400;color:#93C5FD}
+.header-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.header-sub{font-size:12px;color:rgba(147,197,253,.85);display:flex;gap:16px;flex-wrap:wrap}
+.section-title{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#1e3a5f;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}
+.pkg-badge{border-radius:12px;padding:16px 20px;margin-bottom:16px;color:#fff;background:var(--gh);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pkg-badge-name{font-family:'Sora',sans-serif;font-size:26px;font-weight:800}
+.pkg-badge-enc{font-family:'Space Grotesk',sans-serif;font-size:11px;color:rgba(147,197,253,.8);margin-top:3px}
+.pkg-badge-desc{font-size:12px;color:rgba(255,255,255,.8);max-width:300px;line-height:1.5;text-align:right}
+.incluso{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px}
+.incluso-title{font-size:10px;color:#166534;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700}
+.incluso-item{display:flex;gap:6px;font-size:11px;color:#166534;padding:3px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:16px}
+.gi{padding:7px 11px;border-radius:7px;background:#fafafa;border:1px solid #EDEDED}
+.gl{font-size:9px;color:#778082;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.gv{font-size:12px;font-weight:600;color:#222}
+.ctx{font-size:12px;color:#444;line-height:1.75;background:#f8f9fb;border-left:3px solid #3B82F6;padding:11px 14px;border-radius:0 8px 8px 0;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+tr:nth-child(even){background:#f8fafc}
+td{padding:8px 14px}
+.total-row td{font-weight:800;color:#1d4ed8;border-top:2px solid #2563eb;font-size:15px;background:rgba(59,130,246,.06)}
+.cond{font-size:11px;color:#333;padding:7px 0 7px 16px;border-bottom:1px solid #EDEDED;position:relative;line-height:1.65}
+.cond::before{content:"·";position:absolute;left:0;color:#034C8B;font-weight:900;font-size:14px;top:5px}
+.nao-inclui{background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:10px 14px;margin:12px 0 16px}
+.nao-title{font-size:8px;color:#991b1b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.nao-body{font-size:11px;color:#7f1d1d;line-height:1.75}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#94a3b8}
+.validity{background:#fef9c3;border:1px solid #fde68a;border-radius:100px;padding:2px 10px;font-size:10px;color:#92400e;font-weight:600}
+@media print{body{background:#fff}.page{padding:20px;min-height:auto}@page{margin:12mm}}
+</style></head><body>
+<div class="page">
+  <div class="header">
+    <div class="logo-row">
+      <svg width="28" height="22" viewBox="0 0 120 96" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="120" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#031D38"/><stop offset="50%" stop-color="#034C8B"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient></defs><circle cx="44" cy="48" r="34" fill="url(#lg)" opacity=".9"/><circle cx="76" cy="48" r="34" fill="url(#lg)" opacity=".7"/></svg>
+      <div class="logo-text">azumi<span>RH</span></div>
+    </div>
+    <div class="header-title">Proposta de Treinamento</div>
+    <div class="header-sub">
+      <span><b>Empresa:</b> ${empresa}</span>
+      <span><b>Emissão:</b> ${dataHoje()}</span>
+      <span><b>Válida até:</b> ${data15()}</span>
+    </div>
+  </div>
+
+  <div class="pkg-badge">
+    <div><div class="pkg-badge-name">${pkg}</div><div class="pkg-badge-enc">${pkgInfo.enc}</div></div>
+    <div class="pkg-badge-desc">${pkgInfo.desc}</div>
+  </div>
+
+  <div class="incluso">
+    <div class="incluso-title">O que está incluído</div>
+    ${linhas.map(l=>`<div class="incluso-item">✓ ${l.trim()}</div>`).join('')}
+  </div>
+
+  <div class="section-title">Detalhes do Treinamento</div>
+  <div class="grid">
+    ${empresa?`<div class="gi"><div class="gl">Empresa</div><div class="gv">${empresa}</div></div>`:''}
+    ${segmento?`<div class="gi"><div class="gl">Segmento</div><div class="gv">${segmento}</div></div>`:''}
+    <div class="gi"><div class="gl">Público-alvo</div><div class="gv">${publico}</div></div>
+    <div class="gi"><div class="gl">Senioridade</div><div class="gv">${senior}</div></div>
+    <div class="gi"><div class="gl">Formato</div><div class="gv">${formato}</div></div>
+    <div class="gi"><div class="gl">Participantes / turma</div><div class="gv">${nPart} pessoas</div></div>
+    <div class="gi"><div class="gl">Nº de turmas</div><div class="gv">${nTurmas} turma${nTurmas>1?'s':''}</div></div>
+    <div class="gi"><div class="gl">Carga horária / encontro</div><div class="gv">${carga} horas</div></div>
+    ${temas?`<div class="gi" style="grid-column:1/-1"><div class="gl">Temas</div><div class="gv">${temas}</div></div>`:''}
+    <div class="gi"><div class="gl">Deslocamento</div><div class="gv">${deslTexto}</div></div>
+    ${local?`<div class="gi"><div class="gl">Localização</div><div class="gv">${local}</div></div>`:''}
+  </div>
+
+  ${obsProposta?`<div class="section-title">Contexto</div><div class="ctx">${obsProposta.split('\n').join('<br>')}</div>`:''}
+
+  <div class="section-title">Investimento</div>
+  <table>
+    <tr><td>Valor por turma (${nPart} participantes)</td><td style="text-align:right">${brl(valPorTurma)}</td></tr>
+    ${nTurmas>1?`<tr><td>× ${nTurmas} turmas</td><td style="text-align:right">${brl(valPorTurma*nTurmas)}</td></tr>`:''}
+    ${deslVal>0?`<tr><td>Deslocamento</td><td style="text-align:right">${brl(deslVal)}</td></tr>`:''}
+    ${matImpresso&&matVal>0?`<tr><td>Material impresso</td><td style="text-align:right">${brl(matVal)}</td></tr>`:''}
+    ${parceiro&&parcVal>0?`<tr><td>Parceiro externo</td><td style="text-align:right">${brl(parcVal)}</td></tr>`:''}
+    ${descPct>0?`<tr><td>Desconto (${descPct}%)</td><td style="text-align:right;color:#f87171">− ${brl(descVal)}</td></tr>`:''}
+    <tr class="total-row"><td>TOTAL</td><td style="text-align:right">${brl(final)}</td></tr>
+  </table>
+
+  <div class="section-title">Condições Comerciais</div>
+  <div class="cond">Proposta válida por 15 dias a partir da data de emissão. Após esse prazo, os valores poderão ser revisados.</div>
+  <div class="cond">Condições válidas mediante aceite comercial e assinatura de contrato entre as partes.</div>
+  <div class="cond">O pagamento de entrada deve ser quitado antes do início da etapa de preparação (kick-off).</div>
+  <div class="cond">Caso seja necessária nova divisão de turmas, o escopo será recalculado e um novo orçamento emitido.</div>
+  ${formato==='Presencial'||formato==='Híbrido'?'<div class="cond">Infraestrutura necessária (sala com cadeiras móveis, projetor ou TV, som e wi-fi) é de responsabilidade da empresa contratante.</div>':''}
+  ${desl==='fora_pr'?'<div class="cond">Custos de deslocamento e hospedagem da equipe Azumi RH não estão incluídos quando aplicável fora de Curitiba e região.</div>':''}
+  <div class="cond">A Azumi RH segue as diretrizes da LGPD, garantindo confidencialidade e segurança de todas as informações tratadas durante o projeto.</div>
+
+  <div class="nao-inclui">
+    <div class="nao-title">Não inclui nesta contratação</div>
+    <div class="nao-body">
+      Ferramentas, licenças ou integrações externas necessárias à execução.<br>
+      ${matImpresso?'':'Materiais didáticos impressos (disponível como adicional mediante solicitação).<br>'}
+      Custos de deslocamento e hospedagem fora de Curitiba e região metropolitana (quando aplicável).
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Azumi RH Consultoria · contato@azumirh.com.br · azumirh.com.br</div>
+    <div class="validity">Válida por 15 dias</div>
+  </div>
+</div>
+<script>window.onload=function(){setTimeout(()=>window.print(),600)}<\/script>
+</body></html>`
+}
 function mudarStatusProp(status){
   if(!status)return
   g('prop-status-sel').value=''
