@@ -2,6 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18333141930"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18333141930');
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solicitação de Vaga · Azumi RH</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%20120%2096'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'g'%20x1%3D'0'%20y1%3D'0'%20x2%3D'120'%20y2%3D'96'%3E%3Cstop%20offset%3D'0%25'%20stop-color%3D'%23034C8B'/%3E%3Cstop%20offset%3D'50%25'%20stop-color%3D'%233B82F6'/%3E%3Cstop%20offset%3D'100%25'%20stop-color%3D'%238B5CF6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D'44'%20cy%3D'48'%20r%3D'34'%20fill%3D'url%28%23g%29'%20opacity%3D'.9'/%3E%3Ccircle%20cx%3D'76'%20cy%3D'48'%20r%3D'34'%20fill%3D'url%28%23g%29'%20opacity%3D'.7'/%3E%3C/svg%3E">
@@ -962,6 +970,7 @@ async function enviar(){
   document.getElementById('secaoTipo').style.display='none'
   const el=document.getElementById('success')
   el.style.display='block'
+  gtag('event', 'conversion', {'send_to': 'AW-18333141930/YRvRCI-Q4tIcEKqX9qVE'});
   el.classList.add('active')
   const hdr=document.querySelector('header');if(hdr)hdr.style.display='none'
   const heroEl=document.querySelector('.hero');if(heroEl)heroEl.style.display='none'
